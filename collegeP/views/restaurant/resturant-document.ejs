@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Restaurant Documents | Dineous</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/restaurant/restaurant-document.css">
+</head>
+<body>
+
+  <%- include("../includes/flash") %>
+
+  <div class="header-bar">
+    <div class="brand-mark">🍽️</div>
+    <div class="header-logo">DIA<span>nous</span></div>
+  </div>
+
+  <div class="container">
+
+    <!-- Steps Sidebar -->
+    <div class="steps" aria-label="Progress steps">
+      <div class="step completed">
+        <div class="step-title">STEP 1</div>
+        <div class="step-subtext">Restaurant Information<br><a href="#">Edit Information</a></div>
+      </div>
+      <div class="step active">
+        <div class="step-title">STEP 2</div>
+        <div class="step-subtext">Restaurant Documents</div>
+      </div>
+      <div class="step">
+        <div class="step-title">STEP 3</div>
+        <div class="step-subtext">Menu Setup</div>
+      </div>
+      <div class="step">
+        <div class="step-title">STEP 4</div>
+        <div class="step-subtext">Partner Contract</div>
+      </div>
+    </div>
+
+    <div class="main">
+
+      <!-- Outlet Type -->
+      <div class="form-card">
+        <div class="card-body">
+          <h2>Restaurant Documents</h2>
+          <div class="subsection">
+            <p class="subheading">What's your outlet-type?</p>
+            <p class="subtext">This determines whether <b>Dianous</b> or you pay GST on the items sold.</p>
+            <div class="category-box" tabindex="0" aria-label="Select outlet type">
+              <span id="selectedCategory">Category I</span>
+              <button class="edit-link" id="editCategoryBtn" type="button" aria-label="Edit outlet type">
+                <span style="font-size:1em;">&#9998;</span> Edit
+              </button>
+            </div>
+            <div class="note-text"><b>Dianous</b> will pay the <strong>GST</strong> on your behalf</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAN & GSTIN -->
+      <div class="form-card">
+        <div class="card-body">
+          <div class="subsection">
+            <p class="subheading">Enter PAN & GSTIN details <span style="color:var(--orange-mid);font-size:1.1em;vertical-align:middle;">&#9432;</span></p>
+            <label for="pan">Business/Owner PAN<span style="color:var(--error);font-weight:700;">*</span></label>
+            <input type="text" id="pan" value="AAMCR7443M" />
+            <div class="cardholder">Card Holder: <strong>RESTOLANE PRIVATE LIMITED</strong></div>
+            <label for="gstin">GSTIN<span style="color:var(--error);font-weight:700;">*</span></label>
+            <input type="text" id="gstin" value="07AAMCR7443M1ZP" />
+            <div class="checkbox-row">
+              <input type="checkbox" id="no-gstin" />
+              <label for="no-gstin">I don't have a GST number</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bank Details -->
+      <div class="form-card">
+        <div class="card-body">
+          <div class="subsection">
+            <p class="subheading">Official Bank Details</p>
+            <p class="subtext">Payments from <b>Dianous</b> will be credited here</p>
+            <label for="ifsc">Bank IFSC code<span style="color:var(--error);font-weight:700;">*</span></label>
+            <input type="text" id="ifsc" placeholder="Enter IFSC code" />
+            <label for="account">Bank Account number<span style="color:var(--error);font-weight:700;">*</span></label>
+            <input type="text" id="account" placeholder="Enter account number" />
+          </div>
+        </div>
+      </div>
+
+      <!-- FSSAI -->
+      <div class="form-card">
+        <div class="card-body">
+          <div class="subsection fssai-section">
+            <p class="subheading">FSSAI certificate</p>
+            <a class="requirements-link" href="#">Requirements:</a>
+            <ul class="requirements-list">
+              <li>The FSSAI certificate should either <strong>match the name</strong> of the restaurant or the owner.</li>
+              <li>The address on FSSAI certificate should <strong>match the address</strong> of the restaurant.</li>
+              <li>The FSSAI certificate <strong>should not be expiring</strong> before 30 days.</li>
+            </ul>
+            <input type="text" id="fssai" placeholder="FSSAI certificate number*" />
+            <p class="error-text">
+              ❌ Your restaurant address does not match with the address on the FSSAI certificate.
+              <a href="#">Edit Address</a>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- <button type="submit"><a href="/resturant-menu">Submit</a></button>
+      <button><a href="class="submit-btn", href="/resturant-menu">NextPage</a></button> -->
+<button type="submit">Submit</button>
+<a href="/resturant-menu" class="skip-btn">Skip for now →</a>
+    </div><!-- /main -->
+
+    <!-- Overlay -->
+    <div class="modal-overlay" id="modalOverlay"></div>
+
+    <!-- Side Modal for Category Selection -->
+    <div class="side-modal" id="categoryModal" aria-modal="true" role="dialog" tabindex="-1">
+      <div class="side-modal-header">
+        Select your outlet type
+        <button class="close-modal" id="closeCategoryModal" aria-label="Close">&times;</button>
+      </div>
+      <div id="categoryOptions">
+        <div class="category-option" tabindex="0" data-category="Category I">
+          <div class="category-option-title">Category I</div>
+          <div class="category-option-desc">Sells freshly prepared food items only. Does not sell any packed item.</div>
+          <div class="category-option-note"><b>Dianous</b> will pay the <strong>GST</strong> on your behalf.</div>
+          <button class="select-btn" type="button">Select</button>
+        </div>
+        <div class="category-option" tabindex="0" data-category="Category II">
+          <div class="category-option-title">Category II</div>
+          <div class="category-option-desc">Sells IceCreams, bakery products, sweets or other packed items only.</div>
+          <div class="category-option-note">The outlet itself will pay <strong>GST</strong> on these orders.</div>
+          <button class="select-btn" type="button">Select</button>
+        </div>
+        <div class="category-option" tabindex="0" data-category="Category III">
+          <div class="category-option-title">Category III</div>
+          <div class="category-option-desc">Sells both freshly prepared and packed food items.</div>
+          <div class="category-option-note"><b>Dianous</b> will pay <strong>GST</strong> only on sales of freshly prepared food items.</div>
+          <button class="select-btn" type="button">Select</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /container -->
+
+  <script src = "/js/restaurant/restaurant-document.js">
+  </script>
+
+</body>
+</html>

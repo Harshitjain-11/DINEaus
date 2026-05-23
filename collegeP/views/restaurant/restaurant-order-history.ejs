@@ -1,0 +1,62 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Order History — Dineous</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/restaurant/restaurant-order-history.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand-mark">📜</div>
+  <span class="brand-name">Dineous</span>
+</div>
+
+<div class="page-wrap">
+
+<%- include("../includes/flash") %>
+<h1>Order History</h1>
+
+<a href="/restaurant-admin/dashboard"><button>⬅ Back to Dashboard</button></a>
+
+<% if (history.length === 0) { %>
+  <p>No completed or rejected orders yet.</p>
+<% } else { %>
+
+<div class="table-wrap">
+<table>
+  <tr>
+    <th>ID</th>
+    <th>Items</th>
+    <th>Total</th>
+    <th>Status</th>
+    <th>Date</th>
+  </tr>
+
+  <% history.forEach(o => { %>
+  <tr>
+    <td><%= o.id %></td>
+
+    <td>
+      <ul>
+        <% o.items.forEach(it => { %>
+          <li><%= it.item_name %> × <%= it.quantity %> — ₹<%= it.price * it.quantity %></li>
+        <% }) %>
+      </ul>
+    </td>
+
+    <td>₹<%= o.total_price %></td>
+    <td><%= o.status %></td>
+    <td><%= o.created_at.toLocaleString() %></td>
+  </tr>
+  <% }) %>
+
+</table>
+</div>
+
+<% } %>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password - DINEaus</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/user/reset.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">   
+</head>
+<body>
+
+    <div class="flash-container">
+        <%- include("../includes/flash") %>
+    </div>
+
+    <!-- LEFT PANEL -->
+    <div class="panel-left">
+        <div class="candle-glow"></div>
+        <div class="panel-left-content">
+            <div class="brand">
+                <span class="brand-icon">🍴</span>
+                <span class="brand-name">DINE<span>aus</span></span>
+            </div>
+            <div class="panel-hero">
+                <div class="panel-badge">Account Security</div>
+                <h2>Secure Your <em>Table</em></h2>
+                <p>Set a new password to keep your Dineous account safe and your reservations protected.</p>
+            </div>
+            <div class="panel-features">
+                <div class="feat-card">
+                    <div class="feat-icon">🔒</div>
+                    <div class="feat-text"><strong>Secure Account</strong><span>Your data is protected</span></div>
+                </div>
+                <div class="feat-card">
+                    <div class="feat-icon">⚡</div>
+                    <div class="feat-text"><strong>Quick Access</strong><span>Back in seconds</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL — original HTML untouched -->
+    <div class="container">
+        <div class="form-icon">🔑</div>
+        <h4>Reset Password</h4>
+        <p class="form-sub">Create a new secure password for your account.</p>
+        <div class="input-group">
+            <form method="POST" action="/reset-password">
+                <input type="password" placeholder="Create new password" name="password" required>
+                <input type="password" placeholder="Confirm password" name="confirm" required>
+                <input type="hidden" name="token" value="<%= token %>">
+                <button class="btn" type="submit"><b>Reset Password</b></button>
+            </form>
+        </div>
+        <div class="back-link">
+            <p>Remember your password? <a href="/login">Log in</a></p>
+        </div>
+    </div>
+
+</body>
+</html>

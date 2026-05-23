@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menu Setup | Dineous</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/restaurant/restaurant-menu.css">
+</head>
+<body>
+
+  <%- include("../includes/flash") %>
+
+  <!-- NAVBAR -->
+  <div class="header-bar">
+    <div class="nav-brand-mark">🍽️</div>
+    <div class="header-logo">DIA<span>nous</span></div>
+  </div>
+
+  <div class="container">
+
+    <!-- Steps Sidebar -->
+    <div class="steps">
+      <div class="step completed">
+        <div class="step-title">STEP 1<br>Restaurant Information</div>
+        <div class="step-subtext">Location, Owner details, Open & Close hrs.<br><a href="#">Edit Information</a></div>
+      </div>
+      <div class="step completed">
+        <div class="step-title">STEP 2<br>Restaurant Documents</div>
+      </div>
+      <div class="step active">
+        <div class="step-title">STEP 3<br>Menu Setup</div>
+      </div>
+      <div class="step ">
+        <div class="step-title">STEP 4<br>Partner Contract</div>
+      </div>
+    </div>
+
+    <main class="main-content">
+      <form action="/upload-menu" method="POST" enctype="multipart/form-data">
+      <h2>Menu Setup</h2>
+
+      <div class="form-card">
+        <div class="card-body">
+          <p class="question">Do you have POS?</p>
+          <p class="subtext">Systems like PetPooja and Limetray using which you can accept orders from Swiggy</p>
+          <label><input type="radio" name="pos" checked> No, I don't have POS</label>
+          <label><input type="radio" name="pos"> Yes, I have POS integration</label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <p class="question">What kind of food is on your menu?*</p>
+          <label><input type="radio" name="vegNonveg"> Veg Only</label>
+          <label><input type="radio" name="vegNonveg" checked> Both Veg & Non-Veg</label>
+          <p class="subtext" style="margin-top:10px;">Add cuisines that you serve</p>
+          <label class="category-box">
+            <input name="cuisine" placeholder="Eg. Chinese, North Indian" />
+            <span class="edit-link">+</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <p class="question">Cost for two</p>
+          <label class="category-box">
+            <input name="costfortwo" type="number" min="1" step="1" placeholder="Eg. 500" oninput="if(this.value<1)this.value='';" />
+            <span class="edit-link">+</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="upload-card">
+        <div class="card-body">
+          <h3>Upload your menu</h3>
+          <p><span class="highlight">Requirements:</span></p>
+          <ul>
+            <li>Upload <strong>clear menu card photos</strong> or as a <strong>word/excel file</strong>. <br>Item names prices should be readable.</li>
+            <li>Menu should be in <strong>English</strong> only.</li>
+            <li>Every item should have <strong>price mentioned</strong> against it.</li>
+            <li>Max file size: <strong>25 MB</strong> <span class="file-types">(.jpg, .png, .docx, .xlsx, .pdf)</span>.</li>
+          </ul>
+          <label class="upload-label" for="restaurantName">Restaurant Name</label>
+          <input type="text" name="restaurantName" placeholder="Enter Restaurant Name" id="restaurantName" required />
+          <br /><br />
+          <label class="upload-label" for="menuFile">Menu Image</label>
+          <input type="file" name="menuFile" id="menuFile" accept="image/*" required />
+          <br /><br />
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <h4>Packaging Charges*</h4>
+          <p class="subtext">
+            Not applicable on Indian Breads, MRP Items, Packaged Beverages
+            <span class="gray">(Soft drinks, Water Bottle)</span>
+          </p>
+          <div class="button-group">
+            <button class="option-btn" type="button">Zero</button>
+            <button class="option-btn" type="button">Fixed (Order Level Packing)</button>
+            <button class="option-btn" type="button">Based on item price</button>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="option-btn">Upload Menu</button>
+      </form>
+
+      <button class="next-btn" style="margin-top:16px;">
+        <!-- <a href="/resturant-menu">Next Page →</a> -->
+        <a href="/resturant-">Next Page →</a>
+      </button>
+
+    </main>
+  </div>
+
+  <!-- Cuisine Modal -->
+  <div id="cuisineModal" class="cuisine-modal" style="display:none;">
+    <div class="cuisine-modal-content">
+      <button class="close-cuisine-modal" onclick="closeCuisineModal()">&times;</button>
+      <h3>Add cuisines that you serve</h3>
+      <input type="text" id="cuisineSearch" placeholder="Search cuisine name" class="cuisine-search"/>
+      <div class="suggested-cuisines">
+        <span class="cuisine-chip" onclick="addCuisine('Cafe')">Cafe</span>
+        <span class="cuisine-chip" onclick="addCuisine('Burgers')">Burgers</span>
+        <span class="cuisine-chip" onclick="addCuisine('Fast Food')">Fast Food</span>
+        <span class="cuisine-chip" onclick="addCuisine('Ice Cream Cakes')">Ice Cream Cakes</span>
+        <span class="cuisine-chip" onclick="addCuisine('Waffle')">Waffle</span>
+        <span class="cuisine-chip" onclick="addCuisine('Sri Lankan')">Sri Lankan</span>
+      </div>
+    </div>
+  </div>
+
+  <script src = "/js/restaurant/restaurant-menu.js">
+  </script>
+</body>
+</html>

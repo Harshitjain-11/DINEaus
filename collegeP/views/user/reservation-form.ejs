@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Reserve — <%= restaurant.name %></title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/user/reservation-form.css">
+</head>
+<body>
+<%- include("../includes/flash") %>
+<div style="max-width:1100px;margin:0 auto 18px">
+  <a href="/restaurant/<%= restaurant.id %>">&larr; Back to Restaurant</a>
+</div>
+
+<div class="container">
+  <!-- LEFT -->
+  <div class="left">
+    <div class="card">
+      <h1>Reserve at <%= restaurant.name %></h1>
+      <small class="muted">Pick date, meal type, slot, seat & pre-order your food.</small>
+
+      <!-- DATE -->
+      <label>Date</label>
+      <input type="date" id="date" />
+
+      <!-- MEAL TYPE -->
+      <label style="margin-top:12px">Meal Type</label>
+      <select id="mealType">
+        <option value="">Select Meal Type</option>
+        <option value="lunch">Lunch</option>
+        <option value="dinner">Dinner</option>
+      </select>
+
+      <!-- SLOTS -->
+      <label style="margin-top:18px">Time Slots</label>
+      <div id="slotBox" class="slots">Pick a meal type & date to see slots</div>
+
+      <hr style="margin:18px 0;border:none;border-top:1px solid #eee">
+
+      <!-- SEATS (Plan B) -->
+      <h3 style="margin:0 0 6px">Choose a seat</h3>
+      <small class="muted">Choose category or view all — click tile to preview & pick</small>
+
+      <div class="seat-controls">
+        <button class="seat-filter-btn active" data-cat="">All</button>
+        <button class="seat-filter-btn" data-cat="Window">Window</button>
+        <button class="seat-filter-btn" data-cat="Couple">Couple</button>
+        <button class="seat-filter-btn" data-cat="Family">Family</button>
+        <button class="seat-filter-btn" data-cat="Others">Others</button>
+      </div>
+
+      <div id="seatMap" class="seat-map">
+        <div class="seat-empty">Loading seats…</div>
+      </div>
+
+      <!-- seat preview modal -->
+      <div id="seatPreviewModal" onclick="hideSeatModal(event)">
+        <div class="box" onclick="event.stopPropagation()">
+          <img id="seatPreviewImg" style="width:100%;height:380px;object-fit:cover;border-radius:10px">
+          <div style="margin-top:10px;display:flex;justify-content:space-between;align-items:center">
+            <b id="seatPreviewTitle"></b>
+            <button onclick="hideSeatModal()" style="padding:6px 10px;background:var(--accent);color:#fff;border:0;border-radius:6px">Close</button>
+          </div>
+        </div>
+      </div>
+
+      <hr style="margin:18px 0;border:none;border-top:1px solid #eee">
+
+      <!-- MENU -->
+      <h3 style="margin:0 0 6px">Pre-order Food</h3>
+      <small class="muted">Your food will be prepared before arrival.</small>
+
+      <div class="menu-list">
+        <% menuItems.forEach(item => { 
+             const img = `/common-images/${getCommonImageName(item.item_name)}`;
+        %>
+        <div class="menu-item">
+          <img class="menu-thumb" src="<%= img %>" alt="<%= item.item_name %>">
+          <div style="flex:1">
+            <b><%= item.item_name %></b>
+            <div style="color:#777">₹ <%= item.price %></div>
+          </div>
+
+          <div>
+            <input type="number" min="0" value="0" onchange="setPreorder('<%= item.id %>', this.value)" style="width:72px">
+          </div>
+        </div>
+        <% }) %>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right">
+    <div class="card">
+      <h3>Your Details</h3>
+      <small class="muted">Required for confirmation</small>
+
+      <label>Name</label>
+      <input id="name" type="text" value="<%= user.firstname %>">
+
+      <label>Phone</label>
+      <input id="phone" type="text" value="<%= user.number %>">
+
+      <label>Guests</label>
+      <select id="guests">
+        <option>2</option><option>4</option><option>6</option>
+      </select>
+
+      <hr>
+
+      <h4>Booking Summary</h4>
+      <div style="font-size:14px;">
+        <b>Meal:</b> <span id="summary-meal">—</span><br>
+        <b>Date:</b> <span id="summary-date">—</span><br>
+        <b>Time:</b> <span id="summary-slot">—</span><br>
+        <b>Seat:</b> <span id="summary-seat">—</span><br>
+
+        <h4 style="margin-top:12px;">Selected Items</h4>
+        <div id="summary-items" style="font-size:14px;margin-bottom:10px;line-height:20px"><i>No items selected</i></div>
+
+        <b>Food Total:</b> ₹ <span id="summary-total">0</span>
+      </div>
+
+      <hr>
+      <label><b>Payment Method</b></label>
+      <div><input type="radio" name="payment" value="COD" checked> Cash on Delivery (COD)</div>
+
+      <button class="book-btn" onclick="submitForm()">Book Now</button>
+    </div>
+  </div>
+</div>
+
+<!-- Safe JSON blocks -->
+<script id="price-data" type="application/json">
+{ <% menuItems.forEach((item, idx) => { %> "<%= item.id %>": <%= Number(item.price) %><%= idx < menuItems.length - 1 ? ',' : '' %> <% }) %> }
+</script>
+<script id="name-data" type="application/json">
+{ <% menuItems.forEach((item, idx) => { %> "<%= item.id %>": "<%= item.item_name.replace(/"/g,'\\"') %>"<%= idx < menuItems.length - 1 ? ',' : '' %> <% }) %> }
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // ✅ DATE LIMIT SYSTEM (Today to Next 3 Days Only)
+
+  const dateInput = document.getElementById("date");
+
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, "0");
+  const dd = String(today.getDate()).padStart(2, "0");
+
+  const minDate = `${yyyy}-${mm}-${dd}`;
+
+  const max = new Date(today);
+  max.setDate(max.getDate() + 3);   // 🔥 only next 3 days allowed
+
+  const maxYYYY = max.getFullYear();
+  const maxMM = String(max.getMonth() + 1).padStart(2, "0");
+  const maxDD = String(max.getDate()).padStart(2, "0");
+
+  const maxDate = `${maxYYYY}-${maxMM}-${maxDD}`;
+
+  dateInput.min = minDate;
+  dateInput.max = maxDate;
+
+  // auto select today by default
+  dateInput.value = minDate;
+
+  // static slot lists
+  const LUNCH_SLOTS = ["11:00","12:00","13:00","14:00","15:00"];
+  const DINNER_SLOTS = ["18:00","19:00","20:00","21:00","22:00"];
+
+  // state
+  let selectedMealType = "";
+  let selectedSlot = "";
+  let selectedSeat = null;        // will be seat id (number/string)
+  let selectedSeatName = "";
+  let preorder = {};
+  const restaurantId = "<%= restaurant.id %>";
+  const menuPrices = JSON.parse(document.getElementById('price-data').textContent || '{}');
+  const menuNames = JSON.parse(document.getElementById('name-data').textContent || '{}');
+
+  // summary helpers
+  function updateSummaryMeal(){ document.getElementById('summary-meal').textContent = selectedMealType ? selectedMealType.toUpperCase() : '—'; }
+  function updateSummaryDate(){ document.getElementById('summary-date').textContent = document.getElementById('date').value || '—'; }
+  function updateSummarySlot(){ document.getElementById('summary-slot').textContent = selectedSlot || '—'; }
+  function updateSummarySeat(){ document.getElementById('summary-seat').textContent = selectedSeatName || '—'; }
+
+  function updateTotal(){
+    let total = 0;
+    for (let id in preorder){
+      const q = parseInt(preorder[id]) || 0;
+      const price = Number(menuPrices[id] || 0);
+      total += q * price;
+    }
+    document.getElementById('summary-total').textContent = total;
+  }
+
+  function updateSummaryItems(){
+    const box = document.getElementById('summary-items');
+    const ids = Object.keys(preorder);
+    if (ids.length === 0){ box.innerHTML = "<i>No items selected</i>"; return; }
+    let html = "";
+    ids.forEach(id => {
+      const name = menuNames[id] || 'Item';
+      const qty = preorder[id];
+      const price = menuPrices[id] || 0;
+      html += `<div>${name} × ${qty} = ₹${qty * price}</div>`;
+    });
+    box.innerHTML = html;
+  }
+
+  // setPreorder exposed globally for inline onchange
+  window.setPreorder = function(id, qty){
+    qty = parseInt(qty) || 0;
+    if (qty > 0) preorder[id] = qty; else delete preorder[id];
+    updateTotal();
+    updateSummaryItems();
+  };
+
+  // meal type & date events
+  document.getElementById('mealType').addEventListener('change', function(){
+    selectedMealType = this.value;
+    selectedSlot = "";
+    updateSummaryMeal(); updateSummarySlot();
+    renderSlots();
+  });
+  document.getElementById('date').addEventListener('change', function(){
+    updateSummaryDate();
+    renderSlots();
+  });
+
+  // load DB slot occupancy and render static slots (lunch/dinner)
+  function renderSlots(){
+    const date = document.getElementById('date').value;
+    const meal = selectedMealType;
+    const slotBox = document.getElementById('slotBox');
+    if (!meal){ slotBox.innerHTML = 'Select meal type'; return; }
+    if (!date){ slotBox.innerHTML = 'Pick a date to load slots'; return; }
+
+    const staticList = meal === 'lunch' ? LUNCH_SLOTS : DINNER_SLOTS;
+    fetch(`/reservation/slots?restaurant_id=${restaurantId}&date=${date}`)
+      .then(r => r.json())
+      .then(dbSlots => {
+        const html = staticList.map(s => {
+          const found = dbSlots.find(x => x.slot === s);
+          const available = found ? found.available : true;
+          return `<button type="button" class="slot-btn ${ available ? '' : 'disabled' }" ${ available ? '' : 'disabled' } data-slot="${s}">${s}</button>`;
+        }).join('');
+        slotBox.innerHTML = html;
+        document.querySelectorAll('#slotBox .slot-btn').forEach(btn => {
+          btn.addEventListener('click', function(){
+            if (btn.disabled) return;
+            selectedSlot = btn.dataset.slot;
+            document.querySelectorAll('#slotBox .slot-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            updateSummarySlot();
+          });
+        });
+      })
+      .catch(err => { console.error('slots load error', err); slotBox.innerHTML = '<small class="muted">Error loading slots</small>'; });
+  }
+
+  // SEAT MAP (Plan B) - fetch seats and render
+  const seatMapEl = document.getElementById("seatMap");
+  const filterBtns = document.querySelectorAll(".seat-filter-btn");
+  const previewModal = document.getElementById("seatPreviewModal");
+  const previewImg = document.getElementById("seatPreviewImg");
+  const previewTitle = document.getElementById("seatPreviewTitle");
+  let allSeats = [], currentFilter = "";
+
+  function fetchSeats(){
+    fetch(`/restaurant-seats?restaurant_id=${restaurantId}`)
+      .then(r => r.json())
+      .then(data => { allSeats = data || []; renderSeats(); })
+      .catch(err => { console.error('seat fetch error', err); seatMapEl.innerHTML = '<div class="seat-empty">Failed to load seats</div>'; });
+  }
+
+  function renderSeats(){
+    if (!allSeats.length){ seatMapEl.innerHTML = '<div class="seat-empty">No seats uploaded</div>'; return; }
+    const filtered = currentFilter ? allSeats.filter(s => (s.seat_type || 'Others') === currentFilter) : allSeats.slice();
+    const groups = {};
+    filtered.forEach(s => { const cat = s.seat_type || 'Others'; if(!groups[cat]) groups[cat]=[]; groups[cat].push(s); });
+    let html = "";
+    Object.keys(groups).forEach(cat => {
+      html += `<div class="seat-col"><h4>${cat}</h4>`;
+      groups[cat].forEach(seat => {
+        const img = seat.image_url ? `/uploads/seats/${seat.image_url}` : "/uploads/seats/default.jpg";
+        const cls = seat.is_available == 0 ? "seat-tile disabled" : "seat-tile";
+        html += `<div class="${cls}" data-id="${seat.id}" data-name="${seat.seat_name}" data-img="${img}">
+                   <img src="${img}" class="seat-thumb-small">
+                   <div class="seat-meta"><b>${seat.seat_name}</b><small style="display:block;color:#777">${seat.is_available==0 ? 'Booked' : 'Available'}</small></div>
+                 </div>`;
+      });
+      html += `</div>`;
+    });
+    seatMapEl.innerHTML = html;
+
+    // attach click handlers
+    document.querySelectorAll('.seat-tile').forEach(tile => {
+      tile.addEventListener('click', function(){
+        if (tile.classList.contains('disabled')) return;
+        selectedSeat = tile.dataset.id;
+        selectedSeatName = tile.dataset.name;
+        // mark selected visually
+        document.querySelectorAll('.seat-tile').forEach(t => t.classList.remove('selected'));
+        tile.classList.add('selected');
+        // preview modal
+        previewImg.src = tile.dataset.img;
+        previewTitle.textContent = tile.dataset.name;
+        previewModal.style.display = 'flex';
+        updateSummarySeat();
+      });
+    });
+  }
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', function(){
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.dataset.cat || "";
+      renderSeats();
+    });
+  });
+
+  window.hideSeatModal = function(){ previewModal.style.display = 'none'; };
+
+  // expose selected seat getter for server submit
+  window.__getSelectedSeatId = () => selectedSeat;
+
+  // SUBMIT
+  window.submitForm = function(){
+    const name = document.getElementById('name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const guests = document.getElementById('guests').value;
+    const date = document.getElementById('date').value;
+    if(!name || !phone || !date || !selectedSlot) { alert('Please fill name, phone, date, and select a slot.'); return; }
+
+    fetch('/reservation/create-full',{
+      method:'POST',
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({
+        restaurant_id: restaurantId,
+        name, phone, date,
+        time_slot: selectedSlot,
+        guests,
+        seat_id: (window.__getSelectedSeatId ? window.__getSelectedSeatId() : null),
+        preorder
+      })
+    })
+    .then(r => r.text())
+    .then(html => { document.write(html); })
+    .catch(err => { console.error('Booking error', err); alert('Failed to create reservation'); });
+  };
+
+  // init
+  updateSummaryMeal(); updateSummaryDate(); updateSummarySlot(); updateTotal(); updateSummaryItems();
+  fetchSeats();
+});
+
+(function(){
+  const seatMapEl = document.getElementById("seatMap");
+  const filterBtns = document.querySelectorAll(".seat-filter-btn");
+  const previewModal = document.getElementById("seatPreviewModal");
+  const previewImg = document.getElementById("seatPreviewImg");
+  const previewTitle = document.getElementById("seatPreviewTitle");
+
+  let allSeats = [];
+  let currentFilter = "";
+  let selectedSeatId = null;
+
+  // fetch seats from server
+  fetch(`/restaurant-seats?restaurant_id=<%= restaurant.id %>`)
+    .then(r => r.json())
+    .then(data => {
+      allSeats = data;
+      renderSeats();
+    });
+
+  function renderSeats(){
+    if(allSeats.length === 0){
+      seatMapEl.innerHTML = "<div class='seat-empty'>No seats uploaded</div>";
+      return;
+    }
+
+    let filtered = currentFilter ? allSeats.filter(s => s.seat_type === currentFilter) : allSeats;
+
+    let groups = {};
+    filtered.forEach(s => {
+      const cat = s.seat_type || "Others";
+      if(!groups[cat]) groups[cat] = [];
+      groups[cat].push(s);
+    });
+
+    let html = "";
+    Object.keys(groups).forEach(cat => {
+      html += `<div class="seat-col"><h4>${cat}</h4>`;
+      groups[cat].forEach(seat => {
+        const img = seat.image_url ? `/uploads/seats/${seat.image_url}` : "/uploads/seats/default.jpg";
+        const cls = seat.is_available == 0 ? "seat-tile disabled" :
+                    (selectedSeatId == seat.id ? "seat-tile selected" : "seat-tile");
+
+        html += `
+          <div class="${cls}" data-id="${seat.id}" data-name="${seat.seat_name}" data-img="${img}">
+            <img src="${img}" class="seat-thumb-small">
+            <div class="seat-meta">
+              <b>${seat.seat_name}</b>
+              <small>${seat.is_available == 0 ? "Booked" : "Available"}</small>
+            </div>
+          </div>`;
+      });
+      html += `</div>`;
+    });
+
+    seatMapEl.innerHTML = html;
+
+    document.querySelectorAll(".seat-tile").forEach(tile => {
+      tile.addEventListener("click", () => {
+        if(tile.classList.contains("disabled")) return;
+
+        selectedSeatId = tile.dataset.id;
+        const seatName = tile.dataset.name;
+
+        document.querySelectorAll(".seat-tile").forEach(t => t.classList.remove("selected"));
+        tile.classList.add("selected");
+
+        previewImg.src = tile.dataset.img;
+        previewTitle.textContent = seatName;
+        previewModal.style.display = "flex";
+
+        document.getElementById("summary-seat").textContent = seatName;
+      });
+    });
+  }
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      filterBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentFilter = btn.dataset.cat || "";
+      renderSeats();
+    });
+  });
+
+  window.hideSeatModal = function(){
+    previewModal.style.display = "none";
+  };
+
+  // expose seat id for submit
+  window.__getSelectedSeatId = () => selectedSeatId;
+})();
+
+</script>
+
+</body>
+</html>

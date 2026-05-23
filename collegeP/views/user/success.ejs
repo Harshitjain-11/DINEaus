@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Order Successful</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/user/success.css">
+</head>
+<body>
+  <%- include("../includes/flash") %>
+
+  <div class="success-box">
+
+    <!-- animated tick -->
+    <div class="tick-wrap">
+      <svg viewBox="0 0 24 24">
+        <polyline class="tick-path" points="4,13 9,18 20,7"/>
+      </svg>
+    </div>
+
+    <h2>Order Placed Successfully!</h2>
+    <p>Thank you <strong style="color:var(--text)"><%= user?.firstname || "User" %></strong>, your order has been placed successfully.</p>
+    <p>Our delivery partner will reach you soon with your food.</p>
+
+    <div class="order-id-chip">
+      <span>Order ID</span>
+      #<%= orderId %>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="btn-group">
+      <button onclick="window.location.href='/track-order/<%= orderId %>'">
+        🛵 &nbsp;Track Order
+      </button>
+      <button onclick="window.location.href='/home'">
+        Go to Home
+      </button>
+    </div>
+
+  </div>
+</body>
+</html>

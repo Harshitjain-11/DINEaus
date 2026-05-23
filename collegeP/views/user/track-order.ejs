@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Track Order — #<%= orderId %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="/css/user/track-order.css">
+</head>
+<body>
+  <%- include("../includes/flash") %>
+  <div class="header">
+    <div>
+      <h1>Track Order #<%= orderId %></h1>
+      <div class="order-meta">Placed: <strong><%= new Date(createdAt).toLocaleString() %></strong></div>
+    </div>
+    <div>
+      <a href="/home">← Back to home</a>
+    </div>
+  </div>
+
+  <div class="items">
+    <strong>Items</strong>
+    <ul>
+      <% items.forEach(it => { %>
+        <li><%= it.item_name %> × <%= it.quantity %> — ₹<%= (it.price * it.quantity).toFixed(2) %></li>
+      <% }) %>
+    </ul>
+    <div style="margin-top:8px;display:flex;flex-wrap:wrap;align-items:center;gap:4px;min-width:0;overflow:hidden;">Total: <span class="badge">₹<%= items.reduce((t,i)=>t+i.price*i.quantity,0).toFixed(2) %></span></div>
+  </div>
+
+  <div class="notice" id="liveNotice">Live updates enabled — waiting for status changes...</div>
+   <% if (rawStatus === 'scheduled') { %>
+  <div id="countdownBox" class="notice" style="background:#e8f4ff;border-color:#b8daff;color:#004085">
+    ⏳ Order will be sent to restaurant in
+    <strong><span id="countdownTimer">--:--</span></strong>
+  </div>
+<% } %>
+<% if (rawStatus === 'scheduled') { %>
+  <form id="cancelForm" action="/order/<%= orderId %>/cancel" method="POST">
+    <button id="cancelBtn" style="
+      background:#dc3545;
+      color:white;
+      border:none;
+      padding:10px 14px;
+      border-radius:6px;
+      margin-top:10px;
+      cursor:pointer;
+      width:100%;
+    ">
+      ❌ Cancel Order
+    </button>
+  </form>
+
+  <p id="lockMsg" style="color:#b02a37; display:none; margin-top:6px;">
+    ⛔ Cancellation locked. Order is being sent to restaurant.
+  </p>
+<% } %>
+
+  <div style="margin-top:18px">
+  <div style="font-weight:600; margin-bottom:8px">Order Status</div>
+  <!-- 🔥 TIMELINE SECTION -->
+  <div class="timeline" id="timeline"></div>
+  <!-- 🔥 MAP SECTION (timeline ke bahar) -->
+  <h3>Live Delivery Location</h3>
+  <div id="map"></div>
+  <p id="mapStatus">Waiting for rider location...</p>
+<p id="etaText" style="font-weight:600;color:#2c3e50"></p>
+
+</div>
+
+
+  <!-- Socket.io -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const orderId = "<%= orderId %>";
+    const initialStatus = "<%= currentStatus %>";
+    // 🔥 SCHEDULED ORDER COUNTDOWN
+    "<% if (rawStatus === 'scheduled' && scheduledFor) { %>"
+    
+    const scheduledTime = new Date("<%= scheduledFor %>").getTime();
+    
+    function updateCountdownTimer(){
+      const now = new Date().getTime();
+      const diff = scheduledTime - now;
+    
+      const box = document.getElementById("countdownBox");
+      const span = document.getElementById("countdownTimer");
+    
+      if (!box || !span) return;
+    
+      if (diff <= 0) {
+        span.innerText = "sending now...";
+        return;
+      }
+    
+      const mins = Math.floor((diff % (1000*60*60)) / (1000*60));
+      const secs = Math.floor((diff % (1000*60)) / 1000);
+    
+      span.innerText = mins + " min " + secs + " sec";
+    }
+    
+    updateCountdownTimer();
+    setInterval(updateCountdownTimer, 1000);
+    
+    "<% } %>"
+    // 🔒 CANCEL LOCK LOGIC (last 60 sec)
+    const cancelBtn = document.getElementById("cancelBtn");
+    const lockMsg = document.getElementById("lockMsg");
+    
+    function updateCancelLock(){
+      if (!cancelBtn) return;
+    
+      const now = new Date().getTime();
+      const diff = scheduledTime - now;
+    
+      if (diff <= 60000) { // last 60 sec
+        cancelBtn.disabled = true;
+        cancelBtn.style.background = "#999";
+        cancelBtn.style.cursor = "not-allowed";
+        cancelBtn.innerText = "⛔ Cancellation Closed";
+        if (lockMsg) lockMsg.style.display = "block";
+      }
+    }
+    
+    // run every second with countdown
+    setInterval(updateCancelLock, 1000);
+    updateCancelLock();
+
+    const steps = [
+      { key: "pending", label: "Order Placed" },
+      { key: "accepted", label: "Accepted by Restaurant" },
+      { key: "preparing", label: "Preparing" },
+      { key: "ready", label: "Ready for Pickup" },
+      { key: "picked_up", label: "Picked up by Delivery boy" },
+      { key: "out_for_delivery", label: "Out for Delivery" }, // optional, may skip if using picked_up
+      { key: "delivered", label: "Delivered" }
+    ];
+
+    // map for quick lookup of step index
+    const stepIndex = {};
+    steps.forEach((s,i)=> stepIndex[s.key]=i);
+
+    // build timeline DOM
+    const timeline = document.getElementById("timeline");
+    function renderTimeline(currentKey, timestamps = {}) {
+    timeline.innerHTML = "";
+  
+    const currentIndex = stepIndex[currentKey] ?? 0;
+  
+    steps.forEach((s, idx) => {
+    const div = document.createElement("div");
+    div.className = "step";
+
+    // ✅ COMPLETED = jo current se pehle aaye
+    if (idx < currentIndex) div.classList.add("completed");
+
+    // ✅ ACTIVE = jo exact current ho
+    if (s.key === currentKey) div.classList.add("active", "inprogress");
+
+    const dot = document.createElement("div");
+    dot.className = "dot";
+    div.appendChild(dot);
+
+    const title = document.createElement("div");
+    title.innerText = s.label;
+    div.appendChild(title);
+
+    // ✅ Timestamp show only if available
+    if (timestamps[s.key]) {
+      const ts = document.createElement("div");
+      ts.className = "timestamp";
+      ts.innerText = new Date(timestamps[s.key]).toLocaleString();
+      div.appendChild(ts);
+    }
+
+    timeline.appendChild(div);
+  });
+}
+    
+    const serverTimestamps = <%- JSON.stringify(timestamps) %>;
+    let timestamps = { ...serverTimestamps };
+    
+    // Safety: agar pending ka time nahi aaya to createdAt use karlo
+    if (!timestamps.pending) {
+      timestamps.pending = "<%= createdAt.toISOString ? createdAt.toISOString() : createdAt %>";
+    }
+
+    const normalizedInitial = initialStatus === "completed" ? "delivered" : initialStatus || "pending";
+    renderTimeline(normalizedInitial, timestamps);
+    let currentStatus = normalizedInitial;
+// let map, userMarker, restMarker, riderMarker;
+let map, userMarker, restMarker, riderMarker, routeLine = null;
+// ===== FAKE TESTING START =====
+// let testLat = 26.2183;
+// let testLng = 78.1828;
+
+// setInterval(() => {
+//   testLat += 0.0003;   // thoda thoda move
+//   testLng += 0.0002;
+
+//   socket.emit("delivery:locationUpdate", {
+//     orderId,
+//     lat: testLat,
+//     lng: testLng
+//   });
+
+// }, 3000); // every 3 sec
+// ===== FAKE TESTING END =====
+
+let autoFollow = true;   // 🟢 map rider ko follow karega
+let routeFittedOnce = false;
+async function drawRoadRoute(fromLat, fromLng, toLat, toLng) {
+  const url = `https://router.project-osrm.org/route/v1/driving/${fromLng},${fromLat};${toLng},${toLat}?overview=full&geometries=geojson`;
+
+  const res = await fetch(url);
+  const data = await res.json();
+
+  if (!data.routes || !data.routes.length) return null;
+
+  const route = data.routes[0];
+
+  const coords = route.geometry.coordinates.map(c => [c[1], c[0]]);
+
+  if (routeLine) map.removeLayer(routeLine);
+
+  routeLine = L.polyline(coords, {
+    color: "blue",
+    weight: 4
+  }).addTo(map);
+
+  // ❌ zoom only first time (already fixed earlier)
+  if (!routeFittedOnce) {
+    map.fitBounds(routeLine.getBounds().pad(0.3));
+    routeFittedOnce = true;
+  }
+
+  // ✅ return distance & duration
+  return {
+    distance: route.distance,   // meters
+    duration: route.duration    // seconds
+  };
+}
+function createBikeIcon(angle = 0) {
+  return L.divIcon({
+    className: "bike-marker",
+    html: `
+      <div style="transform: rotate(${angle}deg);">
+        <img src="https://cdn-icons-png.flaticon.com/512/2972/2972185.png"
+             style="width:34px;height:34px;" />
+      </div>
+    `,
+    iconSize: [34, 34],
+    iconAnchor: [17, 17]
+  });
+}
+
+function getAngle(from, to) {
+  const dy = to.lat - from.lat;
+  const dx = to.lng - from.lng;
+  const rad = Math.atan2(dy, dx);
+  return rad * (180 / Math.PI);
+}
+function animateMarker(marker, from, to, duration = 1000) {
+  const start = performance.now();
+
+  function frame(now) {
+    const progress = Math.min((now - start) / duration, 1);
+
+    const lat = from.lat + (to.lat - from.lat) * progress;
+    const lng = from.lng + (to.lng - from.lng) * progress;
+
+    marker.setLatLng([lat, lng]);
+
+    if (progress < 1) requestAnimationFrame(frame);
+  }
+
+  requestAnimationFrame(frame);
+}
+function initBaseMap() {
+
+  const userLat = "<%= userLat || 26.2183 %>";
+  const userLng = "<%= userLng || 78.1828 %>";
+  const restLat = "<%= restLat || 26.2183 %>";
+  const restLng = "<%= restLng || 78.1828 %>";
+
+  map = L.map("map").setView([userLat, userLng], 14);
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19
+  }).addTo(map);
+
+  // 🏠 USER PIN
+  userMarker = L.marker([userLat, userLng], {
+    icon: L.icon({
+      iconUrl: "https://cdn-icons-png.flaticon.com/512/64/64113.png",
+      iconSize: [32, 32]
+    })
+  }).addTo(map).bindPopup("Your Location");
+
+  // 🏪 RESTAURANT PIN
+  restMarker = L.marker([restLat, restLng], {
+    icon: L.icon({
+      iconUrl: "https://cdn-icons-png.flaticon.com/512/3075/3075977.png",
+      iconSize: [32, 32]
+    })
+  }).addTo(map).bindPopup("Restaurant");
+
+  // 📐 Auto zoom to fit both
+  const group = L.featureGroup([userMarker, restMarker]);
+  map.fitBounds(group.getBounds().pad(0.4));
+
+  document.getElementById("mapStatus").innerText =
+    "Waiting for delivery partner...";
+}
+
+initBaseMap(); // 🔥 ALWAYS SHOW MAP
+// 🛑 user agar map move kare to auto-follow band
+map.on("dragstart zoomstart", () => {
+  autoFollow = false;
+});
+    // Connect socket and join order room
+    const socket = io({
+      transports: ["websocket"],
+      upgrade: false
+    });
+
+    socket.on("connect", () => {
+      console.log("Socket connected for order tracking:", socket.id);
+      socket.emit("joinOrderRoom", orderId);
+    });
+
+    // Listen for updates
+    socket.on("orderStatusUpdate", (data) => {
+      
+      if (Number(data.orderId) !== Number(orderId)) return;
+      if (data.status !== "scheduled") {
+        const box = document.getElementById("countdownBox");
+        if (box) box.remove();
+      }
+      if (data.status !== "scheduled") {
+        const btn = document.getElementById("cancelBtn");
+        if (btn) btn.remove();
+      }
+currentStatus = data.status;
+
+if (
+  data.status !== "picked_up" &&
+  data.status !== "out_for_delivery"
+) {
+  if (routeLine) {
+    map.removeLayer(routeLine);
+    routeLine = null;
+  }
+}
+  const key = data.status === "completed" ? "delivered" : data.status;
+
+  if (data.timestamp) timestamps[key] = data.timestamp;
+  if (!timestamps[key]) timestamps[key] = new Date().toISOString();
+
+  renderTimeline(key, timestamps);
+      // update notice
+      const liveNotice = document.getElementById("liveNotice");
+      liveNotice.innerText = "Status updated: " + data.status.replace(/_/g," ");
+      // final delivered behavior
+      if (data.status === "delivered") {
+        liveNotice.innerText = "Order delivered — enjoy! (auto-refresh disabled)";
+      }
+    });
+    
+
+// ✅ Live location listener
+socket.on("order:deliveryLocation", async (data) => {
+  if (Number(data.orderId) !== Number(orderId)) return;
+
+  const lat = data.lat;
+  const lng = data.lng;
+
+  if (!riderMarker) {
+    riderMarker = L.marker([lat, lng], {
+      icon: createBikeIcon(0)
+    }).addTo(map).bindPopup("Delivery Partner");
+
+  } else {
+    const from = riderMarker.getLatLng();
+    const to = L.latLng(lat, lng);
+
+    const angle = getAngle(from, to);
+
+    riderMarker.setIcon(createBikeIcon(angle)); // 🔥 rotate bike
+    animateMarker(riderMarker, from, to, 1000); // 🔥 smooth move
+    // 🟢 AUTO FOLLOW RIDER
+    if (autoFollow) {
+      map.panTo([lat, lng], { animate: true, duration: 0.5 });
+    }
+  }
+
+  if (currentStatus === "picked_up" || currentStatus === "out_for_delivery") {
+    const userPos = userMarker.getLatLng();
+    const etaData = await drawRoadRoute(lat, lng, userPos.lat, userPos.lng);
+
+    if (etaData) {
+      const mins = Math.ceil(etaData.duration / 60);
+      const km = (etaData.distance / 1000).toFixed(2);
+    
+      document.getElementById("etaText").innerText =
+        `🕒 ETA: ${mins} min • 📏 ${km} km away`;
+    }
+  }
+
+  document.getElementById("mapStatus").innerText =
+    "Rider last seen: " + new Date().toLocaleTimeString();
+});
+
+    // optional: request current status from server if missed events
+    // (useful if join happens after status changes)
+    async function fetchCurrentStatus(){
+      try {
+        const res = await fetch("/api/order-status/" + orderId);
+        if (!res.ok) return;
+        const js = await res.json();
+        if (js && js.status) {
+          // set timestamp for current status to server time if provided
+          timestamps[js.status] = js.updated_at || timestamps[js.status] || new Date().toISOString();
+          renderTimeline(js.status, timestamps);
+        }
+      } catch (e){
+        console.log("fetch status failed", e);
+      }
+    }
+    // call once to ensure timeline is correct (in case we missed emits)
+    fetchCurrentStatus();
+  </script>
+</body>
+</html>

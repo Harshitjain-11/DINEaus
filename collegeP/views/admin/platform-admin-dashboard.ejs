@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/admin/platform-admin-dashboard.css">
+</head>
+<body>
+  <!-- TOPBAR -->
+  <nav class="topbar">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24"><path d="M21 4H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1zm-1 15H7a1 1 0 0 1 0-2h13v1a1 1 0 0 1-1 1zm1-4H7a3 3 0 0 0-2 .78V6a1 1 0 0 1 1-1h13v10zM9 8h6a1 1 0 0 0 0-2H9a1 1 0 0 0 0 2zm0 4h6a1 1 0 0 0 0-2H9a1 1 0 0 0 0 2z"/></svg>
+      </div>
+      <span class="brand-name">DeliverHub</span>
+    </div>
+    <span class="admin-badge">Platform Admin</span>
+  </nav>
+
+  <!-- PAGE -->
+  <main class="page">
+
+    <!-- Flash -->
+    <div class="flash-wrap">
+      <%- include("../includes/flash") %>
+    </div>
+
+    <!-- Page header -->
+    <div class="page-head">
+      <div class="page-head-text">
+        <h2>Pending Restaurants</h2>
+        <p>Review and approve or reject new restaurant applications.</p>
+      </div>
+      <span class="pending-count">🕐 Awaiting Review</span>
+    </div>
+
+    <!-- Table card -->
+    <div class="table-card">
+
+      <!-- ── DESKTOP TABLE ── -->
+      <table border="1" cellpadding="10" class="desktop-table">
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Owner Name</th>
+          <th>Email</th>
+          <th>Action</th>
+        </tr>
+        <% restaurants.forEach(r => { %>
+          <tr>
+            <td><span class="id-badge"><%= r.id %></span></td>
+            <td><span class="name-cell"><%= r.name %></span></td>
+            <td><%= r.ownerName %></td>
+            <td><span class="email-cell"><%= r.email %></span></td>
+            <td>
+              <div class="action-cell">
+                <form action="/platform-admin/approve/<%= r.id %>" method="POST" style="display:inline;">
+                  <button>✓ Approve</button>
+                </form>
+                <form action="/platform-admin/reject/<%= r.id %>" method="POST" style="display:inline;">
+                  <button>✕ Reject</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        <% }); %>
+      </table>
+
+      <!-- ── MOBILE CARDS ── -->
+      <div class="mobile-list">
+        <% restaurants.forEach(r => { %>
+          <div class="mobile-card">
+            <div class="mobile-card-top">
+              <div>
+                <div class="mobile-card-name"><%= r.name %></div>
+                <div class="mobile-card-owner"><%= r.ownerName %></div>
+              </div>
+              <span class="id-badge"><%= r.id %></span>
+            </div>
+            <div class="mobile-card-email">📧 <%= r.email %></div>
+            <div class="mobile-card-actions">
+              <form action="/platform-admin/approve/<%= r.id %>" method="POST" style="display:inline;">
+                <button>✓ Approve</button>
+              </form>
+              <form action="/platform-admin/reject/<%= r.id %>" method="POST" style="display:inline;">
+                <button>✕ Reject</button>
+              </form>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+
+    </div>
+  </main>
+</body>
+</html>

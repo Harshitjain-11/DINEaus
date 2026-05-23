@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Delivery Partner Registration</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+   <link rel="stylesheet" href="/css/delivery/delivery-register.css">
+</head>
+<body>
+
+    <div class="bg-layer"></div>
+    <div class="bg-overlay"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    
+    <div class="flash-wrap">
+            <%- include("../includes/flash") %>
+        </div>
+    <div class="card">
+
+        <div class="logo-wrap">
+            <div class="logo-ring">
+                <!-- Book icon matching the login page -->
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 4H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1zm-1 15H7a1 1 0 0 1 0-2h13v1a1 1 0 0 1-1 1zm1-4H7a3 3 0 0 0-2 .78V6a1 1 0 0 1 1-1h13v10zM9 8h6a1 1 0 0 0 0-2H9a1 1 0 0 0 0 2zm0 4h6a1 1 0 0 0 0-2H9a1 1 0 0 0 0 2z"/>
+                </svg>
+            </div>
+        </div>
+
+        <h1 class="card-title">Delivery Partner Registration</h1>
+        <p class="card-sub">Join our fleet &amp; start delivering happiness</p>
+
+        <div class="divider">
+            <div class="divider-line"></div>
+            <div class="divider-dot"></div>
+            <div class="divider-line"></div>
+        </div>
+
+        <form action="/delivery/register" method="POST">
+            <div class="form-grid">
+
+                <div class="field">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" placeholder="Your full name" required>
+                </div>
+
+                <div class="field">
+                    <label for="phone">Phone</label>
+                    <input type="text" id="phone" name="phone" placeholder="+91 00000 00000" required>
+                </div>
+
+                <div class="field full">
+                    <label for="vehicle">Vehicle Number</label>
+                    <input type="text" id="vehicle" name="vehicle" placeholder="e.g. MH 12 AB 3456" required>
+                </div>
+
+                <div class="field full">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="you@example.com" required>
+                </div>
+
+                <div class="field full">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Create a strong password" required>
+                </div>
+
+                <button type="submit">Create Account &rarr;</button>
+
+            </div>
+        </form>
+
+        <p class="card-footer">
+            Already a partner? <a href="/delivery/login">Sign in here</a>
+        </p>
+
+    </div>
+
+</body>
+</html>

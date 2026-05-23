@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/user/login.css">
+
+</head>
+<body>
+
+    <!-- FLASH: fixed top-right, z-index 99999 -->
+    <div class="flash-container">
+        <%- include("../includes/flash") %>
+    </div>
+
+    <!-- LEFT PANEL -->
+    <div class="panel-left">
+        <div class="candle-glow"></div>
+        <div class="panel-left-content">
+            <div class="brand">
+                <span class="brand-icon">🍴</span>
+                <span class="brand-name">DINE<span>aus</span></span>
+            </div>
+            <div class="panel-hero">
+                <div class="panel-badge">Experience Excellence</div>
+                <h2>Welcome <em>Back</em></h2>
+                <p>The finest culinary experiences await you. Sign in to your reserved table.</p>
+            </div>
+            <div class="panel-features">
+                <div class="feat-card">
+                    <div class="feat-icon">🪑</div>
+                    <div class="feat-text"><strong>Your Reservations</strong><span>Manage bookings 24/7</span></div>
+                </div>
+                <div class="feat-card">
+                    <div class="feat-icon">⭐</div>
+                    <div class="feat-text"><strong>Exclusive Offers</strong><span>Member-only deals</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL — original HTML untouched -->
+    <div class="container">
+    <h2>Login Page</h2>
+    <p class="form-sub">Pre-order your favorite meal &amp; book a table! 🍕😋🍴</p>
+        <a href="/home" class="wrong-icon">
+            <i class="fa-solid fa-xmark"></i>
+        </a>
+    <form method="POST" action="/login">
+        <div class="input-group">
+        <label>Email :</label>
+        <input type="email" id="email" name="email" placeholder="Enter your Email"></div>
+        <div class="input-group">
+        <label>Password :</label>
+        <input type="password" placeholder="Enter your password" name="password">
+        </div>
+        <button type="submit" class="btn">Login</button>
+        <div class="links">
+         <a href="/forgot">Forgot Password?</a>  
+            <p>New to Login page? <a href="/sign">Create Account</a></p>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

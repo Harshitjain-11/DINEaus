@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Navbar UI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/includes/navbar.css">
+</head>
+<body>
+    <header class="navbar" id="navbar">
+        <nav class="navbar-container">
+
+            <!-- ── LEFT: hamburger + logo + home ── -->
+            <div class="navbar-left">
+                <button
+                    class="navbar-hamburger"
+                    id="hamburger"
+                    aria-label="Open menu"
+                    aria-expanded="false"
+                >
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+
+                <a href="/home" class="navbar-logo">
+                    <span class="logo-dine">DINE</span><span class="logo-aus">aus</span>
+                </a>
+
+                <a href="/home" class="navbar-home-link">Home</a>
+            </div>
+
+            <!-- ── CENTER: location + search ── -->
+            <div class="navbar-center">
+                <% if (user && addresses && addresses.length > 0) { %>
+                <div class="nav-location">
+                    <span class="nav-location-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                        </svg>
+                    </span>
+                    <div class="nav-location-body">
+                        <span class="nav-location-label">Deliver to</span>
+                        <select id="addressSelect">
+                            <% addresses.forEach(addr => { %>
+                            <option value="<%= addr.id %>">
+                                <%= addr.city %>, <%= addr.street %>
+                            </option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <span class="nav-location-chevron">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </span>
+                </div>
+                <% } %>
+
+                <a href="/search" class="navbar-search">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    </svg>
+                    <span>Search for restaurants</span>
+                </a>
+            </div>
+
+            <!-- ── RIGHT: links + cart ── -->
+            <div class="navbar-right">
+                <ul class="navbar-links">
+                    <li>
+                        <a href="/home">DINEaus Corporate</a>
+                    </li>
+                    <li>
+                        <a href="/home">Offers <span class="badge-new">NEW</span></a>
+                    </li>
+                    <li>
+                        <a href="/help">Help</a>
+                    </li>
+
+                    <% if(user) {%>
+                    <li class="navbar-user">
+                        <a href="/profile" class="navbar-user-trigger">
+                            <span class="navbar-user-avatar">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+                                </svg>
+                            </span>
+                            <%=user.firstname%>..
+                        </a>
+                        <div class="navbar-dropdown">
+                            <div class="navbar-dropdown-arrow"></div>
+                            <a href="/profile">Profile</a>
+                            <a href="/orders">Orders</a>
+                            <a href="/swiggy-one">Dino One</a>
+                            <a href="/favourites">Favourites</a>
+                            <a href="/logout">Logout</a>
+                        </div>
+                    </li>
+                    <% } else { %>
+                    <li><a href="/login">Login</a></li>
+                    <li><a href="/sign">SignUp</a></li>
+                    <% }%>
+
+                    <li>
+                        <a href="/cart/checkout" class="navbar-cart" id="cartBtn">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                            </svg>
+                            <span class="navbar-cart-badge" id="cartBadge">0</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Mobile cart -->
+                <button class="navbar-cart navbar-cart-mobile" id="cartBtnMobile">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                    </svg>
+                    <span class="navbar-cart-badge" id="cartBadgeMobile">0</span>
+                </button>
+            </div>
+
+        </nav>
+
+        <!-- ── DRAWER ── -->
+        <aside class="navbar-drawer" id="drawer">
+            <div class="navbar-drawer-header">
+                <a href="/home" class="navbar-drawer-logo">
+                    <span class="logo-dine">DINE</span><span class="logo-aus">aus</span>
+                </a>
+                <button class="navbar-drawer-close" id="drawerClose">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="navbar-drawer-search">
+                <form class="navbar-drawer-search-form" id="drawerSearchForm">
+                    <input type="search" placeholder="Search for restaurants or dishes" id="drawerSearchInput"/>
+                    <button type="submit">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+
+            <ul class="navbar-drawer-links">
+                <li><a href="/home" style="font-weight:700;">HOME</a></li>
+
+                <% if (user && addresses && addresses.length > 0) { %>
+                <li>
+                    <div class="nav-location" style="margin:6px 0; border-radius:12px;">
+                        <span class="nav-location-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                            </svg>
+                        </span>
+                        <div class="nav-location-body">
+                            <span class="nav-location-label">Deliver to</span>
+                            <select id="addressSelectDrawer">
+                                <% addresses.forEach(addr => { %>
+                                <option value="<%= addr.id %>">
+                                    <%= addr.city %>, <%= addr.street %>
+                                </option>
+                                <% }) %>
+                            </select>
+                        </div>
+                        <span class="nav-location-chevron">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </span>
+                    </div>
+                </li>
+                <% } %>
+
+                <li><a href="/home">DINEeaus Corporate</a></li>
+                <li>
+                    <a href="/home">Offers <span class="badge-new">NEW</span></a>
+                </li>
+                <li><a href="/help">Help</a></li>
+
+                <% if(user) { %>
+                <li>
+                    <a href="/profile">
+                        <span class="navbar-user-avatar">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+                            </svg>
+                        </span>
+                        <%=user.firstname%>..
+                    </a>
+                </li>
+                <li><a href="/orders">Orders</a></li>
+                <li><a href="/favourites">Favourites</a></li>
+                <li><a href="/logout" class="drawer-logout">Logout</a></li>
+                <% } else { %>
+                <li><a href="/login">Login</a></li>
+                <li><a href="/sign">SignUp</a></li>
+                <% } %>
+
+                <li>
+                    <a href="/cart/checkout" id="drawerCartBtn">
+                        <svg viewBox="0 0 24 24" fill="currentColor" style="width:20px;height:20px;flex-shrink:0;">
+                            <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                        </svg>
+                        <span>Cart</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="navbar-drawer-actions">
+                <p style="font-size:0.78rem;color:var(--text-muted);text-align:center;">
+                    &copy; DINEaus · All rights reserved
+                </p>
+            </div>
+        </aside>
+
+        <div class="navbar-overlay" id="overlay"></div>
+    </header>
+    <script src = "/js/includes/navbar.js"></script>
+</body>
+</html>

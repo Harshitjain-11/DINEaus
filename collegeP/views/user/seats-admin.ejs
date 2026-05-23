@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Upload Seats — <%= restaurant.name %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/user/seats-admin.css">
+</head>
+<body>
+
+  <div class="card">
+    <div class="card-icon">🪑</div>
+    <h2>Upload a Seat</h2>
+    <p class="subtitle">Adding to <strong><%= restaurant.name %></strong></p>
+
+    <form action="/restaurant/<%= restaurant.id %>/seats-upload" method="POST" enctype="multipart/form-data">
+
+      <div class="field">
+        <label for="seat_name">Seat Name</label>
+        <input id="seat_name" name="seat_name" type="text" placeholder="e.g. Window Table A1" required>
+      </div>
+
+      <div class="field">
+        <label>Seat Type</label>
+        <input type="hidden" name="seat_type" id="seat_type_val" value="window">
+        <div class="cs" id="cs">
+          <div class="cs-trigger" id="csTrigger">
+            <span id="csIcon">🪟</span>
+            <span id="csLabel">Window</span>
+            <svg class="cs-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <ul class="cs-list" id="csList">
+            <li class="cs-opt cs-sel" data-value="window" data-icon="🪟">🪟 <span>Window</span><span class="cs-tick">✓</span></li>
+            <li class="cs-opt" data-value="sofa"   data-icon="🛋️">🛋️ <span>Sofa</span><span class="cs-tick">✓</span></li>
+            <li class="cs-opt" data-value="corner" data-icon="📐">📐 <span>Corner</span><span class="cs-tick">✓</span></li>
+            <li class="cs-opt" data-value="booth"  data-icon="🍽️">🍽️ <span>Booth</span><span class="cs-tick">✓</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Seat Image</label>
+        <div class="file-wrap" id="fileWrap">
+          <input type="file" name="seatImage" accept="image/*" required id="seatImageInput">
+          <div class="file-icon">📷</div>
+          <div class="file-label"><span>Click to upload</span> or drag & drop</div>
+          <div class="file-hint">JPG, PNG, WEBP — max 5MB</div>
+        </div>
+        <img id="imgPreview" alt="Seat preview">
+      </div>
+
+      <button type="submit">Upload Seat</button>
+    </form>
+  </div>
+
+  <script>
+    // custom dropdown
+    const cs = document.getElementById('cs');
+    document.getElementById('csTrigger').addEventListener('click', () => cs.classList.toggle('open'));
+    document.addEventListener('click', e => { if (!cs.contains(e.target)) cs.classList.remove('open'); });
+    document.querySelectorAll('.cs-opt').forEach(opt => {
+      opt.addEventListener('click', () => {
+        document.getElementById('seat_type_val').value = opt.dataset.value;
+        document.getElementById('csIcon').textContent  = opt.dataset.icon;
+        document.getElementById('csLabel').textContent = opt.querySelector('span').textContent;
+        document.querySelectorAll('.cs-opt').forEach(o => o.classList.remove('cs-sel'));
+        opt.classList.add('cs-sel');
+        cs.classList.remove('open');
+      });
+    });
+
+    // image preview on file select
+    document.getElementById('seatImageInput').addEventListener('change', function() {
+      const file = this.files[0];
+      const preview = document.getElementById('imgPreview');
+      const wrap = document.getElementById('fileWrap');
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          preview.src = e.target.result;
+          preview.style.display = 'block';
+          wrap.style.borderStyle = 'solid';
+          wrap.style.borderColor = 'var(--orange-lt)';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
+</body>
+</html>

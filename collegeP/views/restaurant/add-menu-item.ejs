@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Add Menu Item</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+   <link rel="stylesheet" href="/css/restaurant/add-menu-item.css">
+</head>
+<body>
+
+  <div class="wrapper">
+
+    <!-- Page head -->
+    <div class="pg-head">
+      <div class="pg-left">
+        <div class="pg-icon">➕</div>
+        <div class="pg-title">
+          <h1>Add New Menu Item</h1>
+          <p>Fill in the details to add a new dish</p>
+        </div>
+      </div>
+      <a href="/restaurant-admin/menu" class="back-link">⬅ Back</a>
+    </div>
+
+    <!-- Form Card -->
+    <div class="card">
+      <div class="card-inner">
+        <form action="/restaurant-admin/menu/add" method="POST" enctype="multipart/form-data" style="margin-top:20px;">
+
+          <!-- Basic Details -->
+          <div class="sec">
+            <div class="sec-label">Basic Details</div>
+            <div class="row-2" style="margin-bottom:14px;">
+              <div class="field">
+                <label for="item_name">Item Name <span class="req">*</span></label>
+                <input type="text" id="item_name" name="item_name" placeholder="e.g. Paneer Tikka" required>
+              </div>
+              <div class="field">
+                <label for="price">Price (₹) <span class="req">*</span></label>
+                <input type="number" id="price" name="price" placeholder="e.g. 249" required>
+              </div>
+            </div>
+            <div class="row-1">
+              <div class="field">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" rows="3" placeholder="Describe the dish, key ingredients or flavours..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Image -->
+          <div class="sec">
+            <div class="sec-label">Item Image</div>
+            <div class="field">
+              <label>Upload Photo <span style="text-transform:none;letter-spacing:0;font-weight:300;color:var(--text-muted)">(optional)</span></label>
+              <!-- Custom file zone — real input inside so name="image" is submitted normally -->
+              <div class="file-zone" id="fileZone">
+                <input type="file" id="image" name="image" accept="image/*">
+                <div class="fz-icon">📷</div>
+                <p class="fz-text">Drop image here or <em>browse</em></p>
+                <p class="fz-sub">JPG, PNG or WEBP · Max 5 MB</p>
+                <p class="fz-chosen" id="fzChosen">No file chosen</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Options -->
+          <div class="sec">
+            <div class="sec-label">Item Options</div>
+            <div class="row-2">
+
+              <!-- Veg / Non-Veg custom select -->
+              <div class="field">
+                <label>Veg / Non-Veg</label>
+                <div class="csel" id="csel-veg">
+                  <div class="csel-trigger" onclick="toggleCsel('csel-veg')">
+                    <span class="csel-val" id="csel-veg-val">🟢 Veg</span>
+                    <svg class="csel-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                  </div>
+                  <div class="csel-list">
+                    <div class="csel-option active" data-value="true" onclick="selectOpt('csel-veg','true','🟢 Veg',this)">
+                      <span class="opt-left">🟢 Veg</span>
+                      <span class="opt-tick">✓</span>
+                    </div>
+                    <div class="csel-option" data-value="false" onclick="selectOpt('csel-veg','false','🔴 Non-Veg',this)">
+                      <span class="opt-left">🔴 Non-Veg</span>
+                      <span class="opt-tick">✓</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- Hidden input — name="is_veg" submitted to server -->
+                <input type="hidden" name="is_veg" id="val-is_veg" value="true">
+              </div>
+
+              <!-- Availability custom select -->
+              <div class="field">
+                <label>Availability</label>
+                <div class="csel" id="csel-avail">
+                  <div class="csel-trigger" onclick="toggleCsel('csel-avail')">
+                    <span class="csel-val" id="csel-avail-val">✅ In Stock</span>
+                    <svg class="csel-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                  </div>
+                  <div class="csel-list">
+                    <div class="csel-option active" data-value="true" onclick="selectOpt('csel-avail','true','✅ In Stock',this)">
+                      <span class="opt-left">✅ In Stock</span>
+                      <span class="opt-tick">✓</span>
+                    </div>
+                    <div class="csel-option" data-value="false" onclick="selectOpt('csel-avail','false','❌ Out of Stock',this)">
+                      <span class="opt-left">❌ Out of Stock</span>
+                      <span class="opt-tick">✓</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- Hidden input — name="is_available" submitted to server -->
+                <input type="hidden" name="is_available" id="val-is_available" value="true">
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Submit -->
+          <div class="submit-row">
+            <p class="submit-hint">Item will appear on your menu<br>immediately after saving.</p>
+            <button type="submit">Add Item →</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+
+  </div>
+<script src="/js/restaurant/add-menu-item.js"></script>
+</body>
+</html>

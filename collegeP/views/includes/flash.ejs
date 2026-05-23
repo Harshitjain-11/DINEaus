@@ -1,0 +1,336 @@
+<!-- <% if (success && success.length) { %>
+  <div class="alert alert-success">
+    <%= success[0] %>
+  </div>
+<% } %>
+
+<% if (error && error.length) { %>
+  <div class="alert alert-danger">
+    <%= error[0] %>
+  </div>
+<% } %> -->
+<% if (success && success.length) { %>
+  <div class="alert-wrapper alert-success-wrapper">
+    <div class="alert alert-success">
+      <div class="alert-icon-container">
+        <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <div class="alert-content">
+        <h4 class="alert-title">Success!</h4>
+        <p class="alert-message"><%= success[0] %></p>
+      </div>
+      <button class="alert-close" onclick="this.closest('.alert-wrapper').remove()" aria-label="Close alert">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+<% } %>
+
+<% if (error && error.length) { %>
+  <div class="alert-wrapper alert-error-wrapper">
+    <div class="alert alert-error">
+      <div class="alert-icon-container">
+        <svg class="alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      </div>
+      <div class="alert-content">
+        <h4 class="alert-title">Oops!</h4>
+        <p class="alert-message"><%= error[0] %></p>
+      </div>
+      <button class="alert-close" onclick="this.closest('.alert-wrapper').remove()" aria-label="Close alert">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+<% } %>
+
+<style>
+  :root {
+    --alert-success-bg: #F0FDF4;
+    --alert-success-border: #DCFCE7;
+    --alert-success-icon: #16A34A;
+    --alert-success-text: #166534;
+    --alert-success-accent: #22C55E;
+    
+    --alert-error-bg: #FEF2F2;
+    --alert-error-border: #FEE2E2;
+    --alert-error-icon: #DC2626;
+    --alert-error-text: #7F1D1D;
+    --alert-error-accent: #EF4444;
+    
+    --alert-font: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, sans-serif';
+  }
+
+  .alert-wrapper {
+    position: fixed;
+    top: 28px;
+    right: 28px;
+    z-index: 9999;
+    max-width: 440px;
+    animation: slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(420px) rotateY(10deg);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0) rotateY(0);
+    }
+  }
+
+  @keyframes slideOutRight {
+    from {
+      opacity: 1;
+      transform: translateX(0) rotateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(420px) rotateY(10deg);
+    }
+  }
+
+  .alert-wrapper.removing {
+    animation: slideOutRight 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  .alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 20px;
+    border-radius: 10px;
+    border: 1px solid;
+    font-family: var(--alert-font);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12),
+                0 0 1px rgba(0, 0, 0, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .alert::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  }
+
+  .alert-success {
+    background: linear-gradient(135deg, rgba(240, 253, 244, 0.95), rgba(248, 255, 250, 0.9));
+    border-color: var(--alert-success-border);
+    color: var(--alert-success-text);
+  }
+
+  .alert-success::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at top right, rgba(34, 197, 94, 0.03), transparent 70%);
+    pointer-events: none;
+  }
+
+  .alert-error {
+    background: linear-gradient(135deg, rgba(254, 242, 242, 0.95), rgba(255, 250, 250, 0.9));
+    border-color: var(--alert-error-border);
+    color: var(--alert-error-text);
+  }
+
+  .alert-error::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at top right, rgba(239, 68, 68, 0.03), transparent 70%);
+    pointer-events: none;
+  }
+
+  .alert-icon-container {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    margin-top: 1px;
+    border-radius: 6px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .alert-success .alert-icon-container {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(34, 197, 94, 0.08));
+  }
+
+  .alert-error .alert-icon-container {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(239, 68, 68, 0.08));
+  }
+
+  .alert-success .alert-icon {
+    color: var(--alert-success-accent);
+  }
+
+  .alert-error .alert-icon {
+    color: var(--alert-error-accent);
+  }
+
+  .alert-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .alert-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .alert-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.3;
+    letter-spacing: -0.3px;
+  }
+
+  .alert-message {
+    font-size: 14px;
+    margin: 0;
+    line-height: 1.5;
+    opacity: 0.85;
+    font-weight: 500;
+  }
+
+  .alert-close {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+    opacity: 0.5;
+    transition: all 0.2s ease;
+    width: 28px;
+    height: 28px;
+    margin-top: 0;
+    border-radius: 6px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .alert-close:hover {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.04);
+  }
+
+  .alert-close:active {
+    transform: scale(0.95);
+  }
+
+  .alert-close svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Auto-hide alerts after 5 seconds */
+  .alert-wrapper {
+    animation: slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+               fadeOutAfterDelay 0.4s cubic-bezier(0.4, 0, 0.2, 1) 4.6s forwards;
+  }
+
+  @keyframes fadeOutAfterDelay {
+    to {
+      opacity: 0;
+      transform: translateX(420px) rotateY(10deg);
+    }
+  }
+
+  /* Responsive - tablet */
+  @media (max-width: 768px) {
+    .alert-wrapper {
+      top: 20px;
+      right: 20px;
+      max-width: 380px;
+    }
+
+    .alert {
+      padding: 15px 18px;
+      gap: 12px;
+    }
+
+    .alert-title {
+      font-size: 14px;
+    }
+
+    .alert-message {
+      font-size: 13px;
+    }
+  }
+
+  /* Responsive - mobile */
+  @media (max-width: 480px) {
+    .alert-wrapper {
+      top: 16px;
+      right: 12px;
+      left: 12px;
+      max-width: none;
+    }
+
+    .alert {
+      padding: 13px 15px;
+      gap: 10px;
+    }
+
+    .alert-icon-container {
+      width: 26px;
+      height: 26px;
+    }
+
+    .alert-title {
+      font-size: 13px;
+    }
+
+    .alert-message {
+      font-size: 12px;
+    }
+
+    .alert-close {
+      width: 26px;
+      height: 26px;
+    }
+
+    .alert-close svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+</style>

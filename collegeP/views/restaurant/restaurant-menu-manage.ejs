@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Manage Menu — Dineous</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/restaurant/restaurant-menu-manage.css">
+</head>
+<body>
+
+<%- include("../includes/flash") %>
+
+<!-- TOPBAR -->
+<nav class="topbar">
+  <a class="brand" href="/restaurant-admin/dashboard">
+    <div class="brand-mark">🍽️</div>
+    <span class="brand-name">Dineous</span>
+  </a>
+  <div class="topbar-right">
+    <a href="/restaurant-admin/dashboard" class="btn-ghost">⬅ Dashboard</a>
+    <a href="/restaurant-admin/menu/add" class="btn-primary">➕ Add Item</a>
+  </div>
+</nav>
+
+<!-- PAGE -->
+<div class="page">
+
+  <!-- Page head -->
+  <div class="pg-head">
+    <div class="pg-left">
+      <div class="pg-icon">🍽️</div>
+      <div class="pg-title">
+        <h1>Menu Items</h1>
+        <p>Manage your dishes, prices and availability</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Menu grid -->
+  <% if (!items || items.length === 0) { %>
+    <div class="empty">
+      <span class="ei">🍽️</span>
+      No menu items yet.<br>
+      <a href="/restaurant-admin/menu/add" style="color:var(--orange-mid);font-weight:600;text-decoration:none;">Add your first item →</a>
+    </div>
+  <% } else { %>
+
+  <div class="menu-grid">
+    <% items.forEach(item => { %>
+
+    <div class="item-card">
+
+      <!-- HEAD: name + veg badge -->
+      <div class="card-head">
+        <div>
+          <div class="item-name"><%= item.item_name %></div>
+          <% if (item.description) { %>
+            <div class="item-desc"><%= item.description %></div>
+          <% } %>
+        </div>
+        <% if (item.is_veg) { %>
+          <span class="type-pill veg">🟢 Veg</span>
+        <% } else { %>
+          <span class="type-pill nonveg">🔴 Non-Veg</span>
+        <% } %>
+      </div>
+
+      <!-- PRICE -->
+      <div class="card-sec">
+        <div class="sec-label">Price</div>
+        <form action="/restaurant-admin/menu/<%= item.id %>/price" method="POST">
+          <div class="input-row">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:700;color:var(--text-muted);">₹</span>
+            <input
+              type="number"
+              name="price"
+              value="<%= item.price %>"
+              step="0.01"
+              class="field-input"
+              style="width:100px;"
+              required
+            />
+            <button type="submit" class="btn-save">Update</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- DESCRIPTION -->
+      <div class="card-sec">
+        <div class="sec-label">Description</div>
+        <form action="/restaurant-admin/menu/<%= item.id %>/description" method="POST">
+          <textarea
+            name="description"
+            rows="2"
+            class="field-input"
+            placeholder="Describe the dish..."
+          ><%= item.description || "" %></textarea>
+          <button type="submit" class="btn-save">Save</button>
+        </form>
+      </div>
+
+      <!-- IMAGE -->
+      <div class="card-sec">
+        <div class="sec-label">Item Image</div>
+        <form
+          action="/restaurant-admin/menu/<%= item.id %>/image"
+          method="POST"
+          enctype="multipart/form-data"
+        >
+          <div class="img-zone">
+            <input type="file" name="image" accept="image/*" required />
+            <span class="img-zone-icon">🖼️</span>
+            <span class="img-zone-text">Drop or <em>browse</em> to change photo</span>
+          </div>
+          <button type="submit" class="btn-save">Upload Image</button>
+        </form>
+      </div>
+
+      <!-- VEG TOGGLE -->
+      <div class="card-sec">
+        <div class="sec-label">Type</div>
+        <form action="/restaurant-admin/menu/<%= item.id %>/veg-toggle" method="POST">
+          <% if (item.is_veg) { %>
+            <span style="font-size:0.8rem;font-weight:600;color:#16a34a;">🟢 Currently Veg</span>
+            <br>
+            <button type="submit" class="btn-toggle">Switch to Non-Veg</button>
+          <% } else { %>
+            <span style="font-size:0.8rem;font-weight:600;color:#dc2626;">🔴 Currently Non-Veg</span>
+            <br>
+            <button type="submit" class="btn-toggle">Switch to Veg</button>
+          <% } %>
+        </form>
+      </div>
+
+      <!-- FOOTER: stock + delete -->
+      <div class="card-footer">
+
+        <!-- Stock toggle -->
+        <form action="/restaurant-admin/menu/<%= item.id %>/toggle-stock" method="POST" style="flex:1;">
+          <% if (item.is_available) { %>
+            <button type="submit" class="btn-stock in-stock">
+              <span class="stock-dot in"></span>
+              In Stock — Mark Out
+            </button>
+          <% } else { %>
+            <button type="submit" class="btn-stock out-stock">
+              <span class="stock-dot out"></span>
+              Out of Stock — Mark In
+            </button>
+          <% } %>
+        </form>
+
+        <!-- Delete -->
+        <form
+          action="/restaurant-admin/menu/<%= item.id %>/delete"
+          method="POST"
+          onsubmit="return confirm('Delete this item?')"
+          style="display:inline;"
+        >
+          <button type="submit" class="btn-delete">🗑 Delete</button>
+        </form>
+
+      </div>
+
+    </div><!-- /item-card -->
+
+    <% }) %>
+  </div><!-- /menu-grid -->
+
+  <% } %>
+
+</div><!-- /page -->
+
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - DINEaus</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/user/edit.css">
+</head>
+<body>
+
+    <!-- flash fixed top-right -->
+    <div class="flash-container">
+        <%- include("../includes/flash") %>
+    </div>
+
+    <!-- LEFT — scrollable form -->
+    <div class="container">
+
+        <h1>Edit Profile
+            <a href="/profile" class="wrong-icon" title="Back to profile">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+        </h1>
+        <p class="form-sub">Update your DINEaus account information below.</p>
+
+        <!-- Phone section -->
+        <div class="form-section">
+            <h2 class="section-title">
+                <span class="section-icon">📱</span>
+                Phone Number
+            </h2>
+            <form method="POST" action="/profile/edit/number?_method=PATCH" class="form-group">
+                <input type="tel" name="number"
+                       placeholder="+91 <%=user.number%>"
+                       class="input-field"
+                       pattern="[+][9][1][0-9]{10}"
+                       title="Please enter a valid Indian phone number (+91 followed by 10 digits)"
+                       required>
+                <button type="submit" class="change-btn">
+                    <i class="fa-solid fa-mobile-screen-button"></i>
+                    Change Number
+                </button>
+            </form>
+        </div>
+
+        <hr class="divider">
+
+        <!-- Email section -->
+        <div class="form-section">
+            <h2 class="section-title">
+                <span class="section-icon">✉️</span>
+                Email Address
+            </h2>
+            <form method="POST" action="/profile/edit/email?_method=PATCH" class="form-group">
+                <input type="email" name="email"
+                       placeholder="<%=user.email%>"
+                       class="input-field"
+                       required>
+                <button type="submit" class="change-btn">
+                    <i class="fa-solid fa-envelope"></i>
+                    Change Email
+                </button>
+            </form>
+        </div>
+
+        <div class="links">
+            <p>Done? <a href="/profile">Back to Profile →</a></p>
+        </div>
+
+    </div><!-- /.container -->
+
+    <!-- RIGHT — sticky image panel -->
+    <div class="panel-right">
+        <div class="panel-right-content">
+
+            <div class="brand">
+                <span class="brand-icon">🍽</span>
+                <span class="brand-name">DINE<span>aus</span></span>
+            </div>
+
+            <div class="panel-hero">
+                <div class="elite-badge">Your Account</div>
+                <h2>Keep Your<br><em>Details</em> Fresh</h2>
+                <p>An up-to-date profile ensures seamless ordering, accurate delivery, and the best personalised experience DINEaus has to offer.</p>
+            </div>
+
+            <div class="panel-features">
+                <div class="feat-card">
+                    <div class="feat-icon">🔒</div>
+                    <div class="feat-text">
+                        <strong>Secure Updates</strong>
+                        <span>Encrypted at rest</span>
+                    </div>
+                </div>
+                <div class="feat-card">
+                    <div class="feat-icon">⚡</div>
+                    <div class="feat-text">
+                        <strong>Instant Sync</strong>
+                        <span>Changes apply immediately</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div><!-- /.panel-right -->
+
+</body>
+</html>

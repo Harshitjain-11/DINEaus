@@ -1,0 +1,480 @@
+/* ===========================================================
+       DINEOUS LIGHT THEME — RESERVE PAGE
+       ORIGINAL HTML/EJS/JS: ZERO CHANGES
+       Layout: CSS Grid (not flex) — eliminates right panel overflow
+    =========================================================== */
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --orange:    #FF6B1A;
+      --orange-lt: #FF8C42;
+      --orange-dk: #E84F0D;
+      --text:      #1A1008;
+      --muted:     #7A5C45;
+      --muted2:    #A07850;
+      --bg:        #FFF4EC;
+      --surface:   #FFFFFF;
+      --tint:      #FFF8F2;
+      --tint2:     #FFF0E6;
+      --bdr:       rgba(232,100,50,0.16);
+      --bdr2:      rgba(232,100,50,0.30);
+      --grad:      linear-gradient(135deg, #FF8C42 0%, #E84F0D 100%);
+      --sh1:       0 1px 4px rgba(0,0,0,.06);
+      --sh2:       0 4px 18px rgba(232,79,13,.10), 0 1px 4px rgba(0,0,0,.05);
+      --sh3:       0 8px 32px rgba(232,79,13,.13), 0 2px 8px rgba(0,0,0,.05);
+      --shbtn:     0 4px 16px rgba(232,79,13,.32);
+      --glow:      0 0 24px rgba(232,79,13,.16);
+      --r:         12px;
+      --r-lg:      20px;
+      --t:         .22s cubic-bezier(.4,0,.2,1);
+      /* keep for inline JS/style compat */
+      --accent:    #FF6B1A;
+      --muted-var: #777;
+      --card-bg:   #fff;
+      --radius:    12px;
+    }
+
+    html { overflow-x: hidden; }
+
+    body {
+      font-family: 'Manrope', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 24px 16px 56px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background:
+        radial-gradient(ellipse 60% 40% at 96% 4%, rgba(255,140,66,.12) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 38% at 4% 96%, rgba(232,79,13,.07) 0%, transparent 52%);
+    }
+
+    /* ── BACK LINK wrapper ── */
+    div[style*="max-width:1100px;margin:0 auto 18px"] {
+      max-width: 1100px !important;
+      margin: 0 auto 16px !important;
+      padding: 0 4px;
+    }
+    div[style*="max-width:1100px;margin:0 auto 18px"] a {
+      display: inline-flex; align-items: center; gap: .4rem;
+      color: var(--muted); text-decoration: none;
+      font-size: .83rem; font-weight: 600;
+      padding: .42rem .9rem;
+      background: var(--surface);
+      border: 1px solid var(--bdr);
+      border-radius: 50px;
+      box-shadow: var(--sh1);
+      transition: all var(--t);
+    }
+    div[style*="max-width:1100px;margin:0 auto 18px"] a:hover {
+      background: var(--tint2); color: var(--orange-dk); box-shadow: var(--sh2);
+    }
+
+    /* ════════════════════════════════════════
+       CORE LAYOUT — CSS GRID
+       Grid prevents right panel from ever
+       escaping the viewport width.
+       Left gets all remaining space, right
+       is capped at 300px.
+    ════════════════════════════════════════ */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      /* KEY: grid, not flex — right panel cannot overflow */
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 20px;
+      align-items: start;
+      width: 100%;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--bdr);
+      border-radius: var(--r-lg);
+      box-shadow: var(--sh2);
+      padding: 22px 20px;
+      position: relative;
+      /* text containment — never breaks out */
+      word-break: break-word;
+      overflow-wrap: break-word;
+      min-width: 0;
+    }
+    .card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--grad);
+      border-radius: var(--r-lg) var(--r-lg) 0 0;
+    }
+
+    /* left fills its grid cell */
+    .left { min-width: 0; }
+
+    /* right panel — sticky summary */
+    .right { min-width: 0; }
+    .right .card { position: sticky; top: 20px; }
+
+    /* ── TYPOGRAPHY ── */
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.45rem; font-weight: 800;
+      color: var(--orange-dk);
+      margin: 0 0 6px; padding-top: .25rem;
+      line-height: 1.25;
+    }
+    h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem; font-weight: 700;
+      color: var(--text); margin: 0 0 6px;
+    }
+    h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: .9rem; font-weight: 700;
+      color: var(--text); margin: 10px 0 6px;
+    }
+
+    small.muted { color: var(--muted); font-size: .79rem; }
+
+    hr { border: none; border-top: 1px solid var(--bdr); margin: 18px 0; }
+
+    /* ── LABELS ── */
+    label {
+      display: block; margin-top: 14px;
+      font-weight: 700; font-size: .69rem;
+      letter-spacing: .07em; text-transform: uppercase;
+      color: var(--text);
+    }
+
+    /* ── INPUTS ── */
+    input:not([type="radio"]):not([type="number"]),
+    select {
+      width: 100%;
+      padding: .68rem .9rem;
+      border-radius: 10px;
+      border: 1.5px solid var(--bdr);
+      background: var(--tint);
+      color: var(--text);
+      font-family: 'Manrope', sans-serif;
+      font-size: .86rem; font-weight: 500;
+      margin-top: 6px;
+      transition: all var(--t);
+    }
+    input:not([type="radio"]):not([type="number"]):focus,
+    select:focus {
+      outline: none;
+      border-color: var(--orange-lt);
+      background: var(--surface);
+      box-shadow: 0 0 0 3px rgba(255,140,66,.13);
+    }
+    input::placeholder { color: rgba(122,92,69,.35); }
+
+    /* number qty input in menu */
+    input[type="number"] {
+      width: 70px;
+      padding: .5rem .4rem;
+      border-radius: 9px;
+      border: 1.5px solid var(--bdr);
+      background: var(--tint);
+      color: var(--text);
+      font-family: 'Manrope', sans-serif;
+      font-size: .84rem; font-weight: 600;
+      text-align: center;
+      transition: all var(--t);
+    }
+    input[type="number"]:focus {
+      outline: none;
+      border-color: var(--orange-lt);
+      box-shadow: 0 0 0 3px rgba(255,140,66,.12);
+    }
+
+    /* radio */
+    input[type="radio"] {
+      width: auto;
+      accent-color: var(--orange);
+      margin: 0;
+    }
+    div:has(> input[type="radio"]) {
+      display: flex; align-items: center; gap: .5rem;
+      margin-top: 10px; font-size: .86rem; color: var(--muted);
+    }
+
+    /* ── SLOT BUTTONS ── */
+    .slots {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-top: 10px;
+    }
+    .slot-btn {
+      padding: 8px 14px;
+      border-radius: 50px;
+      border: 1.5px solid var(--bdr);
+      background: var(--tint);
+      color: var(--muted);
+      cursor: pointer;
+      font-family: 'Manrope', sans-serif;
+      font-size: .81rem; font-weight: 700;
+      transition: all var(--t);
+    }
+    .slot-btn:hover:not(.disabled) {
+      background: var(--tint2); color: var(--orange-dk);
+      border-color: var(--bdr2); transform: translateY(-1px);
+    }
+    .slot-btn.selected {
+      background: var(--grad); color: #fff;
+      border-color: transparent; box-shadow: var(--shbtn);
+    }
+    .slot-btn.disabled { opacity: .4; cursor: not-allowed; }
+
+    /* ── SEAT FILTER BUTTONS ── */
+    .seat-controls {
+      display: flex; gap: 8px; align-items: center;
+      margin: 12px 0; flex-wrap: wrap;
+    }
+    .seat-filter-btn {
+      padding: 7px 13px;
+      border-radius: 50px;
+      border: 1.5px solid var(--bdr);
+      background: var(--tint);
+      color: var(--muted);
+      cursor: pointer;
+      font-family: 'Manrope', sans-serif;
+      font-size: .79rem; font-weight: 700;
+      transition: all var(--t);
+    }
+    .seat-filter-btn:hover { background: var(--tint2); color: var(--orange-dk); }
+    .seat-filter-btn.active {
+      background: var(--grad); color: #fff;
+      border-color: transparent; box-shadow: var(--shbtn);
+    }
+
+    /* ── SEAT MAP ── */
+    .seat-map {
+      display: flex; gap: 14px;
+      align-items: flex-start; flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .seat-col { min-width: 165px; max-width: 200px; }
+    .seat-col h4 {
+      font-size: .75rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .06em;
+      color: var(--muted); margin: 0 0 8px;
+    }
+    .seat-tile {
+      background: var(--tint);
+      border-radius: 11px; padding: 9px;
+      margin-bottom: 9px;
+      border: 1.5px solid var(--bdr);
+      display: flex; gap: 9px; align-items: center;
+      cursor: pointer; transition: all var(--t);
+    }
+    .seat-tile:hover:not(.disabled) {
+      transform: translateY(-3px);
+      box-shadow: var(--sh2); border-color: var(--bdr2);
+      background: var(--surface);
+    }
+    .seat-tile.disabled { opacity: .42; cursor: not-allowed; }
+    .seat-tile.selected {
+      outline: 3px solid rgba(232,79,13,.20);
+      background: var(--tint2); border-color: var(--orange-lt);
+    }
+    .seat-thumb-small {
+      width: 64px; height: 46px;
+      border-radius: 8px; object-fit: cover;
+      border: 1px solid var(--bdr); flex-shrink: 0;
+    }
+    .seat-meta b { font-size: .86rem; color: var(--text); }
+    .seat-meta small { display: block; color: var(--muted); font-size: .74rem; margin-top: 1px; }
+    .seat-empty { color: var(--muted); font-size: .84rem; padding: 14px 0; }
+
+    /* ── SEAT PREVIEW MODAL ── */
+    #seatPreviewModal {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(26,16,8,.55);
+      backdrop-filter: blur(6px);
+      display: none; align-items: center; justify-content: center;
+      z-index: 999; padding: 1rem;
+    }
+    #seatPreviewModal .box {
+      background: var(--surface);
+      border: 1px solid var(--bdr2);
+      padding: 12px; border-radius: var(--r-lg);
+      max-width: 640px; width: 100%;
+      box-shadow: var(--sh3); position: relative;
+    }
+    #seatPreviewModal .box::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      height: 3px; background: var(--grad);
+      border-radius: var(--r-lg) var(--r-lg) 0 0;
+    }
+    #seatPreviewImg {
+      width: 100%; height: 340px;
+      object-fit: cover; border-radius: 10px; display: block;
+    }
+    #seatPreviewTitle {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem; color: var(--text);
+    }
+    /* close button inside modal */
+    #seatPreviewModal button {
+      padding: 7px 16px !important;
+      background: var(--grad) !important;
+      color: #fff !important;
+      border: none !important; border-radius: 8px !important;
+      font-family: 'Manrope', sans-serif !important;
+      font-weight: 700 !important; font-size: .81rem !important;
+      cursor: pointer !important; transition: all var(--t) !important;
+    }
+
+    /* ── MENU LIST ── */
+    .menu-list { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+    .menu-item {
+      display: flex; gap: 12px; padding: 10px;
+      background: var(--tint);
+      border: 1.5px solid var(--bdr);
+      border-radius: 11px; align-items: center;
+      transition: all var(--t);
+    }
+    .menu-item:hover { background: var(--tint2); border-color: var(--bdr2); }
+    .menu-thumb {
+      width: 60px; height: 48px;
+      border-radius: 8px; object-fit: cover;
+      border: 1px solid var(--bdr); flex-shrink: 0;
+    }
+    .menu-item b { font-size: .88rem; color: var(--text); }
+    .menu-item div[style*="color:#777"] { color: var(--muted2) !important; font-size: .79rem; margin-top: 2px; }
+    /* stop qty input from inheriting full-width */
+    .menu-item > div:last-child { flex-shrink: 0; }
+
+    /* ── BOOKING SUMMARY text ── */
+    div[style*="font-size:14px"] {
+      font-size: .84rem !important; line-height: 1.8;
+    }
+    div[style*="font-size:14px"] b { color: var(--text); }
+    div[style*="font-size:14px"] span { color: var(--muted); }
+    #summary-items {
+      color: var(--muted2); font-size: .81rem !important;
+      line-height: 1.7; margin-bottom: 10px;
+    }
+    #summary-items i { color: var(--muted); }
+
+    /* ── BOOK NOW BUTTON ── */
+    .book-btn {
+      width: 100%; padding: 14px;
+      background: var(--grad); color: #fff;
+      border: none; border-radius: 12px;
+      margin-top: 16px;
+      font-family: 'Manrope', sans-serif;
+      font-weight: 800; font-size: 1rem;
+      cursor: pointer; letter-spacing: .02em;
+      box-shadow: var(--shbtn);
+      transition: all var(--t);
+    }
+    .book-btn:hover {
+      filter: brightness(1.07);
+      transform: translateY(-2px);
+      box-shadow: var(--glow), var(--shbtn);
+    }
+    .book-btn:active { transform: translateY(0); }
+
+    /* ════════════════════════════════════════
+       RESPONSIVE BREAKPOINTS
+       Grid collapses gracefully at each size
+    ════════════════════════════════════════ */
+
+    /* 1000px — tighten right column */
+    @media (max-width: 1000px) {
+      .container { grid-template-columns: 1fr 270px; gap: 16px; }
+    }
+
+    /* 840px — shrink right further, un-sticky */
+    @media (max-width: 840px) {
+      body { padding: 18px 14px 44px; }
+      .container { grid-template-columns: 1fr 240px; gap: 14px; }
+      .right .card { position: static; }
+      .card { padding: 18px 16px; }
+      h1 { font-size: 1.25rem; }
+    }
+
+    /* 680px — SINGLE COLUMN, right panel below left */
+    @media (max-width: 680px) {
+      body { padding: 14px 12px 40px; }
+      .container {
+        /* switch to single column */
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+      /* right panel always shows below on mobile */
+      .right { order: 2; }
+      .left  { order: 1; }
+      .right .card { position: static; }
+      .card { padding: 16px 14px; border-radius: 16px; }
+      h1 { font-size: 1.15rem; }
+      h3 { font-size: .96rem; }
+      h4 { font-size: .87rem; }
+      .seat-col { min-width: 148px; flex: 1 1 148px; max-width: 100%; }
+      #seatPreviewImg { height: 220px; }
+    }
+
+    /* 480px — compact everything */
+    @media (max-width: 480px) {
+      body { padding: 10px 8px 32px; }
+      .card { padding: 14px 12px; border-radius: 14px; }
+      h1 { font-size: 1.06rem; }
+      h3 { font-size: .92rem; }
+      h4 { font-size: .83rem; }
+      .slot-btn { padding: 7px 11px; font-size: .77rem; }
+      .seat-filter-btn { padding: 6px 10px; font-size: .75rem; }
+      .seat-col { min-width: 136px; }
+      .seat-thumb-small { width: 52px; height: 38px; }
+      .seat-tile { padding: 8px; gap: 8px; }
+      .seat-meta b { font-size: .80rem; }
+      .menu-thumb { width: 50px; height: 42px; }
+      .menu-item { padding: 9px; gap: 9px; }
+      .menu-item b { font-size: .84rem; }
+      input[type="number"] { width: 60px !important; font-size: .8rem; }
+      input:not([type="radio"]):not([type="number"]),
+      select { font-size: .83rem; padding: .6rem .8rem; }
+      label { font-size: .65rem; }
+      .book-btn { padding: 12px; font-size: .92rem; }
+      #seatPreviewImg { height: 190px; }
+    }
+
+    /* 400px — very small */
+    @media (max-width: 400px) {
+      body { padding: 8px 7px 28px; }
+      .card { padding: 12px 10px; border-radius: 12px; }
+      h1 { font-size: .98rem; }
+      .slots { gap: 6px; }
+      .slot-btn { padding: 6px 9px; font-size: .74rem; }
+      .seat-controls { gap: 6px; }
+      .seat-filter-btn { padding: 5px 9px; font-size: .72rem; }
+      .seat-col { min-width: 128px; }
+      .seat-thumb-small { width: 46px; height: 35px; }
+      .menu-thumb { width: 44px; height: 37px; }
+      .menu-item b { font-size: .80rem; }
+      input:not([type="radio"]):not([type="number"]),
+      select { font-size: .80rem; padding: .55rem .75rem; }
+      input[type="number"] { width: 54px !important; }
+      .book-btn { padding: 11px; font-size: .88rem; }
+    }
+
+    /* 360px — extreme small */
+    @media (max-width: 360px) {
+      body { padding: 7px 6px 24px; }
+      .card { padding: 10px 9px; }
+      h1 { font-size: .92rem; }
+      .slot-btn { padding: 5px 8px; font-size: .71rem; }
+      .seat-filter-btn { padding: 5px 8px; font-size: .69rem; }
+      .seat-col { min-width: 118px; }
+      .seat-thumb-small { width: 40px; height: 30px; }
+      .menu-thumb { width: 38px; height: 32px; }
+      input:not([type="radio"]):not([type="number"]),
+      select { font-size: .77rem; }
+      .book-btn { font-size: .84rem; padding: 10px; }
+    }

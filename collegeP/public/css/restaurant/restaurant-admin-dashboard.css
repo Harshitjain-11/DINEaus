@@ -1,0 +1,495 @@
+    /* ════════════════════════════════════
+       TOKENS  — same palette as all pages
+    ════════════════════════════════════ */
+    /* ════════════════════════════════════
+   TOKENS
+════════════════════════════════════ */
+:root {
+  --orange-light: #FF8C42;
+  --orange-mid:   #FF6B1A;
+  --orange-deep:  #E84F0D;
+  --text-dark:    #1A1008;
+  --text-muted:   #7A5C45;
+  --border:       rgba(255,140,66,0.2);
+  --glass:        rgba(255,250,246,0.88);
+  --bg:           #FFF4EC;
+  --surface:      #FFFFFF;
+  --tint:         #FFF8F2;
+  --sh-sm: 0 2px 10px rgba(232,79,13,0.07), 0 1px 4px rgba(0,0,0,0.04);
+  --sh-md: 0 8px 32px rgba(232,79,13,0.1),  0 2px 8px rgba(0,0,0,0.06);
+  --sh-btn: 0 6px 20px rgba(232,79,13,0.32);
+  --green:  #16a34a;
+  --red:    #dc2626;
+  --amber:  #d97706;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow-x: hidden; }
+
+body {
+  min-height: 100vh;
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text-dark);
+  -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 100% 0%,   rgba(255,140,66,0.11) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 35% at 0%   100%,  rgba(232,79,13,0.07)  0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* ── FLASH portal ── */
+body > div:first-child,
+body > .flash-wrap {
+  position: fixed; top: 14px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999; width: min(92%, 440px);
+  pointer-events: none;
+}
+body > div:first-child > *, body > .flash-wrap > * { pointer-events: auto; }
+
+/* ════════════════════════════════════
+   TOPBAR
+════════════════════════════════════ */
+.topbar {
+  position: sticky; top: 0; z-index: 500;
+  height: 62px;
+  background: rgba(255,250,246,0.95);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+}
+
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-mark {
+  width: 34px; height: 34px;
+  background: linear-gradient(135deg, var(--orange-light), var(--orange-deep));
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; box-shadow: var(--sh-btn); flex-shrink: 0;
+}
+.brand-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem; font-weight: 700; color: var(--text-dark);
+}
+
+.tab-strip {
+  display: flex; gap: 8px; align-items: center; flex-wrap: nowrap;
+}
+.tab-strip button {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 7px 14px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600; color: var(--text-muted);
+  cursor: pointer; white-space: nowrap;
+  box-shadow: var(--sh-sm);
+  transition: all 0.17s;
+}
+.tab-strip button:hover {
+  background: linear-gradient(135deg, var(--orange-light), var(--orange-deep));
+  color: #fff; border-color: transparent;
+  box-shadow: var(--sh-btn); transform: translateY(-1px);
+}
+.tab-strip a { text-decoration: none; }
+
+/* ════════════════════════════════════
+   PAGE SHELL
+════════════════════════════════════ */
+.page {
+  position: relative; z-index: 1;
+  max-width: 1160px; margin: 0 auto;
+  padding: 28px 20px 80px;
+  display: flex; flex-direction: column; gap: 20px;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ════════════════════════════════════
+   SECTION CARD
+════════════════════════════════════ */
+.s-card {
+  background: var(--surface);
+  border-radius: 22px;
+  border: 1px solid var(--border);
+  box-shadow: var(--sh-md);
+  overflow: hidden;
+  animation: rise 0.42s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+.s-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap;
+  padding: 16px 24px 13px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(to right, rgba(255,140,66,0.05), transparent);
+}
+.s-head h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  font-weight: 700; color: var(--text-dark);
+}
+
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 6px 13px;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: var(--tint);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.76rem;
+  font-weight: 600; color: var(--text-muted);
+  cursor: pointer; white-space: nowrap;
+  text-decoration: none;
+  box-shadow: var(--sh-sm);
+  transition: all 0.17s;
+}
+.btn-ghost:hover {
+  background: var(--orange-light); color: #fff;
+  border-color: var(--orange-light); box-shadow: var(--sh-btn);
+  transform: translateY(-1px);
+}
+
+/* ════════════════════════════════════
+   TABLE WRAPPER — NO OVERFLOW ON DESKTOP
+════════════════════════════════════ */
+.table-scroll {
+  width: 100%;
+  overflow-x: visible; /* desktop: no scroll at all */
+}
+
+/* ════════════════════════════════════
+   TABLE BASE RESET
+════════════════════════════════════ */
+table.order-table,
+table#ordersTable,
+table#activeBookingsTable,
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border: none !important;
+  table-layout: fixed; /* forces columns to share available width */
+}
+
+table th, table td {
+  border: none !important;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* ── HEADER ROW ── */
+table thead tr,
+table tr:first-child:not([id]):not([data-booking-id]) {
+  background: linear-gradient(to right, rgba(255,140,66,0.05), transparent);
+  border-bottom: 1px solid rgba(255,140,66,0.12);
+}
+table th {
+  padding: 11px 10px;
+  font-size: 0.6rem; font-weight: 700;
+  color: var(--text-muted); text-transform: uppercase;
+  letter-spacing: 0.1em; text-align: left; white-space: nowrap;
+}
+
+/* ── DATA ROWS ── */
+table tr[id],
+table tr[data-booking-id] {
+  border-bottom: 1px solid rgba(255,140,66,0.07);
+  transition: background 0.15s;
+}
+table tr[id]:last-child,
+table tr[data-booking-id]:last-child { border-bottom: none; }
+table tr[id]:hover,
+table tr[data-booking-id]:hover { background: rgba(255,140,66,0.025); }
+
+/* ── ALL CELLS ── */
+table td {
+  padding: 11px 10px;
+  font-size: 0.8rem;
+  color: var(--text-dark);
+  vertical-align: middle;
+  line-height: 1.5;
+}
+
+/* ID column */
+table td:first-child {
+  font-size: 0.65rem; font-weight: 700;
+  color: var(--text-muted);
+}
+
+/* Items list */
+table td ul {
+  list-style: none; padding: 0; margin: 0;
+  display: flex; flex-direction: column; gap: 2px;
+}
+table td ul li {
+  font-size: 0.74rem;
+  color: var(--text-muted); line-height: 1.45;
+}
+
+/* Price column */
+table td:nth-child(3) {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.96rem; font-weight: 700;
+  color: var(--text-dark); white-space: nowrap;
+}
+
+/* Status inline style override */
+table td[style*="color:#d35400"] {
+  font-size: 0.65rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.07em !important;
+}
+
+/* Booking status cell */
+td.booking-status {
+  font-size: 0.68rem !important; font-weight: 700;
+  color: var(--orange-deep); text-transform: capitalize;
+  letter-spacing: 0.04em;
+}
+
+table td b { font-weight: 600; color: var(--text-dark); }
+table td small { font-size: 0.68rem; color: var(--text-muted); }
+
+/* Status spans (arrived / completed / rejected) */
+table td span[style*="lightgreen"],
+table td span[style*="green"],
+table td span[style*="red"] {
+  font-size: 0.72rem; font-weight: 600;
+  display: block; margin-bottom: 4px;
+}
+
+/* ════════════════════════════════════
+   ACTION CELL — compact stacked buttons
+════════════════════════════════════ */
+table td:last-child { vertical-align: middle; }
+
+table td form {
+  display: block;
+  width: 100%;
+  margin-bottom: 5px;
+}
+table td form:last-child { margin-bottom: 0; }
+
+/* Base action button — compact */
+table td button,
+table td form button {
+  display: block;
+  width: 100%;
+  padding: 5px 6px;
+  border-radius: 7px;
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--orange-light), var(--orange-deep));
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(232,79,13,0.2);
+  transition: all 0.15s;
+  white-space: nowrap;
+  text-align: center;
+  line-height: 1.45;
+}
+table td button:hover,
+table td form button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(232,79,13,0.35);
+  filter: brightness(1.06);
+}
+table td button:active,
+table td form button:active { transform: none; }
+
+/* 2nd form = reject/cancel = red */
+table td form:nth-of-type(2) button {
+  background: linear-gradient(135deg, #ef5350, #c62828);
+  box-shadow: 0 2px 8px rgba(198,40,40,0.2);
+}
+table td form:nth-of-type(2) button:hover {
+  box-shadow: 0 4px 14px rgba(198,40,40,0.35);
+}
+
+/* Disabled complete button */
+table td button[disabled],
+table td form button[disabled] {
+  background: rgba(0,0,0,0.08) !important;
+  color: var(--text-muted) !important;
+  box-shadow: none !important;
+  transform: none !important;
+  cursor: not-allowed !important;
+  filter: none !important;
+}
+
+/* ════════════════════════════════════
+   EMPTY STATES
+════════════════════════════════════ */
+#noOrdersMsg, #noBookingsMsg {
+  padding: 44px 20px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.86rem;
+  line-height: 1.7;
+}
+.ei { font-size: 1.8rem; display: block; margin-bottom: 8px; }
+
+/* JS-injected status text */
+.order-status-text {
+  font-size: 0.65rem; font-weight: 700;
+  letter-spacing: 0.07em; color: #d35400;
+}
+
+/* ════════════════════════════════════
+   HISTORY SECTION
+════════════════════════════════════ */
+#bookingHistoryBox h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1rem, 2.5vw, 1.15rem);
+  font-weight: 700; color: var(--text-dark);
+  margin-bottom: 14px;
+}
+
+/* ════════════════════════════════════
+   MOBILE CARDS — hidden on desktop
+════════════════════════════════════ */
+.mobile-cards { display: none; }
+
+/* ════════════════════════════════════
+   TABLET (641px – 1024px)
+   Slight scroll allowed if table is wide
+════════════════════════════════════ */
+@media (max-width: 1024px) and (min-width: 641px) {
+  .table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,140,66,0.35) rgba(255,140,66,0.06);
+  }
+  .table-scroll::-webkit-scrollbar { height: 3px; }
+  .table-scroll::-webkit-scrollbar-track { background: rgba(255,140,66,0.06); border-radius: 4px; }
+  .table-scroll::-webkit-scrollbar-thumb { background: rgba(255,140,66,0.35); border-radius: 4px; }
+  .table-scroll::-webkit-scrollbar-thumb:hover { background: var(--orange-light); }
+
+  table { min-width: 600px; }
+  table td, table th { padding: 9px 8px; }
+
+  table td button,
+  table td form button {
+    padding: 5px 7px;
+    font-size: 0.67rem;
+  }
+}
+
+/* ════════════════════════════════════
+   MOBILE (≤ 640px) — card layout
+════════════════════════════════════ */
+@media (max-width: 640px) {
+  /* Hide table, show cards */
+  .table-scroll { display: none; }
+  .mobile-cards { display: flex; flex-direction: column; }
+
+  .m-card {
+    padding: 14px 14px 12px;
+    border-bottom: 1px solid rgba(255,140,66,0.08);
+  }
+  .m-card:last-child { border-bottom: none; }
+
+  .m-top {
+    display: flex; align-items: center;
+    justify-content: space-between; gap: 8px;
+    margin-bottom: 10px;
+  }
+  .m-id {
+    font-size: 0.63rem; font-weight: 700;
+    color: var(--text-muted);
+    background: var(--tint); border: 1px solid var(--border);
+    padding: 3px 10px; border-radius: 6px;
+  }
+  .m-status {
+    font-size: 0.63rem; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--orange-deep);
+    background: rgba(255,140,66,0.09);
+    border: 1px solid rgba(255,140,66,0.2);
+    padding: 3px 10px; border-radius: 6px;
+    white-space: nowrap;
+  }
+
+  .m-body {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 7px; margin-bottom: 11px;
+  }
+  .m-cell {
+    background: var(--tint); border: 1px solid rgba(255,140,66,0.1);
+    border-radius: 9px; padding: 8px 10px;
+  }
+  .m-label {
+    font-size: 0.53rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--text-muted); margin-bottom: 3px;
+  }
+  .m-val {
+    font-size: 0.78rem; font-weight: 600;
+    color: var(--text-dark); line-height: 1.5;
+  }
+  .m-val ul { list-style: none; padding: 0; margin: 0; }
+  .m-val ul li { font-size: 0.74rem; color: var(--text-muted); line-height: 1.45; }
+  .m-val .muted { font-size: 0.7rem; color: var(--text-muted); }
+
+  .m-actions { display: flex; flex-direction: column; gap: 6px; }
+  .m-actions form { display: block; }
+  .m-actions form button,
+  .m-actions button {
+    display: block; width: 100%;
+    padding: 10px 14px;
+    border-radius: 9px; border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem; font-weight: 600;
+    cursor: pointer; text-align: center;
+    background: linear-gradient(135deg, var(--orange-light), var(--orange-deep));
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(232,79,13,0.22);
+    transition: all 0.16s;
+  }
+  .m-actions form:nth-of-type(2) button {
+    background: linear-gradient(135deg, #ef5350, #c62828);
+    box-shadow: 0 3px 10px rgba(198,40,40,0.22);
+  }
+  .m-actions form button[disabled] {
+    background: rgba(0,0,0,0.08) !important;
+    color: var(--text-muted) !important;
+    box-shadow: none !important; cursor: not-allowed !important;
+  }
+}
+
+/* ════════════════════════════════════
+   TOPBAR & PAGE — smaller screens
+════════════════════════════════════ */
+@media (max-width: 900px) {
+  .page { padding: 22px 14px 60px; }
+}
+
+@media (max-width: 700px) {
+  .topbar { padding: 0 14px; height: 58px; }
+  .page { padding: 18px 12px 56px; gap: 14px; }
+  .s-head { padding: 13px 14px 11px; gap: 8px; }
+  .tab-strip { gap: 6px; }
+  .tab-strip button { padding: 6px 11px; font-size: 0.75rem; }
+}
+
+@media (max-width: 420px) {
+  .brand-name { display: none; }
+  .tab-strip button { padding: 6px 9px; font-size: 0.72rem; }
+}

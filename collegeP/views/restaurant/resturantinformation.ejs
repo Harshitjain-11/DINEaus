@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Restaurant Information</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/restaurant/restaurantinformation.css">
+</head>
+<body>
+<%- include("../includes/flash") %>
+  <div class="container">
+    <!-- Steps Sidebar -->
+    <div class="steps">
+      <div class="step active">
+        <div class="step-title">STEP 1<br>Restaurant Information</div>
+        <div class="step-subtext">Location, Owner details, Open & Close hrs.<br><a href="#">Edit Information</a></div>
+      </div>
+      <div class="step">
+        <div class="step-title">STEP 2<br>Restaurant Documents</div>
+      </div>
+      <div class="step">
+        <div class="step-title">STEP 3<br>Menu Setup</div>
+      </div>
+      <div class="step">
+        <div class="step-title">STEP 4<br>Partner Contract</div>
+      </div>
+    </div>
+
+    <!-- Form Content -->
+    <div class="form-section">
+      <form action="/add-restaurant" method="POST">
+
+      <h2>Restaurant Information</h2>
+
+      <div class="form-card">
+        <h3>Basic Details</h3>
+        <div class="form-group">
+          <label class="form-label">Owner's Full Name*</label>
+          <input class="form-input" type="text" name="ownerName" value="Himalaya Vats" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Restaurant Name*</label>
+          <input class="form-input" type="text" name="name" value="Coffee Cafe" />
+        </div>
+        <!-- ADDRESS FIELDS LIKE PROFILE -->
+
+<div class="address-grid">
+
+  <div class="form-group">
+    <label class="form-label">Shop / Building No*</label>
+    <input class="form-input" type="text" name="houseNo">
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Street / Area*</label>
+    <input class="form-input" type="text" name="street" placeholder="Street / Area">
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">City*</label>
+    <input class="form-input" type="text" name="location" placeholder="City">
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">State*</label>
+    <input class="form-input" type="text" name="state" placeholder="State">
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Pincode*</label>
+    <input class="form-input" type="text" name="pincode" placeholder="Pincode">
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Landmark</label>
+    <input class="form-input" type="text" name="landmark" placeholder="Nearby landmark">
+  </div>
+
+</div>
+        <!-- hidden lat lng -->
+<input type="hidden" name="latitude" id="restLat">
+<input type="hidden" name="longitude" id="restLng">
+
+<div id="restMapLoader" style="
+  height:260px;
+  border-radius:12px;
+  background:#eee;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fc8019;
+  font-weight:600;
+  margin-top:10px;
+">
+  📍 Detecting restaurant location...
+</div>
+
+<div id="restMap" style="height:260px;border-radius:12px;display:none;"></div>
+        <div class="form-group form-image">
+          <label class="form-label">Image of resturant url*</label>
+          <input class="form-input" type="text" name="image_url" />
+        </div>
+      </div>
+
+      
+      <!-- lklk -->
+      <div class="form-card">
+        <h3>Owner Contact Details</h3>
+        <p style="font-size: 0.9rem; color: #777;">To get updates on payments, customer complaints, order acceptance, etc</p>
+      
+        <div class="form-group">
+          <label class="form-label">Email address*</label>
+          <input class="form-input" type="email"  name="email" value="hvats.hv@gmail.com" />
+          <small style="color: #777;">You will receive a verification mail on this ID</small>
+        </div>
+      
+        <div class="form-group">
+          <label class="form-label" style="color: #f44336;">Mobile Number*</label>
+          <div style="display: flex;">
+            <span style="padding: 12px 16px; background: #f3f3f3; border: 1px solid #ccc; border-radius: 8px 0 0 8px;">+91</span>
+            <input class="form-input" type="tel" name="ownerNumber" value="9817971713" style="border-radius: 0 8px 8px 0; border-left: none;" />
+          </div>
+        </div>
+      
+        <div class="form-group">
+          <label class="form-label"><strong>Provide your <span style="font-weight: bold;">WhatsApp number</span></strong> to get insights on ratings, menu, etc</label>
+      
+          <label style="display: flex; align-items: center; margin-top: 10px;">
+            <input type="radio" name="whatsapp" checked style="margin-right: 10px;" />
+            My WhatsApp number is same as above
+          </label>
+      
+          <label style="display: flex; align-items: center; margin-top: 10px;">
+            <input type="radio" name="whatsapp" style="margin-right: 10px;" />
+            I have a different WhatsApp number
+          </label>
+        </div>
+      </div>
+      <!-- jkj -->
+      <div class="form-card">
+        <h3>Working days <span style="float: right; color: #f44336; font-size: 0.9rem; cursor: pointer;" onclick="selectAllDays()">Select all</span></h3>
+        <div class="working-days">
+          <label><input type="checkbox" checked /> Monday</label>
+          <label><input type="checkbox" checked /> Tuesday</label>
+          <label><input type="checkbox" checked /> Wednesday</label>
+          <label><input type="checkbox" checked /> Thursday</label>
+          <label><input type="checkbox" checked /> Friday</label>
+          <label><input type="checkbox" checked /> Saturday</label>
+          <label><input type="checkbox" checked /> Sunday</label>
+        </div>
+      </div>
+      
+      <div class="form-card">
+        <h3>Opening & Closing time</h3>
+      
+        <div class="form-group">
+          <label>
+            <input type="radio" name="timing" checked />
+            I open and close my restaurant at the same time on all working days
+          </label>
+          <br />
+          <label>
+            <input type="radio" name="timing" />
+            I've separate daywise timings
+          </label>
+        </div>
+      
+        <div class="time-inputs">
+          <div class="time-box" onclick="openClock(this,'open')">🕒 <span>9:00 AM</span></div>
+          <div class="time-box" onclick="openClock(this,'close')">🕒 <span>9:50 PM</span></div>
+        </div>
+      
+        <a href="#" class="add-slot">+ Add another slot</a>
+      </div>
+      <button type="submit">Submit</button>
+
+    </form>
+    <button><a href="/resturant-document" >NextPage</a></button>
+    </div>
+ 
+  </div>
+
+  <!-- ── CLOCK MODAL (extra HTML only, form untouched) ── -->
+  <div class="clock-overlay" id="ckOverlay" onclick="closeClock()"></div>
+  <div class="clock-modal" id="ckModal">
+    <button class="clock-x" onclick="closeClock()">&times;</button>
+    <div class="clock-hdr" id="ckHdr">Set Time</div>
+    <div class="clock-wrap">
+      <div class="clock-face" id="ckFace"></div>
+      <div class="ck-preview" id="ckPreview" onclick="ckToggleMode()">09:00 AM</div>
+    </div>
+    <div class="ampm-row">
+      <button class="ampm-btn on" id="ckAM" onclick="ckAMPM('AM')">AM</button>
+      <button class="ampm-btn"    id="ckPM" onclick="ckAMPM('PM')">PM</button>
+    </div>
+    <button class="ck-set" onclick="ckSet()">Set Time</button>
+  </div>
+
+  <!-- ── ORIGINAL MAP JS — ZERO CHANGES ── -->
+   <script src="/js/restaurant/restaurantinformation.js"></script>
+</body>
+</html>

@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DINEaus Profile</title>
+    <meta name="description" content="DINEaus - Your Premium Food Delivery Experience" />
+    <meta name="author" content="DINEaus" />
+    
+    <!-- Modern Food Website Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.462.0/lucide.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="/css/user/profile.css">
+</head>
+
+<body>
+    <%- include("../includes/flash") %>
+    <!-- Header -->
+<header class="header" id="header">
+    <div class="header-container">
+        <!-- Logo -->
+       <a href="/home" class="navbar-logo">
+                    <span class="logo-dine">DINE</span><span class="logo-aus">aus</span>
+                </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="nav">
+            <a href="#" class="nav-link">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect width="14" height="20" x="5" y="2" rx="2" ry="2"/>
+                    <path d="M12 18h.01"/>
+                </svg>
+                Get the app
+            </a>
+            <a href="#" class="nav-link">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 21h18"/>
+                    <path d="M5 21V7l8-4v18"/>
+                    <path d="M19 21V11l-6-4"/>
+                </svg>
+                Investor Relations
+            </a>
+            <a href="/dineous-partner" class="nav-link">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/>
+                    <path d="M7 2v20"/>
+                    <path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm-5 7v-2a3 3 0 0 1 3-3h2a3 3 0 0 1 3 3v2a3 3 0 0 1-3 3h-2a3 3 0 0 1-3-3Z"/>
+                </svg>
+                Add Restaurant
+            </a>
+
+            <!-- Help (Dynamic Form) -->
+            <form method="GET" action="/help" class="nav-link" style="margin:0;">
+                <button type="submit" style="background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:6px;color:inherit;font:inherit;padding:0;">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                        <path d="M12 17h.01"/>
+                    </svg>
+                    Help
+                </button>
+            </form>
+        </nav>
+
+        <!-- Desktop Actions -->
+        <div class="nav-actions">
+          <button style="background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:6px;color:inherit;font:inherit;">
+            <i class="fas fa-user"></i> <%= user.firstname %>
+          </button>
+        </div>
+
+        <!-- Mobile Hamburger -->
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+</header>
+
+
+    <!-- Mobile Drawer -->
+    
+    <div class="mobile-drawer" id="mobileDrawer">
+        <div class="mobile-logo">
+            DINE<span class="logo-accent">aus</span>
+        </div>
+          <a href="#" class="close-btn" 
+   style="position:absolute;top:24px;right:32px;text-decoration:none;
+          font-size:28px;color:rgb(248, 123, 6);font-weight:bold;z-index:10;transition:color 0.2s;">
+  &times;
+</a>
+
+
+        <nav class="mobile-nav">
+            <a href="#" class="mobile-nav-link">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect width="14" height="20" x="5" y="2" rx="2" ry="2"/>
+                    <path d="M12 18h.01"/>
+                </svg>
+                Get the app
+            </a>
+            <a href="#" class="mobile-nav-link">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 21h18"/>
+                    <path d="M5 21V7l8-4v18"/>
+                    <path d="M19 21V11l-6-4"/>
+                </svg>
+                Investor Relations
+            </a>
+            <a href="/dineous-partner" class="mobile-nav-link">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/>
+                    <path d="M7 2v20"/>
+                    <path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm-5 7v-2a3 3 0 0 1 3-3h2a3 3 0 0 1 3 3v2a3 3 0 0 1-3 3h-2a3 3 0 0 1-3-3Z"/>
+                </svg>
+                Add Restaurant
+            </a>
+            <form method="GET" action="/help" class="mobile-nav-link" style="margin:0;">
+    <button type="submit" style="background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:8px;color:inherit;font:inherit;width:100%;text-align:left;padding:0;">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+            <path d="M12 17h.01"/>
+        </svg>
+        Help
+    </button>
+</form>
+
+        </nav>
+        
+        <div class="mobile-drawer-footer">
+          <div class="mobile-profile-info">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span><%= user.firstname %></span>
+          </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <main class="main-container">
+        <!-- Profile Card -->
+        <section class="profile-card">
+            <div class="profile-avatar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+            </div>
+            
+            <h1 class="profile-name"><%= user.firstname %> <%= user.lastname %></h1>
+            
+            <div class="profile-contact">
+                <div class="profile-contact-item">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                    <span><%= user.number %></span>
+                </div>
+                <div class="profile-contact-item">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                        <polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                    <span><%= user.email %></span>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+                <a href="/profile/edit" class="btn btn-primary">Edit Profile</a>
+
+            </button>
+        </section>
+
+        <!-- Profile Layout -->
+        <div class="profile-layout">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-container">
+                    <nav class="sidebar-nav">
+                        <button class="sidebar-item active" data-tab="orders">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+                                <path d="M3.3 7 12 12l8.7-5"/>
+                                <path d="M12 22V12"/>
+                            </svg>
+                            <span>Orders</span>
+                        </button>
+                        <button class="sidebar-item" data-tab="bookings">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 3h18v18H3z"/>
+                                <path d="M7 3v18"/>
+                                <path d="M17 3v18"/>
+                                <path d="M3 7h18"/>
+                            </svg>
+                            <span>Bookings</span>
+                        </button>
+                        
+                        <button class="sidebar-item" data-tab="favourites">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                            </svg>
+                            <span>Favourites</span>
+                        </button>
+                        <button class="sidebar-item" data-tab="payments">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect width="20" height="14" x="2" y="5" rx="2"/>
+                                <line x1="2" x2="22" y1="10" y2="10"/>
+                            </svg>
+                            <span>Payments</span>
+                        </button>
+                        <button class="sidebar-item" data-tab="address">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                            <span>Address</span>
+                        </button>
+                        <button class="sidebar-item" data-tab="settings">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            <span>Settings</span>
+                        </button>
+                    </nav>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="main-content-container">
+                    <!-- Orders Section -->
+                    <div class="content-section active" id="orders-section">
+                    
+                      <% if (!orders || orders.length === 0) { %>
+                        <!-- EMPTY STATE -->
+                        <div class="empty-state">
+                          <div class="empty-state-icon">
+                            🛒
+                          </div>
+                          <h2>Your Orders</h2>
+                          <p>No orders yet. Start ordering your favourite meals!</p>
+                          <a href="/home" class="btn btn-primary" style="margin-top:15px;">
+                            Browse Restaurants
+                          </a>
+                        </div>
+                    
+                      <% } else { %>
+                    
+                        <!-- ORDERS LIST -->
+                        <% orders.forEach(order => { %>
+                          <div id="order-<%= order.id %>"style="
+                            display:flex;
+                            gap:16px;
+                            padding:16px;
+                            border:1px solid rgba(255,255,255,0.1);
+                            border-radius:12px;
+                            margin-bottom:16px;
+                            align-items:center;
+                          ">
+                    
+                            <!-- Restaurant Image -->
+                            <img 
+                              src="<%= order.image_url %>" 
+                              alt="<%= order.restaurant_name %>"
+                              style="width:90px;height:90px;object-fit:cover;border-radius:10px;"
+                            />
+                    
+                            <!-- Order Info -->
+                            <div style="flex:1;">
+                                <a href="/restaurant/<%=order.restaurant_id%>">
+                              <h3 style="margin:0;"><%= order.restaurant_name %></h3>
+                              </a>
+                    
+                              <p style="color:gray;margin:4px 0;">
+                                Order #<%= order.id %> • 
+                                <%= new Date(order.created_at).toLocaleString() %>
+                              </p>
+                    
+                              <p style="margin:4px 0;">
+                                Status: 
+                                <b class="order-status" style="color:orange">
+                                  <%= order.status.toUpperCase() %>
+                                </b>
+                                
+                              </p>
+                    
+                              <p style="margin:4px 0;">
+                                Total Paid: ₹<%= order.total_price %>
+                              </p>
+                              
+                            </div>
+                    
+                            <!-- Actions -->
+                            <div>
+                              
+                              <% if (order.status === "completed" || order.status === "delivered"||order.status === "cancelled"||order.status === "rejected") { %>
+                              <a  
+                                href="/orders/reorder/<%= order.id %>" 
+                                class="btn btn-primary"
+                                style="padding:8px 14px;font-size:14px;"
+                              >
+                                Reorder
+                              </a>
+                              <a 
+                                href="/help" 
+                                class="btn btn-primary"
+                                style="padding:8px 14px;font-size:14px;"
+                              >
+                                Help
+                              </a>
+                            <% } else{ %>
+                                 <a 
+                                href="/track-order/<%= order.id %>" 
+                                class="btn btn-primary"
+                                style="padding:8px 14px;font-size:14px;"
+                              >
+                                Track Order
+                              </a>
+                              <a 
+                                href="/help" 
+                                class="btn btn-primary"
+                                style="padding:8px 14px;font-size:14px;"
+                              >
+                                Help
+                              </a>
+                              <% if (order.status === 'scheduled' && order.canCancel) { %>
+                                <form class="cancel-form" action="/order/<%= order.id %>/cancel" method="POST">
+
+                                  <button class="btn btn-primary"
+                                    style="padding:8px 14px;font-size:14px; margin-top:10px; background:#ff4d4d;">
+                                    Cancel Order
+                                  </button>
+                                </form>
+                              <% } %>
+                              
+                              
+                            <% } %>
+                            
+
+                            </div>
+                    
+                          </div>
+                        <% }) %>
+                    
+                      <% } %>
+                    </div>
+                    <div class="content-section" id="bookings-section">
+
+                      <% if (!bookings || bookings.length === 0) { %>
+                    
+                        <div class="empty-state">
+                          <div class="empty-state-icon">🪑</div>
+                          <h2>Your Table Bookings</h2>
+                          <p>No table bookings yet.</p>
+                        </div>
+                    
+                      <% } else { %>
+                    
+                        <% bookings.forEach(b => { %>
+                          <div style="
+                            display:flex;
+                            gap:16px;
+                            padding:16px;
+                            border:1px solid rgba(255,255,255,0.1);
+                            border-radius:12px;
+                            margin-bottom:16px;
+                            align-items:center;
+                          ">
+                    
+                            <div style="flex:1;">
+                              <h3 style="margin:0;"><%= b.restaurant_name %></h3>
+                    
+                              <p style="color:gray;margin:4px 0;">
+                                <%= new Date(b.date).toLocaleDateString() %> • <%= b.time_slot %> • 👥 <%= b.guests %>
+                              </p>
+                              <% if (b.items.length > 0) { %>
+                                <p style="margin-top:6px;font-size:13px;color:#ccc;">
+                                  🍽️
+                                  <% b.items.forEach((it, i) => { %>
+                                    <%= it.name %> × <%= it.quantity %><%= i < b.items.length-1 ? ', ' : '' %>
+                                  <% }) %>
+                                </p>
+                              <% } %>
+                              
+                              <p style="margin:4px 0;">
+                                Status:
+                              
+                                <% if (b.status === 'pending') { %>
+                                  <b style="color:orange;">PENDING</b>
+                              
+                                <% } else if (b.status === 'accepted') { %>
+                                  <b style="color:lightgreen;">CONFIRMED</b>
+                              
+                                <% } else if (b.status === 'arrived') { %>
+                                  <b style="color:#00d2ff;">ARRIVED</b>
+                              
+                                <% } else if (b.status === 'completed') { %>
+                                  <b style="color:green;">COMPLETED</b>
+                              
+                                <% } else if (b.status === 'cancelled') { %>
+                                  <b style="color:red;">CANCELLED</b>
+                              
+                                <% } else if (b.status === 'rejected') { %>
+                                  <b style="color:red;">REJECTED</b>
+                              
+                                <% } %>
+                              </p>
+                              
+                    
+                              
+                            </div>
+                                                   
+                            <div>
+                               
+                                <% if (b.status === 'pending') { %>
+                               
+                                  <span style="color:gray;">Waiting for restaurant</span><br>
+                               
+                                  <form action="/booking/<%= b.id %>/cancel" method="POST" style="margin-top:8px;">
+                                    <button class="btn btn-primary" style="padding:6px 12px;font-size:13px;background:#ff4d4d;">
+                                      Cancel Booking
+                                    </button>
+                                  </form>
+                               
+                                <% } else if (b.status === 'accepted') { %>
+                               
+                                  <span style="color:lightgreen;">Confirmed ✔</span><br>
+                               
+                                  <% if (b.canCancel) { %>
+                                    <form action="/booking/<%= b.id %>/cancel" method="POST" style="margin-top:8px;">
+                                      <button class="btn btn-primary" style="padding:6px 12px;font-size:13px;background:#ff4d4d;">
+                                        Cancel Booking
+                                      </button>
+                                    </form>
+                                  <% } else { %>
+                                    <small style="color:orange;">Cancellation window closed</small>
+                                  <% } %>
+                               
+                                <% } else if (b.status === 'arrived') { %>
+                               
+                                  <b style="color:#00d2ff;">You are at restaurant 🍽️</b>
+                               
+                                <% } else if (b.status === 'completed') { %>
+                               
+                                  <b style="color:green;">Visit completed ✔</b>
+                               
+                                <% } else if (b.status === 'cancelled') { %>
+                               
+                                  <b style="color:red;">Cancelled</b>
+                               
+                                <% } else if (b.status === 'rejected') { %>
+                               
+                                  <b style="color:red;">Rejected by restaurant</b>
+                               
+                                <% } %>
+                               
+                            </div>
+
+                            
+                    
+                          </div>
+                        <% }) %>
+                    
+                      <% } %>
+                    
+                    </div>
+                    
+                    
+                    <!-- Favourites Section -->
+                    <div class="content-section" id="favourites-section">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                                </svg>
+                            </div>
+                            <h2>Your Favourites</h2>
+                            <p>No favourites added yet.</p>
+                        </div>
+                    </div>
+
+                    <!-- Payments Section -->
+                    <div class="content-section" id="payments-section">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect width="20" height="14" x="2" y="5" rx="2"/>
+                                    <line x1="2" x2="22" y1="10" y2="10"/>
+                                </svg>
+                            </div>
+                            <h2>Payments</h2>
+                            <p>No payment methods saved.</p>
+                        </div>
+                    </div>
+
+                    <!-- Address Section -->
+                    <div class="content-section" id="address-section">
+                        <h2 class="address-form-title">Manage Your Address</h2>
+                        
+                        <form class="address-form" id="addressForm"  method="POST" action="/profile">
+                            <div class="address-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="houseNo">House/Flat Number</label>
+                                    <input class="form-input" type="text" id="houseNo" name="houseNo" placeholder="Enter house/flat number">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="street">Street/Area</label>
+                                    <input class="form-input" type="text" id="street" name="street" placeholder="Enter street/area">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="city">City</label>
+                                    <input class="form-input" type="text" id="city" name="city" placeholder="Enter city">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="state">State</label>
+                                    <input class="form-input" type="text" id="state" name="state" placeholder="Enter state">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="pincode">Pincode</label>
+                                    <input class="form-input" type="text" id="pincode" name="pincode" placeholder="Enter pincode">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="landmark">Landmark</label>
+                                    <input class="form-input" type="text" id="landmark" name="landmark" placeholder="Enter landmark">
+                                </div>
+                                
+
+                            </div>
+                                <input type="hidden" name="latitude" id="profileLat">
+                                <input type="hidden" name="longitude" id="profileLng">
+                                
+                               <div id="mapLoader" style="
+  height:280px;
+  border-radius:12px;
+  background:#111;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#ff7a00;
+  font-weight:600;
+">
+  📍 Detecting your location...
+</div>
+
+<div id="profileMap" style="
+  height:280px;
+  border-radius:12px;
+  display:none;
+"></div>
+                            <button type="submit" class="btn btn-primary form-submit">Save Address</button>
+                        </form>
+                    </div>
+
+                    <!-- Settings Section -->
+                    <div class="content-section" id="settings-section">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </div>
+                            <h2>Settings</h2>
+                            <p>Manage your profile and app preferences here.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // DOM Elements
+        const hamburger = document.getElementById('hamburger');
+        const mobileDrawer = document.getElementById('mobileDrawer');
+        const closeBtn = document.querySelector('.close-btn');
+
+        const header = document.getElementById('header');
+        const sidebarItems = document.querySelectorAll('.sidebar-item');
+        const contentSections = document.querySelectorAll('.content-section');
+        const addressForm = document.getElementById('addressForm');
+
+        // Hamburger Menu Toggle
+//       hamburger.addEventListener('click', () => {
+//     const isActive = mobileDrawer.classList.toggle('active');
+//     hamburger.classList.toggle('active', isActive);
+//     document.body.style.overflow = isActive ? 'hidden' : '';
+// });
+
+// // Close button click
+// closeBtn.addEventListener('click', () => {
+//     closeSidebar();
+// });
+
+//         // Close mobile drawer when clicking outside
+//         document.addEventListener('click', (e) => {
+//     if (
+//         window.innerWidth > 768 && // 👈 only works for desktop
+//         mobileDrawer.classList.contains('active') &&
+//         !mobileDrawer.contains(e.target) &&
+//         !hamburger.contains(e.target)
+//     ) {
+//         closeSidebar();
+//     }
+// });
+//       function closeSidebar() {
+//     hamburger.classList.remove('active');
+//     mobileDrawer.classList.remove('active');
+//     document.body.style.overflow = '';
+// }
+hamburger.addEventListener('click', () => {
+  const isActive = mobileDrawer.classList.toggle('active');
+  hamburger.classList.toggle('active', isActive);
+  document.body.style.overflow = isActive ? 'hidden' : '';
+});
+
+// Close Sidebar function (used by × button and outside click)
+function closeSidebar() {
+  hamburger.classList.remove('active');
+  mobileDrawer.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+// Close when × button is clicked
+closeBtn.addEventListener('click', (e) => {
+  e.preventDefault(); // prevent link jump
+  closeSidebar();
+});
+
+// Close when clicking outside (desktop only)
+document.addEventListener('click', (e) => {
+  if (
+    window.innerWidth > 768 &&
+    mobileDrawer.classList.contains('active') &&
+    !mobileDrawer.contains(e.target) &&
+    !hamburger.contains(e.target)
+  ) {
+    closeSidebar();
+  }
+});
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 10) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Sidebar tab switching
+        sidebarItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const targetTab = item.getAttribute('data-tab');
+                localStorage.setItem("profileActiveTab", targetTab);
+
+                // Update active sidebar item
+                sidebarItems.forEach(sidebarItem => sidebarItem.classList.remove('active'));
+                item.classList.add('active');
+                
+                // Update active content section
+                contentSections.forEach(section => section.classList.remove('active'));
+                document.getElementById(`${targetTab}-section`).classList.add('active');
+            });
+        });
+
+        // Address form submission
+        addressForm.addEventListener('submit', (e) => {
+            // e.preventDefault();
+            
+            // Simple toast notification
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: hsl(var(--primary));
+                color: hsl(var(--primary-foreground));
+                padding: 1rem 1.5rem;
+                border-radius: var(--radius);
+                box-shadow: var(--shadow-elevated);
+                z-index: 1000;
+                font-family: var(--font-ui);
+                font-weight: 600;
+            `;
+            toast.textContent = 'Address saved successfully!';
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        });
+
+        // Close mobile drawer on mobile nav link click
+        document.querySelectorAll('.mobile-nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                mobileDrawer.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        });
+        const savedTab = localStorage.getItem("profileActiveTab");
+
+        if (savedTab) {
+          sidebarItems.forEach(i => i.classList.remove('active'));
+          contentSections.forEach(s => s.classList.remove('active'));
+        
+          const btn = document.querySelector(`.sidebar-item[data-tab="${savedTab}"]`);
+          const section = document.getElementById(`${savedTab}-section`);
+        
+          if (btn && section) {
+            btn.classList.add('active');
+            section.classList.add('active');
+          }
+        }
+
+        if (savedTab === "address") {
+          setTimeout(() => {
+            if (!profileMap) {
+              showMap(26.2183, 78.1828);
+            } else {
+              profileMap.invalidateSize();
+            }
+            if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(pos => {
+                const lat = pos.coords.latitude;
+                const lng = pos.coords.longitude;
+                profileMap.setView([lat, lng], 16);
+                profileMarker.setLatLng([lat, lng]);
+                profileLat.value = lat;
+                profileLng.value = lng;
+                autoFillAddress(lat, lng);
+              });
+            }
+          }, 150);
+        }
+        
+    </script>
+    <script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io();
+
+  const bookings = <%- JSON.stringify(bookings.map(b => b.id)) %>;
+
+  socket.on("connect", () => {
+    bookings.forEach(id => {
+        console.log("✅ socket connected", socket.id);
+      socket.emit("joinBookingRoom", id);
+    });
+  });
+
+  socket.on("bookingStatusUpdate", data => {
+    console.log("Booking update:", data);
+    location.reload(); // simple version (later we do dynamic UI)
+  });
+  
+  const userId = "<%= user.id %>";
+
+  socket.on("connect", () => {
+    socket.emit("joinUserRoom", userId);
+    console.log("✅ Joined user room", userId);
+  });
+    socket.on("profileOrderUpdate", (data) => {
+    console.log("🔥 order updated on profile", data);
+
+    const box = document.getElementById("order-" + data.orderId);
+    if (!box) return;
+
+    const statusEl = box.querySelector(".order-status");
+    if (statusEl) {
+      statusEl.innerText = data.status.toUpperCase();
+    }
+
+    // remove cancel button if order sent
+    if (data.status !== "scheduled") {
+      const cancelForm = box.querySelector(".cancel-form");
+      if (cancelForm) cancelForm.remove();
+    }
+  });
+
+</script>
+<script>
+let profileMap, profileMarker;
+
+async function autoFillAddress(lat, lng) {
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
+    );
+    const data = await res.json();
+    if (!data.address) return;
+
+    const addr = data.address;
+
+    document.getElementById("street").value =
+      addr.road || addr.suburb || "";
+
+    document.getElementById("city").value =
+      addr.city || addr.town || addr.village || "";
+
+    document.getElementById("state").value =
+      addr.state || "";
+
+    document.getElementById("pincode").value =
+      addr.postcode || "";
+
+    document.getElementById("landmark").value =
+      addr.neighbourhood || addr.hamlet || "";
+
+  } catch (err) {
+    console.log("Reverse geocode failed:", err);
+  }
+}
+
+function showMap(lat, lng) {
+  document.getElementById("mapLoader").style.display = "none";
+  document.getElementById("profileMap").style.display = "block";
+
+  if (!profileMap) {
+    profileMap = L.map("profileMap").setView([lat, lng], 16);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19
+    }).addTo(profileMap);
+
+    profileMarker = L.marker([lat, lng], { draggable: true }).addTo(profileMap);
+
+    profileMarker.on("dragend", () => {
+  const pos = profileMarker.getLatLng();
+
+  profileMap.panTo(pos); // ✅ map bhi marker ke saath move kare
+
+  profileLat.value = pos.lat;
+  profileLng.value = pos.lng;
+
+  autoFillAddress(pos.lat, pos.lng); // (agar autofill laga hua hai)
+});
+  } else {
+    profileMap.setView([lat, lng], 16);
+    profileMarker.setLatLng([lat, lng]);
+  }
+
+  profileLat.value = lat;
+  profileLng.value = lng;
+
+  setTimeout(() => profileMap.invalidateSize(), 200);
+}
+
+// when Address tab opened
+document.querySelector('[data-tab="address"]').addEventListener("click", () => {
+  setTimeout(() => {
+
+    if (!profileMap) {
+      showMap(26.2183, 78.1828); // fallback Gwalior
+    } else {
+      profileMap.invalidateSize();
+    }
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(pos => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+
+        profileMap.setView([lat, lng], 16);
+        profileMarker.setLatLng([lat, lng]);
+
+        profileLat.value = lat;
+        profileLng.value = lng;
+
+        autoFillAddress(lat, lng); // ✅ GPS autofill
+      });
+    }
+
+  }, 150);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Delivery Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <link rel="stylesheet" href="/css/delivery/delivery-dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- TOPBAR -->
+    <nav class="topbar">
+        <div class="brand">
+            <div class="brand-icon">
+                <svg viewBox="0 0 24 24"><path d="M21 4H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1zm-1 15H7a1 1 0 0 1 0-2h13v1a1 1 0 0 1-1 1zm1-4H7a3 3 0 0 0-2 .78V6a1 1 0 0 1 1-1h13v10zM9 8h6a1 1 0 0 0 0-2H9a1 1 0 0 0 0 2zm0 4h6a1 1 0 0 0 0-2H9a1 1 0 0 0 0 2z"/></svg>
+            </div>
+            <span class="brand-name">DeliverHub</span>
+        </div>
+        <a href="/delivery/logout" class="logout-link">Sign Out</a>
+    </nav>
+
+    <!-- FLASH — fixed toast, top center, above cards -->
+    <div class="flash-container">
+        <%- include("../includes/flash") %>
+    </div>
+
+    <!-- PAGE -->
+    <main class="page">
+
+        <!-- Welcome -->
+        <div class="welcome-card">
+            <div class="avatar">
+                <%= partner.name[0].toUpperCase() %>
+            </div>
+            <div class="welcome-text">
+                <h1>Welcome, <%= partner.name %> 👋</h1>
+                <p>Great to have you back. You're all set to deliver.</p>
+            </div>
+        </div>
+
+        <!-- Info -->
+        <div class="info-row">
+            <div class="info-card">
+                <div class="info-icon">🚗</div>
+                <div class="info-content">
+                    <div class="info-label">Vehicle</div>
+                    <div class="info-value"><%= partner.vehicle %></div>
+                </div>
+            </div>
+            <div class="info-card">
+                <div class="info-icon">📞</div>
+                <div class="info-content">
+                    <div class="info-label">Phone</div>
+                    <div class="info-value"><%= partner.phone %></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action -->
+        <div class="action-card">
+            <div class="status-row">
+                <div class="status-dot"></div>
+                <span class="status-text">Online &amp; Active</span>
+            </div>
+            <div class="sep"></div>
+            <p class="action-title">Ready for your next delivery?</p>
+            <a href="/delivery/orders/<%= partner.id %>">
+                <button style="padding:10px 20px;">📦 View Orders</button>
+            </a>
+        </div>
+
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= restaurant.name %> | Swiggy Clone</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/user/restaurant-card.css">
+</head>
+<body>
+  <%- include("../includes/flash") %>
+ <%- include("../includes/navbar") %>
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="/">Home</a> / <a href="#">Gwalior</a> / <%= restaurant.name %>
+    </div>
+  
+    <h1 class="restaurant-name"><%= restaurant.name %></h1>
+  
+    <div class="info-card">
+      <div class="rating">
+        ⭐ <strong>4.7</strong> (26 ratings) • ₹<%= menuItems[0].costfortwo %> for two
+      </div>
+      <div class="cuisine">
+        <%= restaurant.cuisines %>
+      </div>
+      <div class="outlet">
+        <strong>Outlet:</strong> <%= restaurant.location %>
+      </div>
+      <div class="timing">
+        <strong>⏱</strong> 40–45 mins
+      </div>
+      <div class="offer-strip">
+        <!-- <img src="/images/onelite.png" height="20" /> -->
+        <span>Free delivery on orders above ₹199</span>
+      </div>
+    </div>
+  
+    <h2 class="deals-title">Deals for you</h2>
+    <div class="deals">
+      <div class="deal-card">
+        <div class="icon">%</div>
+        <div class="deal-text">
+          <strong>50% Off Upto ₹100</strong><br />
+          <small>USE TRYNEW</small>
+        </div>
+      </div>
+      <div class="deal-card">
+        <div class="icon">%</div>
+        <div class="deal-text">
+          <strong>Flat ₹80 Off</strong><br />
+          <small>USE FLATDEAL</small>
+        </div>
+      </div>
+    </div>
+  </div>
+  <a href="/reserve/<%= restaurant.id %>">
+  <button>Reserve / Seat / Preorder</button>
+</a>
+
+
+  <div class="menu-header">Menu</div>
+
+  <div class="search-bar">
+    <input type="text" id="dishSearch" placeholder="Search for dishes" />
+    <i class="fa fa-search"></i>
+    
+  </div>
+  
+    
+  <div class="filters">
+    <div class="filter-toggle">
+      <span class="veg-icon"></span> Veg
+    </div>
+    <div class="filter-toggle">
+      <span class="nonveg-icon"></span> Non-Veg
+    </div>
+    <button class="bestseller-btn">Bestseller</button>
+  </div>
+  
+
+  
+
+  <div class="menu-section">
+    <h3>Recommended (<%= menuItems.length %>)</h3>
+  
+    <% menuItems.forEach(item => { %>
+      <div class="menu-item <%= Number(item.is_available) === 1 ? '' : 'out-of-stock' %>
+"  data-item-id="<%= item.id %>" data-name="<%= item.item_name.toLowerCase() %>">
+
+        <div class="menu-left">
+          <!-- <img
+            src="<%= item.vegNonveg === 'veg' ? '/veg-icon.svg' : '/non-veg-icon.svg' %>"
+            class="veg-icon"
+            alt="<%= item.vegNonveg %>"
+          /> -->
+          <h4><%= item.item_name %></h4>
+          <p class="price">₹<%= item.price %></p>
+          <p class="more-link"><button>More Details</button></p>
+        </div>
+  
+        <div class="menu-right">
+          
+          <% if (Number(item.is_available) === 0) { %>
+  <div class="out-badge">OUT OF STOCK</div>
+<% } %>
+
+          <!-- <img src="/common-images/<%= getCommonImageName(item.item_name) %>"> -->
+
+          <img 
+            src="<%= item.common_image 
+                  ? '/uploads/menu-items/' + item.common_image 
+                  : '/common-images/' + getCommonImageName(item.item_name) %>"
+          >
+
+
+
+          <a href="/cart/checkout?item_id=<%= item.id %>&add=1">
+
+            <button
+              class="add-btn add-to-cart-btn"
+              <%= Number(item.is_available) === 1 
+                    ? '' 
+                    : 'disabled style="background:#aaa;cursor:not-allowed;"' %>
+            >
+              <%= Number(item.is_available) === 1 ? 'ADD' : 'UNAVAILABLE' %>
+            </button>
+          </a>
+          
+          
+          <p class="customisable">Customisable</p>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+  <div id="noResult">
+  <div class="icon">🍽️</div>
+  <h4>No dishes found</h4>
+  <p>Try searching with a different keyword.</p>
+</div>
+
+  <script>
+  const searchInput = document.getElementById("dishSearch");
+  const menuItems = document.querySelectorAll(".menu-item");
+  const noResult = document.getElementById("noResult");
+
+  searchInput.addEventListener("input", function () {
+    const keyword = this.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    menuItems.forEach(item => {
+      const dishName = item.dataset.name;
+
+      if (dishName.includes(keyword)) {
+        item.style.display = "flex";
+        visibleCount++;
+      } else {
+        item.style.display = "none";
+      }
+    });
+
+    // 👇 No result logic
+    if (visibleCount === 0) {
+      noResult.style.display = "block";
+    } else {
+      noResult.style.display = "none";
+    }
+  });
+</script>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io();
+
+  const RESTAURANT_ID = "<%= restaurant.id %>";
+  socket.emit("joinRestaurantRoom", RESTAURANT_ID);
+
+  socket.on("menu:stockUpdate", ({ itemId, is_available }) => {
+    const itemCard = document.querySelector(
+      `.menu-item[data-item-id="${itemId}"]`
+    );
+
+    if (!itemCard) return;
+
+    const addBtn = itemCard.querySelector(".add-to-cart-btn");
+    let badge = itemCard.querySelector(".out-badge");
+
+    if (!is_available) {
+      // ❌ OUT OF STOCK
+      itemCard.classList.add("out-of-stock");
+
+      if (addBtn) {
+        addBtn.disabled = true;
+        addBtn.innerText = "UNAVAILABLE";
+        addBtn.style.background = "#aaa";
+        addBtn.style.cursor = "not-allowed";
+      }
+
+      if (!badge) {
+        badge = document.createElement("div");
+        badge.className = "out-badge";
+        badge.innerText = "OUT OF STOCK";
+        itemCard.querySelector(".menu-right").appendChild(badge);
+      }
+
+    } else {
+      // ✅ BACK IN STOCK
+      itemCard.classList.remove("out-of-stock");
+
+      if (addBtn) {
+        addBtn.disabled = false;
+        addBtn.innerText = "ADD";
+        addBtn.style.background = "";
+        addBtn.style.cursor = "pointer";
+      }
+
+      if (badge) badge.remove();
+    }
+  });
+</script>
+
+
+</body>
+</html>

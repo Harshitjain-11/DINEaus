@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Payment Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/user/payment.css">
+</head>
+
+<body>
+    <%- include("../includes/flash") %>
+    <div class="nav">
+        <a>SECURE CHECKOUT</a>
+
+        <form method="GET" action="/help">
+            <button>Help</button>
+        </form>
+        <form method="GET" action="/profile">
+            <button>
+                <i class="fas fa-user"></i><%=user.firstname%>..
+            </button>
+        </form>
+    </div>
+
+    <div class="container" id="paymentContainer">
+        <div class="header">
+            <a href="/cart/checkout"> <i class="fas fa-arrow-left"></i></a>
+            Payment Options
+        </div>
+        <div class="order-info">
+            1 item • Total: ₹<span id="totalAmount">291</span> • Savings of ₹25
+        </div>
+        <script>
+            window.addEventListener("DOMContentLoaded", () => {
+              const total = localStorage.getItem("cartTotal") || "0.00";
+              document.getElementById("totalAmount").textContent = total;
+            });
+        </script>
+
+        <hr>
+        <!-- <div class="address-info">
+            Faasos – Wraps, Rolls & Shawarma | Delivery in: 39 mins<br>
+            Home | 534, Tikoniya Park, B-553, Suresh Nagar Colony, Thatipur, Gwalior, Madhya Pradesh 474011, India
+        </div> -->
+        <div class="address-info">
+          <%= restaurant.name %> | Delivery in: 39 mins<br>
+          <%= address.houseNo %>, <%= address.street %>, <%= address.city %>, <%= address.state %> - <%= address.pincode %>
+        </div>
+
+        <div class="offer">
+            <i class="fas fa-percent"></i>
+            Save upto ₹58 more with payment offers
+        </div>
+
+        <div id="paymentOptions">
+            <div class="payment-section">Pay by any UPI App</div>
+            <div class="payment-option">
+                <div class="left">
+                    <i class="fas fa-plus-circle" style="color:#ff5722;"></i>
+                    <div>
+                        <div class="title">Add New UPI ID</div>
+                        <div class="subtitle">You need to have a registered UPI ID</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="payment-section">Credit & Debit Cards</div>
+            <div class="payment-option">
+                <div class="left">
+                    <i class="fas fa-plus-circle" style="color:#ff5722;"></i>
+                    <div>
+                        <div class="title">Add New Card</div>
+                        <div class="subtitle">Save and Pay via Cards.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="payment-section">More Payment Options</div>
+
+            <!-- Pluxee -->
+            <div class="payment-option">
+                <div class="left">
+                    <i class="fas fa-ticket-alt"></i>
+                    <div>
+                        <div class="title">Pluxee</div>
+                        <div class="subtitle">Pluxee card valid only on Food & Instamart</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right arrow"></i>
+            </div>
+
+            <!-- Wallets -->
+            <div class="payment-option">
+                <div class="left">
+                    <i class="fas fa-wallet"></i>
+                    <div>
+                        <div class="title">Wallets</div>
+                        <div class="subtitle">PhonePe, Amazon Pay & more</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right arrow"></i>
+            </div>
+
+            <!-- Netbanking -->
+            <div class="payment-option">
+                <div class="left">
+                    <i class="fas fa-university"></i>
+                    <div>
+                        <div class="title">Netbanking</div>
+                        <div class="subtitle">Select from a list of banks</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right arrow"></i>
+            </div>
+
+            <!-- Pay on Delivery -->
+            <div class="payment-option" id="payOnDelivery">
+                <div class="left">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <div>
+                        <div class="title">Pay on Delivery</div>
+                        <div class="subtitle">Pay in cash or pay online.</div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right arrow"></i>
+            </div>
+        </div>
+
+        <!-- Pay on Delivery Box -->
+        <div class="pod-box" id="podBox">
+            <div class="pod-option">
+                <input type="radio" id="cashOption" name="pod">
+                <label for="cashOption">Pay on Delivery (Cash/UPI)</label>
+                
+            </div>
+            <p>Pay cash or ask for QR code</p>
+            <a href="/payment/success" class="pay-cash" id="payCashLine"> <b>Pay with Cash</b></a>
+            <script>
+            // 💰 Function to show or update the amount
+            function updatePayAmount() {
+              const payCashLine = document.getElementById("payCashLine");
+              let total = localStorage.getItem("cartTotal") || "0.00";
+            
+              // If first time loading, show the box
+              if (payCashLine.style.display === "none") {
+                payCashLine.style.display = "block";
+              }
+            
+              // Update amount text
+              payCashLine.innerHTML = `<b>Pay with Cash – ₹${total}</b>`;
+            
+              // 🌟 Add flash animation
+              payCashLine.classList.add("flash");
+            
+              // Remove flash class after animation duration
+              setTimeout(() => {
+                payCashLine.classList.remove("flash");
+              }, 500);
+            }
+            
+            // Run once on page load
+            updatePayAmount();
+            
+            // Listen for localStorage changes (from cart page)
+            window.addEventListener("storage", (e) => {
+              if (e.key === "cartTotal") {
+                updatePayAmount();
+              }
+            });
+            </script>
+           
+            <div class="back-btn" id="backBtn"><i class="fas fa-arrow-left"></i> Back to Payment Options</div>
+        </div>
+    </div>
+
+    <script>
+        const payOnDelivery = document.getElementById("payOnDelivery");
+        const paymentOptions = document.getElementById("paymentOptions");
+        const podBox = document.getElementById("podBox");
+        const backBtn = document.getElementById("backBtn");
+        const cashOption = document.getElementById("cashOption");
+        const payCashLine = document.getElementById("payCashLine");
+        const order_info = document.querySelector(".order-info");
+        const address_info = document.querySelector(".address-info");
+        const offer = document.querySelector(".offer");
+
+
+        // When clicking Pay on Delivery
+        payOnDelivery.addEventListener("click", () => {
+            order_info.style.display = "none";
+            address_info.style.display = "none";
+            offer.style.display = "none";
+            paymentOptions.style.display = "none";
+
+            podBox.style.display = "block";
+        });
+
+        // Back to payment options
+        backBtn.addEventListener("click", () => {
+            podBox.style.display = "none";
+            paymentOptions.style.display = "block";
+            order_info.style.display = "block";
+            address_info.style.display = "block";
+            offer.style.display = "block";
+            cashOption.checked = false;
+            payCashLine.style.display = "none";
+        });
+
+        // Radio button click
+        cashOption.addEventListener("change", () => {
+            if (cashOption.checked) {
+                payCashLine.style.display = "block";
+            }
+        });
+    </script>
+</body>
+</html>

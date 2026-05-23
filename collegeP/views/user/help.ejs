@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Help & Support - DINEaus</title>
+  <meta name="description" content="Get help and support for your DINEaus orders, account, and more. Find answers to frequently asked questions.">
+  
+  <!-- SEO Meta Tags -->
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="DINEaus">
+  <link rel="canonical" href="https://dineaus.com/help">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+  
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.462.0/lucide.min.css">
+  <link rel="stylesheet" href="/css/user/help.css">
+
+</head>
+
+<body>
+  <%- include("../includes/flash") %>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-container">
+      <div class="logo">
+        DINE<span class="logo-accent">aus</span>
+      </div>
+
+      <nav class="nav">
+        <a href="#" class="nav-link">Get the app</a>
+        <a href="#" class="nav-link">Investor Relations</a>
+        <a href="/dineous-partner" class="nav-link">Add Restaurant</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="btn btn-ghost">
+          <i data-lucide="help-circle"></i>
+          Help
+        </button>
+        <% if (typeof user !== 'undefined' && user) { %>
+          <button class="btn btn-ghost"><i data-lucide="user"></i>
+            <a href="/profile">Profile</a>
+          </button>
+        <% } else { %>
+          <a href="#" class="btn btn-primary">
+            <i data-lucide="log-in"></i>
+            Sign up
+          </a>
+        <% } %>
+      </div>
+
+      <!-- <button class="hamburger" id="hamburger">
+        <div class="hamburger-line"></div>
+        <div class="hamburger-line"></div>
+        <div class="hamburger-line"></div>
+      </button> -->
+      <div class="hamburger" id="hamburger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+      <div class="logo">
+        DINE<span class="logo-accent">aus</span>
+      </div>
+      
+      <nav class="mobile-nav">
+        <a href="#" class="mobile-nav-link">Get the app</a>
+        <a href="#" class="mobile-nav-link">Investor Relations</a>
+        <a href="/dineous-partner" class="mobile-nav-link">Add Restaurant</a>
+      </nav>
+
+      <div class="mobile-actions">
+        <button class="btn btn-ghost">
+          <i data-lucide="help-circle"></i>
+          Help
+        </button>
+        <% if (typeof user !== 'undefined' && user) { %>
+          <button class="btn btn-ghost"><i data-lucide="user"></i><a href="/profile">
+            Profile</a>
+          </button>
+        <% } else { %>
+          <a href="#" class="btn btn-primary">
+            <i data-lucide="log-in"></i>
+            Sign up
+          </a>
+        <% } %>
+      </div>
+    </div>
+  </header>
+  
+    <div class="help-main">
+    <h2>Help & <span style="color: var(--primary);">Support</span></h2>
+    <h5>Here to Help, Anytime, Anywhere!</h5>
+  </div>
+
+  <!-- Main Content -->
+  <main class="main-container">
+    <div class="help-layout">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <nav class="sidebar-nav" id="sidebarNav">
+          <button class="sidebar-item active" data-section="orders">
+            <i data-lucide="receipt" class="sidebar-icon"></i>
+            Help with Orders
+          </button>
+          <button class="sidebar-item" data-section="foodin-faqs">
+            <i data-lucide="help-circle" class="sidebar-icon"></i>
+            DINEaus FAQs
+          </button>
+          <button class="sidebar-item" data-section="general-issues">
+            <i data-lucide="alert-circle" class="sidebar-icon"></i>
+            General Issues
+          </button>
+          <button class="sidebar-item" data-section="partner-onboarding">
+            <i data-lucide="handshake" class="sidebar-icon"></i>
+            Partner Onboarding
+          </button>
+          <button class="sidebar-item" data-section="safety-emergency">
+            <i data-lucide="shield" class="sidebar-icon"></i>
+            Report Safety Emergency
+          </button>
+          <button class="sidebar-item" data-section="legal-terms">
+            <i data-lucide="file-text" class="sidebar-icon"></i>
+            Legal, Terms & Conditions
+          </button>
+          <button class="sidebar-item" data-section="faqs">
+            <i data-lucide="info" class="sidebar-icon"></i>
+            FAQs
+          </button>
+          <button class="sidebar-item" data-section="money-faqs">
+            <i data-lucide="wallet" class="sidebar-icon"></i>
+            DINEaus Money FAQs
+          </button>
+          <button class="sidebar-item" data-section="dineout-faqs">
+            <i data-lucide="utensils" class="sidebar-icon"></i>
+            DINEaus Dineout FAQs
+          </button>
+        </nav>
+      </aside>
+
+      <!-- FAQ Content -->
+      <div id="faqContent">
+        <!-- FAQ sections will be populated by JavaScript -->
+      </div>
+    </div>
+  </main>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <script>
+    // FAQ Data
+    const faqData = {
+      "orders": {
+        title: "Help with Orders",
+        faqs: [
+          {
+            question: "Is there a limit on the number of devices I can use DINEaus One on?",
+            answer: "Yes. DINEaus One membership can be used only on 2 devices at a time from 8th Feb onwards. DINEaus One memberships are priced for individual and personal usage. Having a 2 device limit helps us curb disproportionate usage of benefits and ensures the sustainability of the pricing we offer to all our consumers."
+          },
+          {
+            question: "Is there a minimum order value to avail extra discount?",
+            answer: "Extra discounts with DINEaus One are auto-applied when you meet the minimum order value criteria of the restaurant. The minimum order value of each restaurant may vary from one restaurant to another. Please note that extra discounts are flat discounts with no upper limit which are exclusively available only for One members."
+          },
+          {
+            question: "Can I cancel, pause or transfer my membership?",
+            answer: "Currently, there is no means of cancelling/pausing/transferring your DINEaus One membership. We are working on this and will ensure we are able to serve you better in the near future."
+          },
+          {
+            question: "On which platforms can I use my DINEaus One benefits?",
+            answer: "DINEaus One benefits can be availed when ordering through Android, iOS and mobile web but not on desktop."
+          }
+        ]
+      },
+      "foodin-faqs": {
+        title: "DINEaus FAQs",
+        faqs: [
+          {
+            question: "What is DINEaus Customer Care Number?",
+            answer: "We value our customer's time and hence moved away from a single customer care number to a comprehensive chat-based support system for quick and easy resolution. You no longer have to go through the maze of an IVRS call support. Just search for your issue in the help section on this page and initiate a chat with us. A customer care executive will be assigned to you shortly."
+          },
+          {
+            question: "I am unable to find the restaurant I'm looking for",
+            answer: "The restaurant might either be closed at the moment or temporarily not serviceable due to the low rider availability near the restaurant. Please try again after some time or consider ordering from a different restaurant."
+          },
+          {
+            question: "I see surge fees on app",
+            answer: "Non-DINEaus one customer: Surge fee is generally enabled temporarily due to higher than expected demand to help us to fairly compensate the delivery executive. Explore our DINEaus one feature which eliminates surge fee along with other benefits."
+          }
+        ]
+      },
+      "general-issues": {
+        title: "General Issues",
+        faqs: [
+          {
+            question: "I did not receive my OTP on SMS",
+            answer: "If you're not receiving the OTP, it's usually due to a network issue. Please check your mobile network settings and try generating a new OTP. If the problem persists, you might want to restart your device or reach out to us at support@dineaus.com for assistance."
+          },
+          {
+            question: "App is crashing or not working properly",
+            answer: "Please try clearing the app cache, updating to the latest version, or reinstalling the app. If issues persist, contact our support team."
+          }
+        ]
+      },
+      "partner-onboarding": {
+        title: "Partner Onboarding",
+        faqs: [
+          {
+            question: "I want to partner my restaurant with DINEaus",
+            answer: "Please visit our partner portal or send an email to partners@dineaus.com with your restaurant details and we'll get back to you within 24 hours."
+          },
+          {
+            question: "What are the mandatory documents needed to list my restaurant?",
+            answer: "Copies of the below documents are mandatory - FSSAI Licence OR FSSAI Acknowledgement, Pan Card, GSTIN Certificate, Cancelled Cheque OR bank Passbook, Menu"
+          },
+          {
+            question: "After I submit all documents, how long will it take for my restaurant to go live?",
+            answer: "After all mandatory documents have been received and verified it takes up to 7-10 working days for the onboarding to be completed and make your restaurant live on the platform."
+          }
+        ]
+      },
+      "safety-emergency": {
+        title: "Report Safety Emergency",
+        faqs: [
+          {
+            question: "Report a Safety incident",
+            answer: "Please note: We will only be able to address safety-related emergencies here. For immediate emergencies, please contact local authorities first."
+          }
+        ]
+      },
+      "legal-terms": {
+        title: "Legal, Terms & Conditions",
+        faqs: [
+          {
+            question: "Terms of Use",
+            answer: "These Terms of Use govern your use of www.dineaus.com and the DINEaus mobile application. By downloading, installing, or using the Services, you agree to these Terms of Use and our Privacy Policy."
+          },
+          {
+            question: "Privacy Policy",
+            answer: "We are fully committed to respecting your privacy and shall ensure that your personal information is safe with us. This privacy policy sets out the information practices including the type of information collected and how it's used."
+          },
+          {
+            question: "Cancellations and Refunds",
+            answer: "As a general rule, buyers shall not be entitled to cancel orders once placed. If a buyer cancels their order after placing it, DINEaus shall have the right to charge 100% of the order amount for breach of contract terms."
+          }
+        ]
+      },
+      "faqs": {
+        title: "FAQs",
+        faqs: [
+          {
+            question: "What is DINEaus Customer Care Number?",
+            answer: "We value our customer's time and hence moved away from a single customer care number to a comprehensive chat-based support system for quick and easy resolution."
+          },
+          {
+            question: "I entered the wrong CVV, why did my transaction still go through?",
+            answer: "The logic of validations of CVV resides with either payment gateways or banks. It is absolutely the choice of banks to have CVV as a mandatory input field or not."
+          },
+          {
+            question: "I want to explore career opportunities with DINEaus",
+            answer: "Please visit our careers page or send your resume to careers@dineaus.com"
+          }
+        ]
+      },
+      "money-faqs": {
+        title: "DINEaus Money FAQs",
+        faqs: [
+          {
+            question: "What are the latest changes on DINEaus Money?",
+            answer: "We recently launched a new DINEaus Money experience which comes with additional benefits to users. DINEaus Money will be powered by gift cards now."
+          },
+          {
+            question: "How do I add DINEaus Money balance in my account?",
+            answer: "You can claim the DINEaus Money vouchers purchased from 3rd party apps or received from your friends, employers etc. on DINEaus app."
+          },
+          {
+            question: "Where can I use DINEaus Money balance?",
+            answer: "DINEaus Money can be used to pay for the orders across different categories on DINEaus (Food, Instamart, DineOut, etc.)."
+          }
+        ]
+      },
+      "dineout-faqs": {
+        title: "DINEaus Dineout FAQs",
+        faqs: [
+          {
+            question: "What is DINEaus Dineout?",
+            answer: "DINEaus Dineout helps its users discover the best restaurants with exclusive offers near them. All users can avail special restaurant discounts of up to 40%."
+          },
+          {
+            question: "How do I claim a walk-in offer?",
+            answer: "To avail a DINEaus Dineout offer, you would need to pay your dining bill at the restaurant using the DINEaus app."
+          },
+          {
+            question: "What is a pre-book offer?",
+            answer: "A pre-book offer is a reservation that allows you to book a table in advance while also enjoying a guaranteed discount."
+          },
+          {
+            question: "How do I redeem the pre-book offer that I have purchased?",
+            answer: "You can redeem an offer by ensuring to arrive at the restaurant within your booked time slot, showing your pre-book offer details, and paying the bill using DINEaus Dineout."
+          }
+        ]
+      }
+    };
+
+    // DOM Elements
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const sidebarNav = document.getElementById('sidebarNav');
+    const faqContent = document.getElementById('faqContent');
+
+    // Mobile Menu Toggle
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('active');
+      mobileMenu.classList.toggle('active');
+      document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+    });
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (window.innerWidth <= 768 && mobileMenu.classList.contains('active')) {
+        if (!mobileMenu.contains(e.target) && !hamburger.contains(e.target)) {
+          hamburger.classList.remove('active');
+          mobileMenu.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      }
+    });
+
+    // Create FAQ Container
+    function createFAQContainer(sectionKey) {
+      const section = faqData[sectionKey];
+      if (!section) return '';
+
+      const faqItems = section.faqs.map(faq => `
+        <div class="faq-item">
+          <button class="faq-question" type="button">
+            ${faq.question}
+            <span class="faq-arrow">▼</span>
+          </button>
+          <div class="faq-answer">
+            ${faq.answer}
+          </div>
+        </div>
+      `).join('');
+
+      return `
+        <div class="faq-container active" id="faq-${sectionKey}">
+          <h2 class="faq-title">${section.title}</h2>
+          ${faqItems}
+        </div>
+      `;
+    }
+
+    // Initialize FAQ Content
+    function initializeFAQ() {
+      // Load initial section (orders)
+      faqContent.innerHTML = createFAQContainer('orders');
+      
+      // Add FAQ toggle functionality
+      addFAQToggleListeners();
+    }
+
+    // Add FAQ Toggle Event Listeners
+    function addFAQToggleListeners() {
+      const faqQuestions = document.querySelectorAll('.faq-question');
+      
+      faqQuestions.forEach(question => {
+        question.addEventListener('click', () => {
+          const faqItem = question.closest('.faq-item');
+          const isOpen = faqItem.classList.contains('open');
+          
+          // Close all FAQ items in the current container
+          const container = question.closest('.faq-container');
+          container.querySelectorAll('.faq-item').forEach(item => {
+            item.classList.remove('open');
+          });
+          
+          // Toggle current item
+          if (!isOpen) {
+            faqItem.classList.add('open');
+          }
+        });
+      });
+    }
+
+    // Sidebar Navigation
+    sidebarNav.addEventListener('click', (e) => {
+      const sidebarItem = e.target.closest('.sidebar-item');
+      if (!sidebarItem) return;
+
+      const sectionKey = sidebarItem.dataset.section;
+      
+      // Update active sidebar item
+      document.querySelectorAll('.sidebar-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      sidebarItem.classList.add('active');
+      
+      // Update FAQ content
+      faqContent.innerHTML = createFAQContainer(sectionKey);
+      addFAQToggleListeners();
+      
+      // Scroll to FAQ content on mobile
+      if (window.innerWidth <= 1024) {
+        setTimeout(() => {
+          faqContent.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start' 
+          });
+        }, 100);
+      }
+    });
+
+    // Initialize the app
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize Lucide icons
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+      }
+      
+      // Initialize FAQ
+      initializeFAQ();
+    });
+  </script>
+</body>
+</html>

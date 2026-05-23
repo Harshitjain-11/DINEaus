@@ -1,0 +1,196 @@
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --orange:    #FF6B1A;
+      --orange-lt: #FF8C42;
+      --orange-dk: #D44E0A;
+      --text:      #1C1008;
+      --muted:     #7C5C46;
+      --bg:        #FFF4EC;
+      --surface:   #FFFFFF;
+      --tint:      #FFF8F3;
+      --tint2:     #FFF0E4;
+      --bdr:       rgba(210,90,30,.14);
+      --bdr2:      rgba(210,90,30,.28);
+      --green:     #16a34a;
+      --green-bg:  #f0fdf4;
+      --green-bdr: rgba(22,163,74,.20);
+      --grad:      linear-gradient(135deg, #FF8C42 0%, #D44E0A 100%);
+      --grad-g:    linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      --sh2:       0 4px 24px rgba(210,78,10,.10), 0 1px 4px rgba(0,0,0,.05);
+      --shbtn:     0 4px 14px rgba(210,78,10,.28);
+      --shbtn-g:   0 4px 14px rgba(22,163,74,.28);
+      --r-lg:      22px;
+      --t:         .22s cubic-bezier(.4,0,.2,1);
+    }
+
+    html, body {
+      min-height: 100vh;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    /* ambient warm glow */
+    body::before {
+      content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background:
+        radial-gradient(ellipse 60% 40% at 95% 5%,  rgba(255,140,66,.13) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 38% at 5%  95%, rgba(210,78,10,.08)  0%, transparent 52%),
+        radial-gradient(ellipse 55% 45% at 50% 50%, rgba(34,197,94,.06)  0%, transparent 60%);
+    }
+
+    /* ── SUCCESS BOX ── */
+    .success-box {
+      background: var(--surface);
+      border: 1px solid var(--bdr);
+      border-radius: var(--r-lg);
+      padding: 44px 40px 36px;
+      text-align: center;
+      box-shadow: var(--sh2);
+      width: 100%;
+      max-width: 460px;
+      position: relative;
+      overflow: hidden;
+      animation: slideUp .5s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    /* top accent stripe */
+    .success-box::before {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 4px;
+      background: var(--grad-g);
+      border-radius: var(--r-lg) var(--r-lg) 0 0;
+    }
+
+    /* ── TICK ICON ── */
+    .tick-wrap {
+      width: 72px; height: 72px;
+      margin: 0 auto 20px;
+      background: var(--green-bg);
+      border: 2px solid var(--green-bdr);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      animation: popIn .5s .2s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    .tick-wrap svg {
+      width: 34px; height: 34px;
+      stroke: var(--green); stroke-width: 3;
+      fill: none; stroke-linecap: round; stroke-linejoin: round;
+    }
+    .tick-path {
+      stroke-dasharray: 60;
+      stroke-dashoffset: 60;
+      animation: drawTick .45s .5s ease forwards;
+    }
+
+    /* ── HEADINGS ── */
+    .success-box h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.75rem; font-weight: 800;
+      color: var(--green);
+      margin-bottom: 10px; line-height: 1.2;
+    }
+
+    .success-box p {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: .9rem; font-weight: 500;
+      line-height: 1.6;
+    }
+
+    /* ── ORDER ID CHIP ── */
+    .order-id-chip {
+      display: inline-flex; align-items: center; gap: 8px;
+      margin: 20px auto 0;
+      background: var(--tint2);
+      border: 1px solid var(--bdr2);
+      border-radius: 50px;
+      padding: 8px 18px;
+      font-size: .8rem; font-weight: 700;
+      color: var(--orange-dk); letter-spacing: .04em;
+    }
+    .order-id-chip span { color: var(--muted); font-weight: 500; }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px; background: var(--bdr);
+      margin: 24px 0;
+    }
+
+    /* ── BUTTONS ── */
+    .btn-group {
+      display: flex; flex-direction: column; gap: 10px;
+    }
+
+    .success-box button {
+      width: 100%;
+      padding: 13px 24px;
+      border: none; border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700; font-size: .88rem;
+      letter-spacing: .03em; cursor: pointer;
+      transition: all var(--t);
+    }
+
+    /* Track Order — primary orange */
+    button[onclick*="track-order"] {
+      background: var(--grad);
+      color: #fff;
+      box-shadow: var(--shbtn);
+    }
+    button[onclick*="track-order"]:hover {
+      filter: brightness(1.08);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 22px rgba(210,78,10,.26);
+    }
+
+    /* Go to Home — ghost */
+    button[onclick*="/home"] {
+      background: var(--tint);
+      color: var(--muted);
+      border: 1.5px solid var(--bdr);
+    }
+    button[onclick*="/home"]:hover {
+      background: var(--tint2);
+      color: var(--orange-dk);
+      border-color: var(--bdr2);
+      transform: translateY(-1px);
+    }
+
+    button:active { transform: translateY(0) !important; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(.6); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    @keyframes drawTick {
+      to { stroke-dashoffset: 0; }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 480px) {
+      .success-box { padding: 36px 24px 28px; border-radius: 18px; }
+      .success-box h2 { font-size: 1.5rem; }
+      .tick-wrap { width: 62px; height: 62px; }
+      .tick-wrap svg { width: 28px; height: 28px; }
+    }
+    @media (max-width: 360px) {
+      .success-box { padding: 28px 16px 22px; }
+      .success-box h2 { font-size: 1.3rem; }
+      .success-box button { font-size: .83rem; padding: 11px; }
+    }

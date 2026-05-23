@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dineous</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/user/home.css">
+</head>
+
+<body>
+
+<%- include("../includes/flash") %>
+<%- include("../includes/navbar") %>
+
+<main>
+
+    <!-- ========== HERO SLIDER (video preserved) ========== -->
+    <section class="hero-slider">
+        <div class="slider-wrapper">
+            <!-- Slide 1 : VIDEO -->
+            <div class="slide active">
+                <video autoplay muted loop playsinline>
+                    <source src="sliding-video.mp4" type="video/mp4">
+                </video>
+                <div class="slide-overlay">
+                    <div class="slide-content">
+                        <span class="slide-badge">Crafted with Passion</span>
+                        <h1 class="slide-title">Master Chefs</h1>
+                        <p class="slide-description">Our expert chefs bring decades of culinary mastery to create unforgettable dining experiences</p>
+                        <div class="slide-buttons">
+                            <button class="slide-btn slide-btn-primary">Meet Our Team</button>
+                            <button class="slide-btn slide-btn-secondary">View Menu</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 2 -->
+            <div class="slide">
+                <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1920&q=80" alt="Signature Burgers">
+                <div class="slide-overlay">
+                    <div class="slide-content">
+                        <span class="slide-badge">Best Sellers</span>
+                        <h1 class="slide-title">Signature Burgers</h1>
+                        <p class="slide-description">Handcrafted burgers made with premium ingredients and secret sauces</p>
+                        <div class="slide-buttons">
+                            <button class="slide-btn slide-btn-primary">Order Now</button>
+                            <button class="slide-btn slide-btn-secondary">Explore Menu</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 3 -->
+            <div class="slide">
+                <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=1920&q=80" alt="Authentic Biryani">
+                <div class="slide-overlay">
+                    <div class="slide-content">
+                        <span class="slide-badge">Traditional Recipe</span>
+                        <h1 class="slide-title">Authentic Biryani</h1>
+                        <p class="slide-description">Experience the rich flavors of traditional biryani</p>
+                        <div class="slide-buttons">
+                            <button class="slide-btn slide-btn-primary">Order Now</button>
+                            <button class="slide-btn slide-btn-secondary">See Reviews</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Slide 4 -->
+            <div class="slide">
+                <img src="https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?w=1920&q=80" alt="Chef Cooking">
+                <div class="slide-overlay">
+                    <div class="slide-content">
+                        <span class="slide-badge">Chef's Special</span>
+                        <h1 class="slide-title">Live Kitchen Experience</h1>
+                        <p class="slide-description">Watch our chefs in action as they prepare dishes with precision, passion, and perfection</p>
+                        <div class="slide-buttons">
+                            <button class="slide-btn slide-btn-primary">Explore Kitchen</button>
+                            <button class="slide-btn slide-btn-secondary">Book a Table</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slider-nav slider-nav-prev" onclick="changeSlide(-1)"><i class="fas fa-chevron-left"></i></div>
+        <div class="slider-nav slider-nav-next" onclick="changeSlide(1)"><i class="fas fa-chevron-right"></i></div>
+        <div class="slider-indicators">
+            <span class="indicator active" onclick="goToSlide(0)"></span>
+            <span class="indicator"        onclick="goToSlide(1)"></span>
+            <span class="indicator"        onclick="goToSlide(2)"></span>
+            <span class="indicator"        onclick="goToSlide(3)"></span>
+        </div>
+    </section>
+
+    <!-- ========== DEALS ========== -->
+    <section class="deals-section">
+        <h2>Today's Hot Deals</h2>
+        <div class="deals-slider-wrapper">
+            <div class="deals-slider" id="dealsSlider">
+                <div class="deal-card">
+                    <img src="deal-pizza-delivery.jpg" alt="Free Delivery">
+                    <div class="deal-overlay">
+                        <div>
+                            <span class="deal-badge">Save ₹299</span>
+                            <h3 class="deal-title">Free Delivery</h3>
+                            <span class="deal-code">Use Code: FREEDEL</span>
+                        </div>
+                        <button class="deal-btn">Order Now</button>
+                    </div>
+                </div>
+                <div class="deal-card">
+                    <img src="deal-dessert-bogo.jpg" alt="Buy 1 Get 1">
+                    <div class="deal-overlay">
+                        <div>
+                            <span class="deal-badge">On All Desserts</span>
+                            <h3 class="deal-title">Buy 1 Get 1 Free</h3>
+                            <span class="deal-code">Use Code: SWEET2X</span>
+                        </div>
+                        <button class="deal-btn">Order Now</button>
+                    </div>
+                </div>
+                <div class="deal-card">
+                    <img src="deal-upi-payment.jpg" alt="20% Cashback">
+                    <div class="deal-overlay">
+                        <div>
+                            <span class="deal-badge">Pay with UPI</span>
+                            <h3 class="deal-title">20% Cashback</h3>
+                            <span class="deal-code">Use Code: UPISAVE</span>
+                        </div>
+                        <button class="deal-btn">Order Now</button>
+                    </div>
+                </div>
+                <div class="deal-card">
+                    <img src="deal-first-order.jpg" alt="50% Off">
+                    <div class="deal-overlay">
+                        <div>
+                            <span class="deal-badge">First Order</span>
+                            <h3 class="deal-title">50% OFF</h3>
+                            <span class="deal-code">Use Code: FIRST50</span>
+                        </div>
+                        <button class="deal-btn">Order Now</button>
+                    </div>
+                </div>
+            </div>
+            <div class="deals-nav deals-nav-prev" onclick="scrollDeals(-1)"><i class="fas fa-chevron-left"></i></div>
+            <div class="deals-nav deals-nav-next" onclick="scrollDeals(1)"><i class="fas fa-chevron-right"></i></div>
+        </div>
+    </section>
+
+    <!-- ========== FOOD CATEGORIES (Lovable sticker style) ========== -->
+    <div class="food-img-section">
+        <% if(user){ %>
+        <h3><%= user.firstname %>, what's on your mind?</h3>
+        <% } else { %>
+        <h3>What's on your mind?</h3>
+        <% } %>
+        <div class="food-img">
+            <div class="food"><div class="sticker-wrap"><img src="Pizza.png"           alt="Pizza"></div>       <h3>Pizza</h3></div>
+            <div class="food"><div class="sticker-wrap"><img src="Biryani.png"         alt="Biryani"></div>     <h3>Biryani</h3></div>
+            <div class="food"><div class="sticker-wrap"><img src="Burger.png"          alt="Burger"></div>      <h3>Burger</h3></div>
+            <div class="food"><div class="sticker-wrap"><img src="Chinese.png"         alt="Chinese"></div>     <h3>Chinese</h3></div>
+            <div class="food"><div class="sticker-wrap"><img src="Chole Bhature.png"  alt="Chole Bhature"></div><h3>Chole B.</h3></div>
+            <div class="food"><div class="sticker-wrap"><img src="Dosa.png"            alt="Dosa"></div>        <h3>Dosa</h3></div>
+            <div class="food"><div class="sticker-wrap"><img src="Noodles.png"        alt="Noodles"></div>     <h3>Noodles</h3></div>
+            <div class="food"><div class="sticker-wrap"><img src="NorthIndian.png"     alt="North Indian"></div><h3>N. Indian</h3></div>
+            <div class="food"><div class="sticker-wrap"><img src="Rolls.png"           alt="Rolls"></div>       <h3>Rolls</h3></div>
+            <div class="food"><div class="sticker-wrap"><img src="Momos.png"           alt="Momos"></div>       <h3>Momos</h3></div>
+            <div class="food"><div class="sticker-wrap"><img src="Cake.png"            alt="Desserts"></div>    <h3>Desserts</h3></div>
+            <div class="food"><div class="sticker-wrap"><img src="French Fries.png"        alt="French Fries"></div>    <h3>French Fries</h3></div>
+            <div class="food"><div class="sticker-wrap"><img src="Samosa.png"            alt="Samosa"></div>    <h3>Samosa</h3></div>
+            <div class="food"><div class="sticker-wrap"><img src="Itli.png"            alt="Itli"></div>    <h3>Itli</h3></div>
+            <div class="food"><div class="sticker-wrap"><img src="Platters.png"            alt="Platters"></div>    <h3>Platters</h3></div>
+            <div class="food"><div class="sticker-wrap"><img src="Paneer Tikka.png"            alt="Paneer Tikka"></div>    <h3>Paneer Tikka</h3></div>
+            <div class="food"><div class="sticker-wrap"><img src="Coffee.png"            alt="Coffee"></div>    <h3>Coffee</h3></div>
+            <div class="food"><div class="sticker-wrap"><img src="Dhokla.png"            alt="Dhokla"></div>    <h3>Dhokla</h3></div>
+            <div class="food"><div class="sticker-wrap"><img src="SandWitch.png"            alt="Dhokla"></div>    <h3>SandWitch</h3></div>
+
+        </div>
+    </div>
+
+    <!-- ========== TOP RESTAURANT CHAINS ========== -->
+    <h2 class="section-heading">Top restaurant chains in Gwalior</h2>
+    <div class="restaurant-container-top">
+        <% restaurants.forEach((restaurant) => { %>
+        <a href="/restaurant/<%= restaurant.id %>">
+            <div class="card">
+                <div class="card-image">
+                    <img src="<%= restaurant.image_url %>" alt="<%= restaurant.name %>">
+                </div>
+                <div class="card-content">
+                    <h3><%= restaurant.name %></h3>
+                    <p class="rating-time">⭐ 4.4 • 35-40 mins</p>
+                    <p><%= restaurant.cuisines %></p>
+                    <p><%= restaurant.location %></p>
+                </div>
+            </div>
+        </a>
+        <% }) %>
+    </div>
+
+    <hr style="border:none;border-top:1px solid #ebebeb;margin:0 20px;">
+    <h2 class="section-heading">Restaurants with online food delivery in Gwalior</h2>
+
+    <!-- ========== FILTER BAR (Lovable chips + FA icons, existing functionality) ========== -->
+    <div class="filter-bar">
+        <div class="filter-button" id="filter">
+            <i class="fas fa-sliders-h"></i>
+            <span>Filter</span>
+        </div>
+
+        <div class="sort-wrapper">
+            <button class="sort-btn" onclick="toggleSortMenu()">
+                <i class="fas fa-sort-amount-down"></i>
+                Sort By
+                <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="sort-menu" id="sortMenu">
+                <label><input type="radio" name="sort" checked> Relevance (Default)</label>
+                <label><input type="radio" name="sort" id="sortDelivery"> Delivery Time</label>
+                <label><input type="radio" name="sort" id="sortRating"> Rating</label>
+                <label><input type="radio" name="sort"> Cost: Low to High</label>
+                <label><input type="radio" name="sort"> Cost: High to Low</label>
+                <button class="apply-sort">Apply</button>
+            </div>
+        </div>
+
+        <div class="filter-button" onclick="toggleFastDeliveryFilter()">
+            <i class="fas fa-bolt"></i>
+            Fast Delivery
+            <span id="fastDeliveryClose" style="display:none;cursor:pointer;margin-left:2px;" onclick="event.stopPropagation();resetFastDeliveryFilter()">✕</span>
+        </div>
+
+        <div class="filter-button" onclick="toggleExploreFilter()">
+            <i class="fas fa-star"></i>
+            New on Dineous
+            <span id="exploreClose" style="display:none;cursor:pointer;margin-left:2px;" onclick="event.stopPropagation();resetExploreFilter()">✕</span>
+        </div>
+
+        <div class="filter-button" id="ratingFilterBtn" onclick="toggleRatingFilter()">
+            <i class="fas fa-star" style="color:#f59e0b;"></i>
+            Ratings 4.0+
+            <span id="ratingClose" style="display:none;cursor:pointer;margin-left:2px;" onclick="event.stopPropagation();resetRatingFilter()">✕</span>
+        </div>
+
+        <div class="filter-button">
+            <i class="fas fa-leaf" style="color:#22c55e;"></i>
+            Pure Veg
+        </div>
+
+        <div class="filter-button" onclick="toggleOfferFilter()">
+            <i class="fas fa-tag"></i>
+            Offers
+            <span id="offerClose" style="display:none;cursor:pointer;margin-left:2px;" onclick="event.stopPropagation();resetOfferFilter()">✕</span>
+        </div>
+    </div>
+
+    <!-- ========== RESTAURANT LIST ========== -->
+    <div class="restaurant-container">
+        <% restaurants.forEach((restaurant) => { %>
+        <a href="/restaurant/<%= restaurant.id %>">
+            <div class="card">
+                <div class="card-image">
+                    <img src="<%= restaurant.image_url %>" alt="<%= restaurant.name %>">
+                </div>
+                <div class="card-content">
+                    <h3><%= restaurant.name %></h3>
+                    <p class="rating-time">⭐ 4.4 • 35-40 mins</p>
+                    <p><%= restaurant.cuisines %></p>
+                    <p><%= restaurant.location %></p>
+                </div>
+            </div>
+        </a>
+        <% }) %>
+        <a href="#">
+            <div class="card">
+                <div class="card-image">
+                    <img src="https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_660/RX_THUMBNAIL/IMAGES/VENDOR/2025/3/17/da8f751e-e68d-40f3-9147-c8e22111cd53_979595.jpg" alt="CakeZone">
+                </div>
+                <div class="offer-badge">60% OFF UPTO ₹20</div>
+                <div class="card-content">
+                    <h3>CakeZone Patisserie</h3>
+                    <p class="rating-time">⭐ 4.5 • 20-25 mins</p>
+                    <p>Bakery, Desserts, Beverages</p>
+                    <p>KAILASH VIHAR</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- ========== CUISINE GRIDS ========== -->
+    <h2 class="section-heading">🌟 Best Places to Eat Across Cities</h2>
+    <div class="cuisine-grid">
+        <div class="cuisine-card">Best Restaurants in Bangalore</div>
+        <div class="cuisine-card">Best Restaurants in Pune</div>
+        <div class="cuisine-card">Best Restaurants in Mumbai</div>
+        <div class="cuisine-card">Best Restaurants in Delhi</div>
+        <div class="cuisine-card">Best Restaurants in Hyderabad</div>
+        <div class="cuisine-card">Best Restaurants in Kolkata</div>
+        <div class="cuisine-card">Best Restaurants in Chennai</div>
+        <div class="cuisine-card">Best Restaurants in Chandigarh</div>
+        <div class="cuisine-card">Best Restaurants in Ahmedabad</div>
+        <div class="cuisine-card">Best Restaurants in Jaipur</div>
+        <div class="cuisine-card">Best Restaurants in Nagpur</div>
+        <div class="cuisine-card">Show More ➜</div>
+    </div>
+
+    <h2 class="section-heading">🍲 Best Cuisines Near You</h2>
+    <div class="cuisine-grid">
+        <div class="cuisine-card">Chinese Restaurant Near Me</div>
+        <div class="cuisine-card">South Indian Restaurant Near Me</div>
+        <div class="cuisine-card">Indian Restaurant Near Me</div>
+        <div class="cuisine-card">Kerala Restaurant Near Me</div>
+        <div class="cuisine-card">Korean Restaurant Near Me</div>
+        <div class="cuisine-card">North Indian Restaurant Near Me</div>
+        <div class="cuisine-card">Seafood Restaurant Near Me</div>
+        <div class="cuisine-card">Bengali Restaurant Near Me</div>
+        <div class="cuisine-card">Punjabi Restaurant Near Me</div>
+        <div class="cuisine-card">Italian Restaurant Near Me</div>
+        <div class="cuisine-card">Andhra Restaurant Near Me</div>
+        <div class="cuisine-card">Show More ➜</div>
+    </div>
+
+</main>
+
+<!-- ========== FOOTER ========== -->
+<footer class="footer">
+    <div class="app-buttons">
+        <h3>For better experience, download the Dineous app now</h3>
+        <img src="/common-images/Google_Play_Store_badge_EN.svg" alt="Google Play">
+        <img src="/common-images/download-on-the-app-store.svg" alt="App Store">
+    </div>
+    <div class="footer-content">
+        <div class="footer-logo">
+            <span class="brand">DINEaus</span>
+            <span class="tagline">Taste the city</span>
+            <div class="copyright">© 2025 DINEaus Limited<br>All rights reserved.</div>
+        </div>
+        <div class="footer-section">
+            <h4>Company</h4>
+            <ul>
+                <li>About Us</li><li>Careers</li><li>Team</li>
+                <li>Dineous One</li><li>Dineous Dineout</li><li>Minis</li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h4>Contact us</h4>
+            <ul>
+                <li>Help &amp; Support</li>
+                <li><a href="/dineous-partner">Partner with us</a></li>
+                <li>Ride with us</li>
+            </ul>
+            <h4 style="margin-top:28px;">Legal</h4>
+            <ul>
+                <li>Terms &amp; Condition</li><li>Cookies Policy</li>
+                <li>Privacy Policy</li><li>Investor Relations</li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h4>Available in:</h4>
+            <ul>
+                <li>Bangalore</li><li>Gurgaon</li><li>Hyderabad</li>
+                <li>Delhi</li><li>Mumbai</li><li>Pune</li>
+            </ul>
+            <select class="city-select">
+                <option selected disabled>679 cities</option>
+                <option>Bangalore</option><option>Mumbai</option>
+                <option>Delhi</option><option>Chennai</option><option>Hyderabad</option>
+            </select>
+        </div>
+        <div class="footer-section">
+            <h4>Life at Dineous</h4>
+            <ul>
+                <li>Explore with Dineous</li><li>Dineous News</li><li>Snackables</li>
+            </ul>
+            <h4 style="margin-top:24px;">Follow Us</h4>
+            <div class="social-links">
+                <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2025 DINEaus Limited · Made with ❤️ in India</p>
+        <p>Delivering happiness, one meal at a time 🍜</p>
+    </div>
+</footer>
+
+<!-- ========== FILTER PANEL (portal pattern — direct child of body) ========== -->
+<div class="filter-panel" id="filterPanel">
+    <div class="filter-header">
+        <span>Filter</span>
+        <button class="close-button" onclick="closeFilterPanel()">×</button>
+    </div>
+    <div class="filter-body">
+        <div class="filter-sidebar" id="filterSidebar">
+            <div class="filter-scroll">
+                <div id="sortButton">Sort</div>
+                <div id="deliveryButton">Delivery Time</div>
+                <div id="exploreButton">Explore</div>
+                <div id="cuisineButton">Cuisines</div>
+                <div id="ratingsButton">Ratings</div>
+                <div id="vegButton">Veg / NonVeg</div>
+                <div id="offerButton">Offers</div>
+                <div id="costButton">Cost for two</div>
+            </div>
+        </div>
+        <div class="filter-rightbar" id="filterRightbar">
+            <div class="filter-content" id="content1">
+                <h4>Sort By</h4>
+                <label><input type="radio" name="filterSort" checked> Relevance (Default)</label>
+                <label><input type="radio" class="filter-checkbox" name="filterSort"> Delivery Time</label>
+                <label><input type="radio" class="filter-checkbox" name="filterSort"> Rating</label>
+                <label><input type="radio" class="filter-checkbox" name="filterSort"> Cost: Low to High</label>
+                <label><input type="radio" class="filter-checkbox" name="filterSort"> Cost: High to Low</label>
+            </div>
+            <div class="filter-content" id="content2">
+                <h4>Filter By</h4>
+                <label><input type="checkbox" class="filter-checkbox" id="deliveryCheckbox"> Fast Delivery</label>
+            </div>
+            <div class="filter-content" id="content3">
+                <h4>Filter By</h4>
+                <label><input type="checkbox" class="filter-checkbox" id="exploreCheckbox"> New on Dineous</label>
+            </div>
+            <div class="filter-content" id="content4">
+                <h4>Filter by Cuisine</h4>
+                <label><input type="checkbox" class="filter-checkbox" name="Cuisines"> Afghani</label>
+                <label><input type="checkbox" class="filter-checkbox" name="Cuisines"> American</label>
+                <label><input type="checkbox" class="filter-checkbox" name="Cuisines"> Asian</label>
+                <label><input type="checkbox" class="filter-checkbox" name="Cuisines"> Bakery</label>
+            </div>
+            <div class="filter-content" id="content5">
+                <h4>Filter By</h4>
+                <label><input type="checkbox" class="filter-checkbox" name="Ratings"> Ratings 4.5+</label>
+                <label><input type="checkbox" class="filter-checkbox" id="rating4Checkbox" name="Ratings"> Ratings 4.0+</label>
+                <label><input type="checkbox" class="filter-checkbox" name="Ratings"> Ratings 3.5+</label>
+            </div>
+            <div class="filter-content" id="content6">
+                <h4>Filter By</h4>
+                <label><input type="radio" class="filter-checkbox" name="Veg"> Pure Veg</label>
+                <label><input type="radio" class="filter-checkbox" name="Veg"> Non Veg</label>
+            </div>
+            <div class="filter-content" id="content7">
+                <h4>Restaurants With</h4>
+                <label><input type="checkbox" class="filter-checkbox" id="offerCheckbox"> Offers</label>
+            </div>
+            <div class="filter-content" id="content8">
+                <h4>Filter By</h4>
+                <label><input type="checkbox" class="filter-checkbox" name="cost"> Rs. 300–Rs. 600</label>
+                <label><input type="checkbox" class="filter-checkbox" name="cost"> Greater than Rs. 600</label>
+                <label><input type="checkbox" class="filter-checkbox" name="cost"> Less than Rs. 300</label>
+            </div>
+        </div>
+    </div>
+    <div class="filter-actions" id="filterActions" style="display:none;">
+        <button onclick="clearFilters()">Clear Filters</button>
+        <button onclick="applyFilters()">Apply</button>
+    </div>
+</div>
+
+<div class="filter-overlay" id="filterOverlay" onclick="closeFilterPanel()"></div>
+
+<script>
+/* ========================= HERO SLIDER ========================= */
+let currentSlide = 0;
+const slides     = document.querySelectorAll('.slide');
+const indicators = document.querySelectorAll('.indicator');
+let slideInterval;
+
+function showSlide(index) {
+    slides.forEach((s, i) => {
+        s.classList.remove('active');
+        if (indicators[i]) indicators[i].classList.remove('active');
+    });
+    currentSlide = (index + slides.length) % slides.length;
+    slides[currentSlide].classList.add('active');
+    if (indicators[currentSlide]) indicators[currentSlide].classList.add('active');
+}
+function changeSlide(dir)  { showSlide(currentSlide + dir); resetSlideInterval(); }
+function goToSlide(i)      { showSlide(i);                  resetSlideInterval(); }
+function resetSlideInterval() {
+    clearInterval(slideInterval);
+    slideInterval = setInterval(() => showSlide(currentSlide + 1), 5000);
+}
+slideInterval = setInterval(() => showSlide(currentSlide + 1), 5000);
+document.addEventListener("visibilitychange", () => {
+    document.hidden ? clearInterval(slideInterval) : resetSlideInterval();
+});
+
+/* ========================= DEALS SLIDER ========================= */
+function scrollDeals(dir) {
+    const c = document.getElementById("dealsSlider");
+    if (c) c.scrollBy({ left: dir * 370, behavior: "smooth" });
+}
+
+/* ========================= SORT MENU ========================= */
+function toggleSortMenu() {
+    const menu = document.getElementById("sortMenu");
+    const btn  = document.querySelector(".sort-btn");
+    if (menu.classList.contains("show")) { menu.classList.remove("show"); return; }
+    const rect = btn.getBoundingClientRect();
+    menu.style.top  = (rect.bottom + 8) + "px";
+    menu.style.left = rect.left + "px";
+    menu.classList.add("show");
+}
+window.addEventListener("click", e => {
+    const btn  = document.querySelector(".sort-btn");
+    const menu = document.getElementById("sortMenu");
+    if (menu && btn && !menu.contains(e.target) && !btn.contains(e.target))
+        menu.classList.remove("show");
+});
+document.querySelector(".apply-sort").addEventListener("click", () => {
+    const sel = document.querySelector('.sort-menu input[name="sort"]:checked');
+    const con = document.querySelector(".restaurant-container");
+    if (!sel || !con) return;
+    const cards = Array.from(con.querySelectorAll(".card"));
+    const label = sel.parentElement.textContent.trim();
+    if (label.includes("Delivery")) {
+        cards.sort((a, b) => (parseInt(a.querySelector(".rating-time")?.innerText.split("•")[1]) || 99) -
+                             (parseInt(b.querySelector(".rating-time")?.innerText.split("•")[1]) || 99));
+    } else if (label.includes("Rating")) {
+        cards.sort((a, b) => (parseFloat(b.querySelector(".rating-time")?.innerText.split("⭐")[1]) || 0) -
+                             (parseFloat(a.querySelector(".rating-time")?.innerText.split("⭐")[1]) || 0));
+    }
+    cards.forEach(c => con.appendChild(c));
+    document.getElementById("sortMenu").classList.remove("show");
+});
+
+/* ========================= FILTER PANEL ========================= */
+const filterBtn     = document.getElementById("filter");
+const filterPanel   = document.getElementById("filterPanel");
+const filterOverlay = document.getElementById("filterOverlay");
+
+filterBtn.addEventListener("click", () => {
+    filterPanel.classList.add("show");
+    filterOverlay.classList.add("show");
+    document.body.classList.add("filter-open");
+    showContent('content1');
+    setActiveSidebar('sortButton');
+});
+function closeFilterPanel() {
+    filterPanel.classList.remove("show");
+    filterOverlay.classList.remove("show");
+    document.body.classList.remove("filter-open");
+}
+document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && filterPanel.classList.contains("show")) closeFilterPanel();
+});
+
+/* ========================= SIDEBAR TABS ========================= */
+function showContent(id) {
+    document.querySelectorAll(".filter-content").forEach(c => c.classList.remove("show"));
+    const el = document.getElementById(id); if (el) el.classList.add("show");
+}
+function setActiveSidebar(id) {
+    document.querySelectorAll(".filter-sidebar div").forEach(d => d.classList.remove("active"));
+    const el = document.getElementById(id); if (el) el.classList.add("active");
+}
+const sidebarMap = {
+    sortButton:"content1", deliveryButton:"content2", exploreButton:"content3",
+    cuisineButton:"content4", ratingsButton:"content5", vegButton:"content6",
+    offerButton:"content7", costButton:"content8"
+};
+Object.keys(sidebarMap).forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) btn.addEventListener("click", () => { showContent(sidebarMap[id]); setActiveSidebar(id); });
+});
+
+const checkboxes    = document.querySelectorAll('.filter-checkbox');
+const filterActions = document.getElementById('filterActions');
+checkboxes.forEach(cb => {
+    cb.addEventListener('change', () => {
+        filterActions.style.display = Array.from(checkboxes).some(c => c.checked) ? 'flex' : 'none';
+    });
+});
+
+/* ========================= APPLY / CLEAR ========================= */
+function clearFilters() {
+    checkboxes.forEach(cb => cb.checked = false);
+    filterActions.style.display = 'none';
+    if (isRatingFilterActive) resetRatingFilter();
+    if (isFastDeliveryActive) resetFastDeliveryFilter();
+    if (isoffer)              resetOfferFilter();
+    if (isexplore)            resetExploreFilter();
+    closeFilterPanel();
+}
+function applyFilters() {
+    document.getElementById('rating4Checkbox').checked   ? applyRatingFilter()       : (isRatingFilterActive && resetRatingFilter());
+    document.getElementById('deliveryCheckbox').checked  ? applyFastDeliveryFilter() : (isFastDeliveryActive && resetFastDeliveryFilter());
+    document.getElementById('offerCheckbox').checked     ? applyOfferFilter()        : (isoffer             && resetOfferFilter());
+    document.getElementById('exploreCheckbox').checked   ? applyExploreFilter()      : (isexplore           && resetExploreFilter());
+    closeFilterPanel();
+}
+
+/* ========================= FILTER COUNT ========================= */
+let activeFilterCount = 0;
+function updateFilterCount() {
+    const el = document.getElementById('filter');
+    el.innerHTML = activeFilterCount > 0
+        ? `<i class="fas fa-sliders-h"></i> <span>Filters (${activeFilterCount})</span>`
+        : `<i class="fas fa-sliders-h"></i> <span>Filter</span>`;
+}
+
+/* ========================= RATING FILTER ========================= */
+let isRatingFilterActive = false;
+function toggleRatingFilter() { isRatingFilterActive ? resetRatingFilter() : applyRatingFilter(); }
+function applyRatingFilter() {
+    document.querySelectorAll('.restaurant-container a').forEach(a => {
+        const card = a.querySelector('.card');
+        const r = parseFloat(card?.querySelector('.rating-time')?.innerText.split('⭐')[1]) || 0;
+        a.style.display = r >= 4.0 ? '' : 'none';
+    });
+    isRatingFilterActive = true; activeFilterCount++; updateFilterCount();
+    document.getElementById('ratingClose').style.display = 'inline';
+    const cb = document.getElementById('rating4Checkbox'); if (cb) cb.checked = true;
+    filterActions.style.display = 'flex';
+}
+function resetRatingFilter() {
+    document.querySelectorAll('.restaurant-container a').forEach(a => a.style.display = '');
+    isRatingFilterActive = false; activeFilterCount = Math.max(0, activeFilterCount-1); updateFilterCount();
+    document.getElementById('ratingClose').style.display = 'none';
+    const cb = document.getElementById('rating4Checkbox'); if (cb) cb.checked = false;
+    if (!Array.from(checkboxes).some(c => c.checked)) filterActions.style.display = 'none';
+}
+
+/* ========================= FAST DELIVERY FILTER ========================= */
+let isFastDeliveryActive = false;
+function toggleFastDeliveryFilter() { isFastDeliveryActive ? resetFastDeliveryFilter() : applyFastDeliveryFilter(); }
+function applyFastDeliveryFilter() {
+    document.querySelectorAll('.restaurant-container a').forEach(a => {
+        const card = a.querySelector('.card');
+        const t = parseInt(card?.querySelector('.rating-time')?.innerText.split('•')[1]?.trim().split('-')[0]) || 999;
+        a.style.display = t <= 30 ? '' : 'none';
+    });
+    isFastDeliveryActive = true; activeFilterCount++; updateFilterCount();
+    document.getElementById('fastDeliveryClose').style.display = 'inline';
+    const cb = document.getElementById('deliveryCheckbox'); if (cb) cb.checked = true;
+    filterActions.style.display = 'flex';
+}
+function resetFastDeliveryFilter() {
+    document.querySelectorAll('.restaurant-container a').forEach(a => a.style.display = '');
+    isFastDeliveryActive = false; activeFilterCount = Math.max(0, activeFilterCount-1); updateFilterCount();
+    document.getElementById('fastDeliveryClose').style.display = 'none';
+    const cb = document.getElementById('deliveryCheckbox'); if (cb) cb.checked = false;
+    if (!Array.from(checkboxes).some(c => c.checked)) filterActions.style.display = 'none';
+}
+
+/* ========================= OFFER FILTER ========================= */
+let isoffer = false;
+function toggleOfferFilter() { isoffer ? resetOfferFilter() : applyOfferFilter(); }
+function applyOfferFilter() {
+    document.querySelectorAll('.restaurant-container a').forEach(a => {
+        const t = a.querySelector('.offer-badge')?.innerText || "";
+        a.style.display = (t.includes("₹") || t.includes("%")) ? '' : 'none';
+    });
+    isoffer = true; activeFilterCount++; updateFilterCount();
+    document.getElementById('offerClose').style.display = 'inline';
+    const cb = document.getElementById('offerCheckbox'); if (cb) cb.checked = true;
+    filterActions.style.display = 'flex';
+}
+function resetOfferFilter() {
+    document.querySelectorAll('.restaurant-container a').forEach(a => a.style.display = '');
+    isoffer = false; activeFilterCount = Math.max(0, activeFilterCount-1); updateFilterCount();
+    document.getElementById('offerClose').style.display = 'none';
+    const cb = document.getElementById('offerCheckbox'); if (cb) cb.checked = false;
+    if (!Array.from(checkboxes).some(c => c.checked)) filterActions.style.display = 'none';
+}
+
+/* ========================= EXPLORE FILTER ========================= */
+let isexplore = false;
+function toggleExploreFilter() { isexplore ? resetExploreFilter() : applyExploreFilter(); }
+function applyExploreFilter() {
+    document.querySelectorAll('.restaurant-container a').forEach(a => {
+        const t = a.querySelector('.rating-time')?.innerText || "";
+        a.style.display = !t.includes("⭐") ? '' : 'none';
+    });
+    isexplore = true; activeFilterCount++; updateFilterCount();
+    document.getElementById('exploreClose').style.display = 'inline';
+    const cb = document.getElementById('exploreCheckbox'); if (cb) cb.checked = true;
+    filterActions.style.display = 'flex';
+}
+function resetExploreFilter() {
+    document.querySelectorAll('.restaurant-container a').forEach(a => a.style.display = '');
+    isexplore = false; activeFilterCount = Math.max(0, activeFilterCount-1); updateFilterCount();
+    document.getElementById('exploreClose').style.display = 'none';
+    const cb = document.getElementById('exploreCheckbox'); if (cb) cb.checked = false;
+    if (!Array.from(checkboxes).some(c => c.checked)) filterActions.style.display = 'none';
+}
+</script>
+
+<!-- DINEBOT -->
+<script>
+  window.DINEAUS_USER_ID = "<%= user ? user.id : 'guest_' + Date.now() %>";
+    window.DINEAUS_IS_LOGGED_IN = <%= user ? 'true' : 'false' %>;
+    window.DINEAUS_USER_NAME = "<%= user ? user.firstname : '' %>";
+</script>
+
+<button class="chat-toggle-btn" id="chat-toggle" aria-controls="chat-container" aria-expanded="false">
+  <img src="/chatbot/assets/bot-face.png" alt="DineBot"/>
+</button>
+
+<div class="chat-container" id="chat-container">
+  <div class="chat-header">
+    <div class="header-logo">
+      <img src="/chatbot/assets/bot-face.png" alt="DineBot"/>
+    </div>
+    <div class="header-info">
+      <h3>DineBot</h3>
+      <span>Your AI Food Assistant</span>
+    </div>
+    <div class="header-actions">
+      <button id="reset-btn" title="Reset">
+        <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+      </button>
+      <button id="minimize-btn" title="Minimize">
+        <svg viewBox="0 0 24 24"><path d="M19 13H5v-2h14v2z"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="info-banner">
+    DineBot — Order food, book tables & track orders!
+  </div>
+  <div class="chat-messages" id="chat-messages"></div>
+  <div class="chat-input">
+    <div class="input-row">
+      <input type="text" id="user-input" 
+             placeholder="Ask DineBot..." autocomplete="off">
+      <button id="mic-btn">🎤</button>
+      <button id="send-btn">➤</button>
+    </div>
+  </div>
+</div>
+
+<link rel="stylesheet" href="/chatbot/style.css">
+<script src="/chatbot/script.js"></script>
+<!-- END DINEBOT -->
+
+</body>
+</html>

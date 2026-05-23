@@ -1,0 +1,350 @@
+ *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0; padding: 0;
+        }
+
+        :root {
+            --orange-light: #FF8C42;
+            --orange-mid:   #FF6B1A;
+            --orange-deep:  #E84F0D;
+            --bg:           #FFF4EC;
+            --surface:      #FFFFFF;
+            --text-dark:    #1A1008;
+            --text-muted:   #8C6A55;
+            --border:       rgba(255,140,66,0.18);
+        }
+
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            min-height: 100vh;
+            overflow-x: hidden;
+            background:
+                radial-gradient(ellipse 70% 45% at 95% 0%, rgba(255,140,66,0.13) 0%, transparent 60%),
+                radial-gradient(ellipse 55% 40% at 0% 100%, rgba(232,79,13,0.08) 0%, transparent 55%),
+                var(--bg);
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text-dark);
+        }
+
+        /* ── TOPBAR ── */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255,244,236,0.92);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 36px;
+            height: 66px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-icon {
+            width: 38px; height: 38px;
+            background: linear-gradient(135deg, var(--orange-light), var(--orange-deep));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 14px rgba(232,79,13,0.32);
+            flex-shrink: 0;
+        }
+
+        .brand-icon svg {
+            width: 17px; height: 17px;
+            fill: #fff;
+        }
+
+        .brand-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .logout-link {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-decoration: none;
+            border: 1px solid var(--border);
+            padding: 7px 18px;
+            border-radius: 20px;
+            background: var(--surface);
+            transition: all 0.2s;
+            letter-spacing: 0.03em;
+        }
+
+        .logout-link:hover {
+            background: var(--orange-light);
+            color: #fff;
+            border-color: var(--orange-light);
+        }
+
+        /* ── FLASH TOAST — fixed top center, above everything ── */
+        .flash-container {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 999;
+            width: 100%;
+            max-width: 480px;
+            padding: 0 16px;
+            pointer-events: none;
+        }
+
+        .flash-container > * {
+            pointer-events: auto;
+        }
+
+        /* ── PAGE ── */
+        .page {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 36px 24px 64px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* ── WELCOME CARD ── */
+        .welcome-card {
+            background: var(--surface);
+            border-radius: 22px;
+            border: 1px solid var(--border);
+            box-shadow:
+                0 1px 0 rgba(255,255,255,0.9) inset,
+                0 8px 32px rgba(180,90,30,0.09);
+            padding: 28px 30px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            overflow: hidden;
+            animation: up 0.5s cubic-bezier(0.22,1,0.36,1) both;
+        }
+
+        @keyframes up {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Single letter avatar — fixed size, no overflow */
+        .avatar {
+            flex-shrink: 0;
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, var(--orange-light), var(--orange-deep));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+            box-shadow: 0 5px 16px rgba(232,79,13,0.3);
+            overflow: hidden;
+            line-height: 1;
+        }
+
+        .welcome-text {
+            min-width: 0;
+            flex: 1;
+        }
+
+        /* Heading — capped size so it doesn't overflow */
+        .welcome-text h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(1.1rem, 2.5vw, 1.45rem);
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1.25;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .welcome-text p {
+            font-size: clamp(0.76rem, 1.8vw, 0.84rem);
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-weight: 300;
+        }
+
+        /* ── INFO ROW ── */
+        .info-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            animation: up 0.5s 0.08s cubic-bezier(0.22,1,0.36,1) both;
+        }
+
+        .info-card {
+            background: var(--surface);
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 18px rgba(180,90,30,0.07);
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            overflow: hidden;
+            min-width: 0;
+        }
+
+        .info-icon {
+            width: 42px; height: 42px;
+            border-radius: 12px;
+            background: rgba(255,140,66,0.09);
+            border: 1px solid rgba(255,140,66,0.16);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            flex-shrink: 0;
+        }
+
+        .info-content {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .info-label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 3px;
+        }
+
+        .info-value {
+            font-size: clamp(0.82rem, 1.6vw, 0.92rem);
+            font-weight: 600;
+            color: var(--text-dark);
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        /* ── ACTION CARD ── */
+        .action-card {
+            background: var(--surface);
+            border-radius: 22px;
+            border: 1px solid var(--border);
+            box-shadow:
+                0 1px 0 rgba(255,255,255,0.9) inset,
+                0 8px 32px rgba(180,90,30,0.09);
+            padding: 26px 30px;
+            animation: up 0.5s 0.16s cubic-bezier(0.22,1,0.36,1) both;
+        }
+
+        .status-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .status-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #2ecc71;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%,100% { box-shadow: 0 0 0 3px rgba(46,204,113,0.22); }
+            50%      { box-shadow: 0 0 0 7px rgba(46,204,113,0.06); }
+        }
+
+        .status-text {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #27ae60;
+            letter-spacing: 0.04em;
+        }
+
+        .sep {
+            height: 1px;
+            background: linear-gradient(to right, rgba(255,140,66,0.2), transparent);
+            margin-bottom: 18px;
+        }
+
+        .action-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(1rem, 2.2vw, 1.25rem);
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+        }
+
+        /* Original <a><button> untouched */
+        .action-card a {
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .action-card a button {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--orange-light), var(--orange-deep));
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-family: 'DM Sans', sans-serif;
+            font-size: clamp(0.82rem, 2vw, 0.9rem);
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            cursor: pointer;
+            box-shadow: 0 6px 22px rgba(232,79,13,0.3);
+            transition: transform 0.17s, box-shadow 0.17s, filter 0.17s;
+        }
+
+        .action-card a button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(232,79,13,0.4);
+            filter: brightness(1.06);
+        }
+
+        .action-card a button:active { transform: translateY(0); }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 560px) {
+            .topbar { padding: 0 18px; }
+            .page { padding: 24px 14px 50px; }
+
+            .welcome-card {
+                padding: 20px 18px;
+                gap: 14px;
+            }
+
+            .welcome-text h1 {
+                white-space: normal;
+                font-size: clamp(1rem, 5vw, 1.2rem);
+            }
+
+            .info-row { grid-template-columns: 1fr; }
+            .action-card { padding: 20px 18px; }
+
+            .flash-container {
+                top: 74px;
+                padding: 0 12px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .brand-name { display: none; }
+        }

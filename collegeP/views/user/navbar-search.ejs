@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FoodFinder - Discover Amazing Restaurants & Dishes</title>
+  <!-- Foody fonts and classy font for subtitle -->
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Lobster&family=Montserrat:wght@400;600&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/user/navbar-search.css">
+</head>
+<body class="search-page">
+
+  <!-- Navbar space (server will inject) -->
+  <%- include("../includes/flash") %>
+  <%- include("../includes/navbar") %>
+
+  <div class="hero-section">
+    <h1 class="hero-title">
+      Find Your Perfect
+      <span class="hero-gradient"> Meal</span>
+    </h1>
+    <p class="hero-subtitle">
+      Discover amazing restaurants and delicious dishes in your area
+    </p>
+  </div>
+
+  <div class="search-container">
+    <form class="search-form" id="searchForm" autocomplete="off" onsubmit="return false;">
+      <span class="search-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0z"></path>
+        </svg>
+      </span>
+      <input 
+        type="text" 
+        id="searchInput" 
+        class="search-input" 
+        placeholder="Search for restaurants and food..."
+      />
+    </form>
+  </div>
+  <ul id="resultsList"></ul>
+  <script>
+    const searchInput = document.getElementById("searchInput");
+    const resultsList = document.getElementById("resultsList");
+    let debounceTimer;
+
+    function renderResults(data) {
+      resultsList.innerHTML = data.length
+        ? data.map(r => {
+            if (r.type === "restaurant") {
+              return `
+                <li>
+                  <a href="/restaurant/${r.id}" 
+                    style="display:flex; align-items:center; text-decoration:none; color:inherit;">
+                    <img src="${r.image_url}" alt="${r.name}" />
+                    <div class="info">
+                      <strong>${r.name}</strong>
+                      <span>Restaurant</span>
+                    </div>
+                  </a>
+                </li>`;
+            } else if (r.type === "dish") {
+              return `
+                <li>
+                  <a href="/restaurant/${r.restaurant_id}" 
+                    style="display:flex; align-items:center; text-decoration:none; color:inherit;">
+                    <img src="${r.restaurant_image}" alt="${r.item_name}" />
+                    <div class="info">
+                      <strong>${r.item_name}</strong>
+                      <span>Dish</span>
+                      <span>${r.restaurant_name} • ₹${r.price}</span>
+                    </div>
+                  </a>
+                </li>`;
+            }
+          }).join("")
+        : `<li style="justify-content:center;color:var(--text-body);font-size:1.1rem;">No results found</li>`;
+    }
+
+    function doSearch(query) {
+      if (!query) {
+        resultsList.innerHTML = "";
+        return;
+      }
+      fetch(`/search-ajax?q=${encodeURIComponent(query)}`)
+        .then(res => res.json())
+        .then(data => {
+          renderResults(data);
+        }).catch(() => {
+          resultsList.innerHTML = `<li style="justify-content:center;color:var(--text-body);font-size:1.1rem;">Error fetching results</li>`;
+        });
+    }
+
+    searchInput.addEventListener("input", () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        doSearch(searchInput.value.trim());
+      }, 300);
+    });
+  </script>
+</body>
+</html>

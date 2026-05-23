@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart Page</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/user/cart.css">
+</head>
+<body>
+  <%- include("../includes/flash") %>
+  <!-- Navbar -->
+<div class="nav">
+    <a>SECURE CHECKOUT</a>
+    
+    <form method="GET" action="/help">
+    <button>Help</button>
+    </form>
+   <% if(user){%>
+ <form method="GET" action="/profile">
+    <button>
+        <i class="fas fa-user"></i><%=user.firstname%>..</button>
+    </form>
+   <% }else{%>
+       <button>
+        <a href="/login">Login</a></button>
+        <a href="/sign">SignUp</a></button>
+    </form>
+    <%}%>
+   
+    
+</div>
+<% if(isEmpty) { %>
+  <div style="text-align:center; padding:40px;">
+    <h2>Your cart is empty 🛒</h2>
+    <a href="/home">Browse restaurants</a>
+  </div>
+<% } else { %>
+
+
+  <div class="container">
+   
+
+    <!-- LEFT: Address Section -->
+    <div class="left">
+      <%if(user){%>
+      <h3>Select delivery address</h3>
+      <% if (addresses.length > 0) { %>
+        <% addresses.forEach((addr, index) => { %>
+          <div class="address-box">
+            <strong><%= addr.label || "Address " + (index + 1) %></strong>
+            <% if (addresses && addresses.length > 0) { %>
+                <p>
+                  <%= addr.houseNo %>,
+                  <%= addr.street %>,
+                  <%= addr.city %>,
+                  <%= addr.state %>,
+                  <%= addr.pincode %>,
+                  <%= addr.landmark %>
+                </p>
+                
+              <% } else { %>
+                <p style="color:red;">No address selected</p>
+              <% } %>
+              
+            <p>49 MINS</p>
+            <button class="deliver-btn" data-id="<%= addr.id %>"data-index="<%= index %>">DELIVER HERE</button>
+            <form method="post" action="/cart/delete?_method=DELETE">
+               <input type="hidden" name="address_id" value="<%= addr.id %>">
+                <button>Delete</button>
+            </form>
+      
+          </div>
+        <% }) %>
+      <% } else { %>
+        <p>No address saved yet. Please add one.</p>
+      <% } %>
+
+      <!-- Add new address -->
+      <div class="address-box">
+        <p>Add New Address</p>
+        <button class="add-btn"><a href="#" id="addressLink">ADD NEW</a></button>
+      </div>
+      <!-- Delivery Slot -->
+      <div class="address-box">
+              <h4>Delivery Slot</h4>
+              <button id="slotBtn" class="add-btn">Select Delivery Slot</button>
+              <p id="selectedSlot" style="margin-top:10px; color:gray;">No slot selected</p>
+            </div>
+            <div class="address-box" id="selectedAddressSection" style="display: none; border: 1px solid #28a745;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <strong id="selectedAddressLabel">Selected Address</strong>
+            <p id="selectedAddressText" style="color:#555;">
+              No address selected
+            </p>
+            <p>49 MINS</p>
+          </div>
+      
+          <a href="#" id="changeAddress" style="color: #ff5722; font-weight: bold;">
+            CHANGE
+          </a>
+        </div>
+      </div>
+
+
+      <div class="address-box" id="paymentSection" style="display: none;">
+        <h4>Choose payment method</h4>
+        <form method="GET" action="/payment">
+          <input type="hidden" id="selectedAddressId" name="address_id">
+          <!-- <button class="deliver-btn" style="width:100%">PROCEED TO PAY</button> -->
+           <button class="deliver-btn" id="payBtn" style="width:100%">
+             PROCEED TO PAY
+           </button>
+           
+           <p id="stockBlockMsg" style="
+             display:none;
+             color:red;
+             font-size:13px;
+             margin-top:8px;
+           ">
+             Remove out-of-stock items to continue
+           </p>
+           
+        </form>
+      </div>
+      <!-- 🔥 SCHEDULING DATA -->
+<input type="hidden" id="isScheduled" value="0">
+<input type="hidden" id="scheduledFor" value="">
+
+      <%}else{%>
+         <h1><b>Account</b></h1>
+         <p>To place your order now, log in to your existing account or sign up.</p>
+         <button><a href="/login">Login</a></button>
+         <button><a href="/sign">SignUp</a></button>
+      <%}%>
+    </div>
+
+    <!-- RIGHT: Order Summary -->
+    <div class="right">
+      <img src="<%= restaurant.image_url %>" alt="<%= restaurant.name %>" />
+      <h3><%=restaurant.name%></h3>
+      <p style="color: gray;"><%=restaurant.location%></p>
+      <% menuItems.forEach(item => { %>
+        <div class="item <%= item.is_available ? '' : 'cart-out' %>"
+     data-item-id="<%= item.id %>">
+
+          <div class="item-info">
+            <h4><%= item.item_name %></h4>
+            <p style="color: gray;">₹<%= item.price %></p>
+          </div>
+          
+          <div class="qty-box">
+            <% if (item.is_available) { %>
+          
+              <form method="POST" action="/cart/update" style="display:inline">
+                <input type="hidden" name="item_id" value="<%= item.id %>">
+                <input type="hidden" name="action" value="decrease">
+                <button>-</button>
+              </form>
+          
+              <span><%= item.quantity %></span>
+          
+              <form method="POST" action="/cart/update" style="display:inline">
+                <input type="hidden" name="item_id" value="<%= item.id %>">
+                <input type="hidden" name="action" value="increase">
+                <button>+</button>
+              </form>
+          
+            <% } %>
+          </div>
+
+          <!-- 🔥 REMOVE BUTTON ALWAYS PRESENT (BUT HIDDEN) -->
+          <form method="POST" action="/cart/remove" class="remove-form" style = "<%= item.is_available ? 'display:none' : 'display:block' %>">
+            <input type="hidden" name="item_id" value="<%= item.id %>">
+            <button class="remove-btn">Remove</button>
+          </form>
+          <% if (!item.is_available) { %>
+  <div class="cart-warning">
+    Out of stock – please remove item
+  </div>
+<% } %>
+
+        </div>
+      <% }) %>
+      <div class="bill">
+        <h4>TO PAY <span>₹<%= menuItems.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2) %></span></h4>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar for new address -->
+  <div id="sidebar" class="sidebar">
+    <span id="closeBtn">&times;</span>
+    <h3>Save delivery address</h3>
+    <button type="button" id="getLocationBtn">📍 Use My Current Location</button>
+    <div id="map"></div>
+    <form method="POST" action="/profile" style="margin-top:15px;">
+      <input type="hidden" id="lat" name="latitude">
+      <input type="hidden" id="lng" name="longitude">
+      <label>Door / Flat No.</label>
+      <input type="text" name="houseNo" required>
+      <label>Street</label>
+      <input type="text" name="street" id="street">
+      <label>City</label>
+      <input type="text" name="city" id="city">
+      <label>State</label>
+      <input type="text" name="state" id="state">
+      <label>Pincode</label>
+      <input type="number" name="pincode" id="pincode">
+      <label>Landmark</label>
+      <textarea name="landmark"></textarea>
+      <button type="submit">Save Address</button>
+    </form>
+  </div>
+
+  <!-- Delivery Slot Modal -->
+  <div id="slotModal" class="slot-modal">
+    <div class="slot-content">
+      <span id="slotClose" class="close">&times;</span>
+      <h3>Select Delivery Slot</h3>
+      <div class="date-tabs" id="dateTabs"></div>
+      <div class="time-slots" id="timeSlots"></div>
+      <button id="confirmSlot" class="deliver-btn" style="margin-top:15px;">Confirm Slot</button>
+    </div>
+  </div>
+<% } %>
+  <!-- Leaflet CSS + JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <!-- Cart JS (pure client-side logic) -->
+  <script src="/js/user/cart.js"></script>
+
+  <!-- Socket.IO (inline because it uses EJS variable: restaurant.id) -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const RESTAURANT_ID = "<%= restaurant ? restaurant.id : '' %>";
+    if (RESTAURANT_ID) {
+      socket.emit("joinRestaurantRoom", RESTAURANT_ID);
+    }
+
+    socket.on("menu:stockUpdate", ({ itemId, is_available }) => {
+      const itemDiv = document.querySelector(`.item[data-item-id="${itemId}"]`);
+      if (!itemDiv) return;
+      const removeForm = itemDiv.querySelector(".remove-form");
+
+      if (!is_available) {
+        itemDiv.classList.add("cart-out");
+        if (removeForm) removeForm.style.display = "block";
+        if (!itemDiv.querySelector(".cart-warning")) {
+          const warn = document.createElement("div");
+          warn.className = "cart-warning";
+          warn.innerText = "Out of stock – please remove item";
+          itemDiv.appendChild(warn);
+        }
+      } else {
+        itemDiv.classList.remove("cart-out");
+        if (removeForm) removeForm.style.display = "none";
+        const warn = itemDiv.querySelector(".cart-warning");
+        if (warn) warn.remove();
+      }
+      checkStockAndBlockPay();
+    });
+  </script>
+
+</body>
+</html>

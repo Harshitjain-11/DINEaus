@@ -1,0 +1,36 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Restaurant Admin Login</title>
+  <link rel="stylesheet" href="/css/restaurant/restaurant-admin-login.css">
+</head>
+<body> 
+   <div class="flash-fixed">
+        <%- include("../includes/flash") %>
+  </div>
+  <div class="page-wrap">
+    <div class="box" role="region" aria-labelledby="login-heading">
+      <h2 id="login-heading">Restaurant Admin Login</h2>
+      <p class="lead">Sign in to manage your restaurant, menus and orders.</p>
+
+      <form action="/restaurant-admin/login" method="POST" autocomplete="on" novalidate>
+        <label for="email">Email</label>
+        <input id="email" type="email" name="email" required inputmode="email" placeholder="you@example.com" />
+
+        <label for="password">Password</label>
+        <input id="password" type="password" name="password" required placeholder="Enter your password" />
+
+        <div class="row">
+          <div class="note" style="font-size:13px; opacity:0.85;">Don't share your password</div>
+          <!-- placeholder for future links like "Forgot?" -->
+        </div>
+
+        <button type="submit">Login</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

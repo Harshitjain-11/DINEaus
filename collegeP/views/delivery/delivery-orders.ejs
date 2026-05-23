@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Delivery Orders — Dineous</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="/css/delivery/delivery-orders.css">
+</head>
+<body>
+
+<%- include("../includes/flash") %>
+
+<!-- ════════ TOPBAR ════════ -->
+<nav class="topbar">
+  <div class="brand">
+    <div class="brand-mark">🍽️</div>
+    <span class="brand-name">Dineous</span>
+  </div>
+  <a href="/delivery/dashboard/<%= partner.id %>" class="back-link">⬅ Back</a>
+</nav>
+
+<!-- ════════ PAGE WRAPPER ════════ -->
+<div class="page-wrap">
+
+  <!-- Greeting -->
+  <div class="greeting">
+    <div class="greeting-left">
+      <div class="greeting-icon">🛵</div>
+      <div>
+        <h1>Hi <%= partner.name %> 👋</h1>
+        <p>Your active deliveries & history</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Strip -->
+  <div class="tab-strip">
+    <button class="tab-btn" onclick="showActive()">🛵 Active Orders</button>
+    <button class="tab-btn" onclick="showHistory()">📜 History</button>
+  </div>
+
+  <!-- ════════ ACTIVE ORDERS ════════ -->
+  <div id="activeBox">
+    <%
+      const activeOrders = orders.filter(o =>
+        !['delivered','completed','rejected','cancelled'].includes(o.status)
+      );
+    %>
+
+    <div class="s-card">
+      <div class="s-head">
+        <h3>🛵 Active Orders</h3>
+      </div>
+
+      <% if (activeOrders.length === 0) { %>
+        <div class="empty-state">No active orders right now 🎉</div>
+      <% } else { %>
+
+        <% if (isBusy) { %>
+          <div class="busy-banner">
+            🚚 You are currently on an active delivery. New orders will appear after delivery.
+          </div>
+        <% } %>
+
+        <!-- Table -->
+        <div class="tbl-wrap">
+          <table>
+            <tr>
+              <th>ID</th>
+              <th>Restaurant</th>
+              <th>Customer</th>
+              <th>Items</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+
+            <% activeOrders.forEach(o => { %>
+            <tr id="order-row-<%= o.id %>"
+                data-order-id="<%= o.id %>"
+                data-status="<%= o.status %>"
+                data-rest-lat="<%= o.rest_lat %>"
+                data-rest-lng="<%= o.rest_lng %>"
+                data-user-lat="<%= o.user_lat %>"
+                data-user-lng="<%= o.user_lng %>">
+
+              <td><%= o.id %></td>
+
+              <td>
+                <b><%= o.restaurant_name %></b><br>
+                <%= o.restaurant_address %><br>
+                📞 <%= o.restaurant_phone %>
+              </td>
+
+              <td>
+                <b><%= o.user_name %></b><br>
+                📞 <%= o.user_phone %>
+              </td>
+
+              <td>
+                <ul>
+                  <% (o.items||[]).forEach(it=>{ %>
+                    <li><%= it.item_name %> × <%= it.quantity %></li>
+                  <% }) %>
+                </ul>
+              </td>
+
+              <td>₹<%= o.total_price %></td>
+
+              <td class="status"><b><%= o.status %></b></td>
+
+              <td class="action">
+                <% if (o.status === "ready" && !o.delivery_partner_id) { %>
+                  <form onsubmit="startAcceptTracking(event, <%= o.id %>)"
+                        action="/delivery/order/<%= o.id %>/accept" method="POST">
+                    <button>Accept</button>
+                  </form>
+
+                <% } else if (o.status === "ready") { %>
+                  <form action="/delivery/order/<%= o.id %>/pickup" method="POST">
+                    <button>📦 Picked Up</button>
+                  </form>
+
+                <% } else if (o.status === "picked_up") { %>
+                  <form onsubmit="return handleOutForDelivery(event, <%= o.id %>)"
+                        action="/delivery/order/<%= o.id %>/out-for-delivery" method="POST">
+                    <button>🚚 Out For Delivery</button>
+                  </form>
+
+                <% } else if (o.status === "out_for_delivery") { %>
+                  <form action="/delivery/order/<%= o.id %>/delivered" method="POST">
+                    <button>✅ Delivered</button>
+                  </form>
+                <% } %>
+              </td>
+            </tr>
+            <% }) %>
+          </table>
+        </div>
+
+        <!-- Map -->
+        <div class="map-section">
+          <h3>🗺 Live Delivery Map</h3>
+          <div id="map"></div>
+          <div class="map-meta">
+            <span id="mapStatus">Waiting for rider...</span>
+            <span id="etaText"></span>
+          </div>
+        </div>
+
+      <% } %>
+    </div><!-- /s-card -->
+  </div><!-- /activeBox -->
+
+  <!-- ════════ HISTORY ════════ -->
+  <div id="historyBox" style="display:none">
+    <div class="s-card">
+      <div class="s-head">
+        <h3>📜 Delivery History</h3>
+      </div>
+
+      <div class="tbl-wrap">
+        <table>
+          <tr>
+            <th>ID</th>
+            <th>Items</th>
+            <th>Total</th>
+            <th>Status</th>
+          </tr>
+
+          <% orders.filter(o => ['delivered','completed','rejected','cancelled'].includes(o.status))
+             .forEach(o => { %>
+          <tr>
+            <td><%= o.id %></td>
+            <td>
+              <ul>
+                <% (o.items||[]).forEach(it=>{ %>
+                  <li><%= it.item_name %> × <%= it.quantity %></li>
+                <% }) %>
+              </ul>
+            </td>
+            <td>₹<%= o.total_price %></td>
+            <td class="status"><b><%= o.status %></b></td>
+          </tr>
+          <% }) %>
+        </table>
+      </div>
+
+    </div><!-- /s-card -->
+  </div><!-- /historyBox -->
+
+</div><!-- /page-wrap -->
+<script>
+const myPartnerId = "<%= partner.id %>";
+</script>
+<script src="/socket.io/socket.io.js"></script>
+<script src = "/js/delivery/delivery-orders.js"></script>
+</body>
+</html>

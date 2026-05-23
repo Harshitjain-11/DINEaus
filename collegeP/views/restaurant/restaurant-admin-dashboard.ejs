@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Restaurant Dashboard — Dineous</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/restaurant/restaurant-admin-dashboard.css">
+</head>
+<body>
+
+<%- include("../includes/flash") %>
+
+<!-- TOPBAR -->
+<nav class="topbar">
+  <div class="brand">
+    <div class="brand-mark">🍽️</div>
+    <span class="brand-name">Dineous</span>
+  </div>
+
+  <!-- Tab strip — original onclick / href fully preserved -->
+  <div class="tab-strip" style="margin:0;">
+    <button onclick="showTab('orders')">🛵 Orders</button>
+    <button onclick="showTab('bookings')">🪑 Bookings</button>
+    <a href="/restaurant-admin/menu">
+      <button>🍽 Menu</button>
+    </a>
+  </div>
+</nav>
+
+<!-- PAGE -->
+<div class="page">
+
+  <!-- ════════ ORDERS TAB ════════ -->
+  <div id="ordersTab">
+    <div class="s-card">
+      <div class="s-head">
+        <h2>🛵 Active Orders</h2>
+        <a href="/restaurant-admin/orders/history" class="btn-ghost">📜 View History</a>
+      </div>
+
+      <%
+        const activeOrders = [
+          ...pending.map(o => ({...o, _status:o.status})),
+          ...accepted.map(o => ({...o, _status:o.status})),
+          ...preparing.map(o => ({...o, _status:o.status})),
+          ...ready.map(o => ({...o, _status:o.status}))
+        ];
+      %>
+
+      <p id="noOrdersMsg" style = "<%= activeOrders.length === 0 ? '' : 'display:none' %>">
+        <span class="ei">🎉</span>No active orders right now
+      </p>
+
+      <!-- DESKTOP TABLE -->
+      <div class="table-scroll">
+        <table class="order-table" id="ordersTable">
+          <tr>
+            <th>ID</th>
+            <th>Items</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Delivery Partner</th>
+            <th>Action</th>
+          </tr>
+
+          <% activeOrders.forEach(o => { %>
+          <tr id="order-row-<%= o.id %>">
+            <td><%= o.id %></td>
+
+            <td>
+              <ul>
+                <% o.items.forEach(it => { %>
+                  <li><%= it.item_name %> × <%= it.quantity %></li>
+                <% }) %>
+              </ul>
+            </td>
+
+            <td>₹<%= o.total_price %></td>
+
+            <td style="font-weight:600;color:#d35400;">
+              <%= o._status.replaceAll("_"," ").toUpperCase() %>
+            </td>
+
+            <td>
+              <% if (o.delivery_name) { %>
+                🛵 <b><%= o.delivery_name %></b><br>
+                📞 <%= o.delivery_phone %>
+              <% } else { %>
+                <span style="color:gray;">Not assigned</span>
+              <% } %>
+            </td>
+
+            <td>
+              <% if (o._status === 'pending') { %>
+                <form action="/restaurant-admin/order/<%= o.id %>/accept" method="POST" style="display:inline;">
+                  <button>Accept</button>
+                </form>
+                <form action="/restaurant-admin/order/<%= o.id %>/reject" method="POST" style="display:inline;">
+                  <button>Reject</button>
+                </form>
+
+              <% } else if (o._status === 'accepted') { %>
+                <form action="/restaurant-admin/order/<%= o.id %>/preparing" method="POST">
+                  <button>Start Preparing</button>
+                </form>
+
+              <% } else if (o._status === 'preparing') { %>
+                <form action="/restaurant-admin/order/<%= o.id %>/ready" method="POST">
+                  <button>Mark Ready</button>
+                </form>
+
+              <% } else if (['ready','picked_up','out_for_delivery','delivered'].includes(o._status)) { %>
+                <form action="/restaurant-admin/order/<%= o.id %>/completed" method="POST">
+                  <button
+                    id="complete-btn-<%= o.id %>"
+                    <%= o._status !== 'delivered' ? 'disabled' : '' %>
+                    style="<%= o._status !== 'delivered' ? 'opacity:0.5;cursor:not-allowed;' : '' %>"
+                  >Completed</button>
+                </form>
+              <% } %>
+            </td>
+          </tr>
+          <% }) %>
+        </table>
+      </div>
+
+      <!-- MOBILE CARDS (shown ≤640px via CSS, table hidden) -->
+      <div class="mobile-cards">
+        <% activeOrders.forEach(o => { %>
+        <div class="m-card">
+          <div class="m-top">
+            <span class="m-id">#<%= o.id %></span>
+            <span class="m-status"><%= o._status.replaceAll("_"," ").toUpperCase() %></span>
+          </div>
+          <div class="m-body">
+            <div class="m-cell" style="grid-column:1/-1">
+              <div class="m-label">Items</div>
+              <div class="m-val"><ul><% o.items.forEach(it => { %><li><%= it.item_name %> × <%= it.quantity %></li><% }) %></ul></div>
+            </div>
+            <div class="m-cell">
+              <div class="m-label">Total</div>
+              <div class="m-val">₹<%= o.total_price %></div>
+            </div>
+            <div class="m-cell">
+              <div class="m-label">Partner</div>
+              <div class="m-val">
+                <% if (o.delivery_name) { %>🛵 <%= o.delivery_name %><% } else { %><span class="muted">Not assigned</span><% } %>
+              </div>
+            </div>
+          </div>
+          <div class="m-actions">
+            <% if (o._status === 'pending') { %>
+              <form action="/restaurant-admin/order/<%= o.id %>/accept" method="POST"><button>Accept</button></form>
+              <form action="/restaurant-admin/order/<%= o.id %>/reject" method="POST"><button>Reject</button></form>
+            <% } else if (o._status === 'accepted') { %>
+              <form action="/restaurant-admin/order/<%= o.id %>/preparing" method="POST"><button>Start Preparing</button></form>
+            <% } else if (o._status === 'preparing') { %>
+              <form action="/restaurant-admin/order/<%= o.id %>/ready" method="POST"><button>Mark Ready</button></form>
+            <% } else if (['ready','picked_up','out_for_delivery','delivered'].includes(o._status)) { %>
+              <form action="/restaurant-admin/order/<%= o.id %>/completed" method="POST">
+                <button <%= o._status !== 'delivered' ? 'disabled' : '' %> style="<%= o._status !== 'delivered' ? 'opacity:0.5;cursor:not-allowed;' : '' %>">Completed</button>
+              </form>
+            <% } %>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+
+    </div>
+  </div><!-- /ordersTab -->
+
+  <!-- ════════ BOOKINGS TAB ════════ -->
+  <div id="bookingsTab" style="display:none">
+
+    <div id="activeBookingsBox">
+      <div class="s-card">
+        <div class="s-head">
+          <h2>🪑 Table Bookings / Preorders</h2>
+          <button onclick="showBookingHistory()" class="btn-ghost">📜 View History</button>
+        </div>
+
+        <% if (activeReservations.length === 0) { %>
+          <p id="noBookingsMsg">
+            <span class="ei">🪑</span>No bookings yet
+          </p>
+        <% } else { %>
+          <p id="noBookingsMsg" style="display:none;">No bookings yet</p>
+          <div class="table-scroll">
+            <table id="activeBookingsTable">
+              <tr>
+                <th>ID</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Guests</th>
+                <th>Pre-Order Items</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+
+              <% activeReservations.forEach(r => { %>
+              <tr data-booking-id="<%= r.id %>">
+                <td><%= r.id %></td>
+
+                <td>
+                  <b><%= r.customer_name %></b><br>
+                  <small><%= r.customer_phone %></small>
+                </td>
+
+                <td><%= new Date(r.date).toLocaleDateString() %></td>
+                <td><%= r.time_slot %></td>
+                <td><%= r.guests %></td>
+
+                <td>
+                  <% if (!r.preorders || r.preorders.length === 0) { %>
+                    No preorder
+                  <% } else { %>
+                    <ul>
+                      <% r.preorders.forEach(p => { %>
+                        <li><%= p.item_name %> × <%= p.quantity %></li>
+                      <% }) %>
+                    </ul>
+                  <% } %>
+                </td>
+
+                <td class="booking-status"><%= r.status %></td>
+
+                <td>
+                  <% if (r.status === 'pending') { %>
+                    <form action="/restaurant-admin/booking/<%= r.id %>/accept" method="POST">
+                      <button>Accepted</button>
+                    </form>
+                    <form action="/restaurant-admin/booking/<%= r.id %>/reject" method="POST">
+                      <button>Rejected</button>
+                    </form>
+
+                  <% } else if (r.status === 'accepted') { %>
+                    <form action="/restaurant-admin/booking/<%= r.id %>/arrived" method="POST">
+                      <button>Mark Arrived</button>
+                    </form>
+
+                  <% } else if (r.status === 'arrived') { %>
+                    <span style="color:lightgreen;">Guest Arrived 🍽️</span>
+                    <form action="/restaurant-admin/booking/<%= r.id %>/completed" method="POST" style="margin-top:6px;">
+                      <button>Mark Completed</button>
+                    </form>
+
+                  <% } else if (r.status === 'completed') { %>
+                    <span style="color:green;">Completed ✔</span>
+
+                  <% } else if (r.status === 'rejected') { %>
+                    <span style="color:red;">Rejected</span>
+
+                  <% } else if (r.status === 'cancelled') { %>
+                    <span style="color:red;">Cancelled by user</span>
+                  <% } %>
+                </td>
+              </tr>
+              <% }) %>
+            </table>
+          </div>
+        <% } %>
+      </div>
+    </div><!-- /activeBookingsBox -->
+
+    <div id="bookingHistoryBox" style="display:none">
+      <div class="s-card">
+        <div class="s-head">
+          <h2>📜 Booking History</h2>
+          <button onclick="showActiveBookings()" class="btn-ghost">⬅ Back to Active</button>
+        </div>
+
+        <% if (historyReservations.length === 0) { %>
+          <p id="noBookingsMsg" style="padding:44px 20px;text-align:center;color:var(--text-muted);">No past bookings</p>
+        <% } else { %>
+          <div class="table-scroll">
+            <table>
+              <tr>
+                <th>ID</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Guests</th>
+                <th>Pre-Order Items</th>
+                <th>Status</th>
+              </tr>
+
+              <% historyReservations.forEach(r => { %>
+              <tr>
+                <td><%= r.id %></td>
+                <td>
+                  <b><%= r.customer_name %></b><br>
+                  <small><%= r.customer_phone %></small>
+                </td>
+                <td><%= new Date(r.date).toLocaleDateString() %></td>
+                <td><%= r.time_slot %></td>
+                <td><%= r.guests %></td>
+                <td>
+                  <% if (!r.preorders || r.preorders.length === 0) { %>
+                    No preorder
+                  <% } else { %>
+                    <ul>
+                      <% r.preorders.forEach(p => { %>
+                        <li><%= p.item_name %> × <%= p.quantity %></li>
+                      <% }) %>
+                    </ul>
+                  <% } %>
+                </td>
+                <td><%= r.status %></td>
+              </tr>
+              <% }) %>
+            </table>
+          </div>
+        <% } %>
+      </div>
+    </div><!-- /bookingHistoryBox -->
+
+  </div><!-- /bookingsTab -->
+
+</div><!-- /page -->
+
+<!-- ════════════════════════════════════
+     ALL ORIGINAL SCRIPTS — UNTOUCHED
+════════════════════════════════════ -->
+<input type="hidden" id="RESTAURANT_ID" value="<%= restaurantId %>">
+<audio id="newOrderSound" src="/sounds/new-order.mp3" preload="auto"></audio>
+<script src="/socket.io/socket.io.js"></script>
+<script src = "/js/restaurant/restaurant-admin-dashboard.js"></script>
+
+</body>
+</html>

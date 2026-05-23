@@ -1,0 +1,32 @@
+{
+  "name": "collegep",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Divyam Agrawal",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.3",
+    "connect-flash": "^0.1.1",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "ejs": "^3.1.10",
+    "express": "^4.22.1",
+    "express-session": "^1.19.0",
+    "jsonwebtoken": "^9.0.3",
+    "method-override": "^3.0.0",
+    "multer": "^2.1.1",
+    "mysql2": "^3.22.2",
+    "node-cron": "^4.2.1",
+    "nodemailer": "^8.0.6",
+    "socket.io": "^4.8.3",
+    "tesseract.js": "^6.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

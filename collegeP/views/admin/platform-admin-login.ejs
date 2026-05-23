@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Platform Admin Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+ <link rel="stylesheet" href="/css/admin/platform-admin-login.css">
+</head>
+<body>
+
+  <div class="bg-layer"></div>
+  <div class="bg-overlay"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <%- include("../includes/flash") %>
+
+  <div class="card">
+
+    <div class="logo-wrap">
+      <div class="logo-wrap-inner">
+        <div class="logo-ring">
+          <svg viewBox="0 0 24 24"><path d="M21 4H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1zm-1 15H7a1 1 0 0 1 0-2h13v1a1 1 0 0 1-1 1zm1-4H7a3 3 0 0 0-2 .78V6a1 1 0 0 1 1-1h13v10zM9 8h6a1 1 0 0 0 0-2H9a1 1 0 0 0 0 2zm0 4h6a1 1 0 0 0 0-2H9a1 1 0 0 0 0 2z"/></svg>
+        </div>
+        <div class="logo-shield">🛡️</div>
+      </div>
+    </div>
+
+    <h2 class="card-title">Platform Admin Login</h2>
+    <p class="card-sub">Restricted access — authorised personnel only</p>
+
+    <div class="admin-tag">
+      <span>⚙️ Admin Portal</span>
+    </div>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-dot"></div>
+      <div class="divider-line"></div>
+    </div>
+
+    <form method="POST" action="/platform-admin/login">
+      <div class="form-stack">
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="admin@deliverhub.com">
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter your password">
+        </div>
+
+        <button type="submit">Login</button>
+
+      </div>
+    </form>
+
+    <p class="card-footer">
+      This portal is for platform administrators only.<br>
+      Unauthorised access is strictly prohibited.
+    </p>
+  </div>
+</body>
+</html>

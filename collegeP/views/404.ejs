@@ -1,0 +1,704 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+  <title>Page Not Found</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff;
+      text-align: center;
+      padding: 80px;
+    }
+    h1 { font-size: 60px; color: #fc8019; }
+    p { font-size: 18px; color: #555; }
+    a {
+      display: inline-block;
+      margin-top: 20px;
+      background: #fc8019;
+      color: white;
+      padding: 12px 25px;
+      border-radius: 5px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>404</h1>
+  <p>Oops! Page not found.</p>
+  <p>The page you are looking for does not exist.</p>
+  <a href="/home">Go Home</a>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oops! | Dineous</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --color-primary: #F97316;
+      --color-primary-dark: #EA580C;
+      --color-primary-light: #FFEDD5;
+      --color-secondary: #FCD34D;
+      --color-background: #FFFBF7;
+      --color-surface: #FFFFFF;
+      --color-text: #1C1917;
+      --color-text-muted: #78716C;
+      --color-text-light: #A8A29E;
+      --shadow-soft: 0 4px 24px rgba(249, 115, 22, 0.12);
+      --shadow-button: 0 4px 14px rgba(249, 115, 22, 0.35);
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+      --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(180deg, var(--color-background) 0%, #FFF7ED 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow-x: hidden;
+    }
+
+    /* Main Container */
+    .error-container {
+      max-width: 520px;
+      width: 100%;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: slideUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      animation-delay: 0.1s;
+    }
+
+    @keyframes slideUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Logo */
+    .logo {
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: fadeIn 0.6s ease forwards;
+    }
+
+    .logo-text {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--color-primary);
+      letter-spacing: -0.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    /* Illustration Container */
+    .illustration-wrapper {
+      position: relative;
+      margin-bottom: 32px;
+    }
+
+    .illustration {
+      width: 280px;
+      height: 200px;
+      margin: 0 auto;
+      opacity: 0;
+      animation: bounceIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      animation-delay: 0.3s;
+    }
+
+    @keyframes bounceIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* Floating animation for illustration elements */
+    .float-slow {
+      animation: float 4s ease-in-out infinite;
+    }
+
+    .float-medium {
+      animation: float 3s ease-in-out infinite;
+      animation-delay: 0.5s;
+    }
+
+    .float-fast {
+      animation: float 2.5s ease-in-out infinite;
+      animation-delay: 1s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    /* Error Code */
+    .error-code {
+      font-size: 72px;
+      font-weight: 700;
+      color: var(--color-primary);
+      line-height: 1;
+      margin-bottom: 16px;
+      opacity: 0;
+      animation: scaleIn 0.5s ease forwards;
+      animation-delay: 0.5s;
+    }
+
+    @keyframes scaleIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* Messages */
+    .error-title {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--color-text);
+      margin-bottom: 12px;
+      opacity: 0;
+      animation: fadeIn 0.6s ease forwards;
+      animation-delay: 0.6s;
+    }
+
+    .error-message {
+      font-size: 16px;
+      color: var(--color-text-muted);
+      line-height: 1.6;
+      margin-bottom: 36px;
+      opacity: 0;
+      animation: fadeIn 0.6s ease forwards;
+      animation-delay: 0.7s;
+    }
+
+    /* Buttons Container */
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+      opacity: 0;
+      animation: fadeIn 0.6s ease forwards;
+      animation-delay: 0.8s;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 32px;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      text-decoration: none;
+      border: none;
+      min-width: 200px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+      color: white;
+      box-shadow: var(--shadow-button);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(249, 115, 22, 0.45);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background: var(--color-surface);
+      color: var(--color-text);
+      border: 2px solid #E7E5E4;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+      background: var(--color-primary-light);
+    }
+
+    .btn-icon {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Offline indicator */
+    .offline-badge {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: #FEF3C7;
+      border: 1px solid #FCD34D;
+      border-radius: var(--radius-full);
+      margin-bottom: 24px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #92400E;
+    }
+
+    .offline-badge.visible {
+      display: inline-flex;
+    }
+
+    .offline-dot {
+      width: 8px;
+      height: 8px;
+      background: #F59E0B;
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 48px;
+      opacity: 0;
+      animation: fadeIn 0.6s ease forwards;
+      animation-delay: 1s;
+    }
+
+    .footer-text {
+      font-size: 14px;
+      color: var(--color-text-light);
+    }
+
+    .footer-link {
+      color: var(--color-primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition-smooth);
+    }
+
+    .footer-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Decorative elements */
+    .decoration {
+      position: fixed;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .decoration-1 {
+      top: 10%;
+      left: 5%;
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle, rgba(249, 115, 22, 0.08) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .decoration-2 {
+      bottom: 15%;
+      right: 8%;
+      width: 180px;
+      height: 180px;
+      background: radial-gradient(circle, rgba(252, 211, 77, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: float 8s ease-in-out infinite;
+      animation-delay: 1s;
+    }
+
+    .decoration-3 {
+      top: 20%;
+      right: 15%;
+      width: 60px;
+      height: 60px;
+      background: radial-gradient(circle, rgba(249, 115, 22, 0.06) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: float 5s ease-in-out infinite;
+      animation-delay: 0.5s;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .error-code {
+        font-size: 56px;
+      }
+
+      .error-title {
+        font-size: 20px;
+      }
+
+      .error-message {
+        font-size: 15px;
+        padding: 0 16px;
+      }
+
+      .illustration {
+        width: 220px;
+        height: 160px;
+      }
+
+      .btn {
+        width: 100%;
+        max-width: 280px;
+      }
+
+      .logo-text {
+        font-size: 24px;
+      }
+
+      .decoration-1,
+      .decoration-2,
+      .decoration-3 {
+        display: none;
+      }
+    }
+
+    @media (max-width: 380px) {
+      body {
+        padding: 16px;
+      }
+
+      .error-code {
+        font-size: 48px;
+      }
+
+      .error-title {
+        font-size: 18px;
+      }
+
+      .buttons {
+        width: 100%;
+      }
+    }
+
+    /* Tablet adjustments */
+    @media (min-width: 641px) and (max-width: 1024px) {
+      .decoration-1 {
+        width: 100px;
+        height: 100px;
+      }
+
+      .decoration-2 {
+        width: 140px;
+        height: 140px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Decorative background elements -->
+  <div class="decoration decoration-1"></div>
+  <div class="decoration decoration-2"></div>
+  <div class="decoration decoration-3"></div>
+
+  <div class="error-container">
+    <!-- Logo -->
+    <div class="logo">
+      <span class="logo-text">
+        <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="20" cy="20" r="20" fill="#FFF7ED"/>
+          <path d="M20 8C13.373 8 8 13.373 8 20C8 26.627 13.373 32 20 32C26.627 32 32 26.627 32 20C32 13.373 26.627 8 20 8Z" fill="#FFEDD5"/>
+          <path d="M20 11C15.029 11 11 15.029 11 20C11 24.971 15.029 29 20 29C24.971 29 29 24.971 29 20C29 15.029 24.971 11 20 11Z" fill="#F97316"/>
+          <ellipse cx="20" cy="20" rx="6" ry="3" fill="#FDBA74"/>
+          <circle cx="16" cy="17" r="1.5" fill="#FFF7ED"/>
+          <circle cx="24" cy="17" r="1" fill="#FFF7ED"/>
+          <path d="M17 22C17 22 18.5 24 20 24C21.5 24 23 22 23 22" stroke="#FFF7ED" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        DINEaus
+      </span>
+    </div>
+
+    <!-- Offline Badge -->
+    <div class="offline-badge" id="offlineBadge">
+      <span class="offline-dot"></span>
+      You're currently offline
+    </div>
+
+    <!-- Illustration - Cute confused plate with food -->
+    <div class="illustration-wrapper">
+      <svg class="illustration" viewBox="0 0 280 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Plate shadow -->
+        <ellipse cx="140" cy="175" rx="80" ry="12" fill="#F5F5F4" class="float-slow"/>
+        
+        <!-- Main plate -->
+        <g class="float-medium">
+          <ellipse cx="140" cy="140" rx="75" ry="20" fill="#E7E5E4"/>
+          <ellipse cx="140" cy="135" rx="75" ry="20" fill="#FAFAF9"/>
+          <ellipse cx="140" cy="130" rx="65" ry="16" fill="#F5F5F4"/>
+          <ellipse cx="140" cy="128" rx="55" ry="12" fill="#FAFAF9"/>
+        </g>
+        
+        <!-- Cute food mascot (friendly dumpling/bun) -->
+        <g class="float-fast">
+          <!-- Body -->
+          <ellipse cx="140" cy="95" rx="40" ry="35" fill="#FFFBEB"/>
+          <ellipse cx="140" cy="95" rx="40" ry="35" fill="url(#bun-gradient)"/>
+          
+          <!-- Pleats on top -->
+          <path d="M120 70 Q140 60 160 70" stroke="#FCD34D" stroke-width="2" fill="none"/>
+          <path d="M125 68 Q140 58 155 68" stroke="#FBBF24" stroke-width="1.5" fill="none"/>
+          
+          <!-- Face -->
+          <!-- Left eye -->
+          <circle cx="125" cy="90" r="5" fill="#1C1917"/>
+          <circle cx="126" cy="88" r="2" fill="white"/>
+          
+          <!-- Right eye -->
+          <circle cx="155" cy="90" r="5" fill="#1C1917"/>
+          <circle cx="156" cy="88" r="2" fill="white"/>
+          
+          <!-- Worried eyebrows -->
+          <path d="M118 82 Q122 79 128 82" stroke="#78716C" stroke-width="2" stroke-linecap="round"/>
+          <path d="M152 82 Q158 79 162 82" stroke="#78716C" stroke-width="2" stroke-linecap="round"/>
+          
+          <!-- Cute worried mouth -->
+          <path d="M132 105 Q140 100 148 105" stroke="#1C1917" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          
+          <!-- Blush -->
+          <ellipse cx="115" cy="98" rx="6" ry="4" fill="#FECACA" opacity="0.6"/>
+          <ellipse cx="165" cy="98" rx="6" ry="4" fill="#FECACA" opacity="0.6"/>
+          
+          <!-- Sweat drop -->
+          <path d="M170 78 Q175 85 170 92 Q165 85 170 78Z" fill="#93C5FD"/>
+        </g>
+        
+        <!-- Steam wisps -->
+        <g opacity="0.4">
+          <path d="M100 60 Q95 50 100 40" stroke="#A8A29E" stroke-width="2" stroke-linecap="round" fill="none" class="float-slow"/>
+          <path d="M140 55 Q135 45 140 35" stroke="#A8A29E" stroke-width="2" stroke-linecap="round" fill="none" class="float-medium"/>
+          <path d="M180 60 Q185 50 180 40" stroke="#A8A29E" stroke-width="2" stroke-linecap="round" fill="none" class="float-fast"/>
+        </g>
+        
+        <!-- Fork on left -->
+        <g transform="translate(35, 120) rotate(-20)">
+          <rect x="0" y="0" width="4" height="50" rx="2" fill="#A8A29E"/>
+          <rect x="-3" y="-15" width="3" height="18" rx="1.5" fill="#A8A29E"/>
+          <rect x="1" y="-15" width="3" height="18" rx="1.5" fill="#A8A29E"/>
+          <rect x="5" y="-15" width="3" height="18" rx="1.5" fill="#A8A29E"/>
+        </g>
+        
+        <!-- Spoon on right -->
+        <g transform="translate(235, 125) rotate(20)">
+          <rect x="0" y="0" width="4" height="45" rx="2" fill="#A8A29E"/>
+          <ellipse cx="2" cy="-8" rx="8" ry="12" fill="#A8A29E"/>
+          <ellipse cx="2" cy="-6" rx="5" ry="8" fill="#D6D3D1"/>
+        </g>
+        
+        <!-- Question marks -->
+        <text x="70" y="50" font-size="20" fill="#F97316" opacity="0.6" class="float-slow">?</text>
+        <text x="210" y="45" font-size="16" fill="#FBBF24" opacity="0.5" class="float-medium">?</text>
+        
+        <defs>
+          <linearGradient id="bun-gradient" x1="100" y1="60" x2="180" y2="130">
+            <stop offset="0%" stop-color="#FEF3C7"/>
+            <stop offset="100%" stop-color="#FDE68A"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <!-- Error Code -->
+    <div class="error-code" id="errorCode">404</div>
+
+    <!-- Error Messages -->
+    <h1 class="error-title" id="errorTitle">Oops! This dish isn't on the menu</h1>
+    <p class="error-message" id="errorMessage">
+      Looks like this page took a wrong turn on the way to your table. 
+      Don't worry, there's plenty more delicious options waiting for you!
+    </p>
+
+    <!-- Buttons -->
+    <div class="buttons">
+      <a href="/" class="btn btn-primary" id="primaryBtn">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9,22 9,12 15,12 15,22"/>
+        </svg>
+        <span id="primaryBtnText">Browse Restaurants</span>
+      </a>
+      <button class="btn btn-secondary" id="retryBtn" onclick="handleRetry()">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 4v6h-6"/>
+          <path d="M1 20v-6h6"/>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+        </svg>
+        Try Again
+      </button>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p class="footer-text">
+        Need help? <a href="/support" class="footer-link">Contact Support</a>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      // Error type detection and content configuration
+      const errorConfigs = {
+        '404': {
+          code: '404',
+          title: "Oops! This dish isn't on the menu",
+          message: "Looks like this page took a wrong turn on the way to your table. Don't worry, there's plenty more delicious options waiting for you!",
+          primaryText: 'Browse Restaurants',
+          primaryHref: '/home'  
+        },
+        '500': {
+          code: '500',
+          title: 'Our kitchen had a small hiccup',
+          message: "We're cooking up a fix right now. Please give us a moment and try again. Great food is worth the wait!",
+          primaryText: 'Go to Home',
+          primaryHref: '/home'
+        },
+        'offline': {
+          code: '📡',
+          title: "You're offline right now",
+          message: "It seems your internet connection took a break. Check your connection and we'll have you browsing restaurants in no time!",
+          primaryText: 'Go to Home',
+          primaryHref: '/home'
+        },
+        'error': {
+          code: '😅',
+          title: 'Something went wrong',
+          message: "Our chefs are looking into it! In the meantime, why not head back and explore more delicious options?",
+          primaryText: 'Browse Restaurants',
+          primaryHref: '/home'
+        }
+      };
+
+      // DOM Elements
+      const errorCode = document.getElementById('errorCode');
+      const errorTitle = document.getElementById('errorTitle');
+      const errorMessage = document.getElementById('errorMessage');
+      const primaryBtn = document.getElementById('primaryBtn');
+      const primaryBtnText = document.getElementById('primaryBtnText');
+      const offlineBadge = document.getElementById('offlineBadge');
+
+      // Detect error type from URL or default to 404
+      function getErrorType() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const type = urlParams.get('type');
+        
+        if (!navigator.onLine) {
+          return 'offline';
+        }
+        
+        if (type && errorConfigs[type]) {
+          return type;
+        }
+        
+        return '404';
+      }
+
+      // Update page content based on error type
+      function updateContent(type) {
+        const config = errorConfigs[type];
+        
+        errorCode.textContent = config.code;
+        errorTitle.textContent = config.title;
+        errorMessage.textContent = config.message;
+        primaryBtnText.textContent = config.primaryText;
+        primaryBtn.href = config.primaryHref;
+        
+        if (type === 'offline') {
+          offlineBadge.classList.add('visible');
+        } else {
+          offlineBadge.classList.remove('visible');
+        }
+      }
+
+      // Handle retry button
+      window.handleRetry = function() {
+        const retryBtn = document.getElementById('retryBtn');
+        retryBtn.innerHTML = `
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation: spin 1s linear infinite;">
+            <path d="M23 4v6h-6"/>
+            <path d="M1 20v-6h6"/>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+          </svg>
+          Retrying...
+        `;
+        
+        // Add spin animation
+        const style = document.createElement('style');
+        style.textContent = '@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }';
+        document.head.appendChild(style);
+        
+        setTimeout(() => {
+          window.location.reload();
+        }, 800);
+      };
+
+      // Listen for online/offline events
+      window.addEventListener('online', function() {
+        offlineBadge.classList.remove('visible');
+        updateContent('404');
+      });
+
+      window.addEventListener('offline', function() {
+        updateContent('offline');
+      });
+
+      // Initialize
+      document.addEventListener('DOMContentLoaded', function() {
+        const errorType = getErrorType();
+        updateContent(errorType);
+      });
+
+      // Run immediately in case DOMContentLoaded already fired
+      if (document.readyState !== 'loading') {
+        const errorType = getErrorType();
+        updateContent(errorType);
+      }
+    })();
+  </script>
+</body>
+</html>

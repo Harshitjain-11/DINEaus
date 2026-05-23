@@ -1,0 +1,321 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": [
+        "hi", "hello", "hey", "good morning", "good evening",
+        "yo", "whats up", "hey there", "hi there", "howdy",
+        "namaste", "hello bot", "bhai hello", "hi bro"
+      ],
+      "responses": [
+        "Hello! 👋 How can I help you today?",
+        "Hi there! 😊 What would you like to do?"
+      ]
+    },
+
+    {
+      "tag": "menu",
+      "patterns": [
+        "menu", "show menu", "menu dikhao", "food list",
+        "kya kya milta hai", "items batao", "what can i order",
+        "khane me kya hai"
+      ],
+      "responses": [
+        "Here’s our menu 👇"
+      ]
+    },
+
+    {
+      "tag": "new_order",
+      "patterns": [
+        "i want to order", "order food", "can i order",
+        "place an order", "start order", "i want food",
+        "order something", "get me some food",
+        "let me order", "i want to buy food",
+        "bhai order karna hai", "khana order karna hai"
+      ],
+      "responses": [
+        "Sure! 😄 What would you like to order?",
+        "Let's start your order! 🍽️ Tell me what you'd like."
+      ]
+    },
+
+    {
+      "tag": "order_item",
+      "patterns": [
+        "add pizza", "add 2 pizzas", "get me fries",
+        "order coke", "i want samosa", "i want to add biryani",
+        "add sandwich", "i want burger", "give me pasta",
+        "i want to eat dosa", "add two cokes", "bring 3 burgers",
+        "add two pizzas and one coke", "i want paneer tikka",
+
+        "bhai ek pizza add kar do",
+        "2 pizza aur 1 coke",
+        "ek samosa chahiye",
+        "do burger le aao",
+        "pizza aur coke add karo",
+        "mere order me pasta daal do"
+      ],
+      "responses": [
+        "✅ Item added to your cart! Want to add more?",
+        "👍 Added to your order!"
+      ]
+    },
+
+    {
+      "tag": "remove_item",
+      "patterns": [
+        "remove pizza", "remove one coke", "remove my burger",
+        "delete my coke", "take away fries", "remove dosa",
+        "remove the biryani", "remove sandwich",
+        "delete item", "remove it",
+
+        "bhai pizza hata do",
+        "ek coke remove kar do",
+        "burger mat chahiye",
+        "item nikal do"
+      ],
+      "responses": [
+        "❌ Item removed from your cart.",
+        "Done 👍 Removed it."
+      ]
+    },
+
+    {
+      "tag": "confirm_order",
+      "patterns": [
+        "confirm", "place order", "yes confirm", "confirm my order",
+        "order now", "proceed with order", "place it", "checkout",
+
+        "haan confirm karo",
+        "order place kar do",
+        "final kar do"
+      ],
+      "responses": [
+        "🎉 Order confirmed!",
+        "✅ Your order is placed!"
+      ]
+    },
+
+    {
+      "tag": "track_order",
+      "patterns": [
+        "where is my order", "track my order", "order status",
+        "is my food on the way", "track order",
+        "check my delivery status", "track my food",
+
+        "mera order kaha hai",
+        "order track karo",
+        "order status batao"
+      ],
+      "responses": [
+        "📦 Please share your order ID to track it.",
+        "Tell me your order ID and I’ll check the status."
+      ]
+    },
+
+    {
+      "tag": "cancel_order",
+      "patterns": [
+        "cancel my order", "cancel order", "i want to cancel",
+        "stop my order", "i don't want it",
+        "cancel this order",
+
+        "bhai order cancel kar do",
+        "mujhe order nahi chahiye",
+        "order hata do"
+      ],
+      "responses": [
+        "❌ Okay, cancelling your order.",
+        "Your order will be cancelled."
+      ]
+    },
+
+    {
+      "tag": "book_table",
+      "patterns": [
+        "book a table", "reserve a table", "table for 2",
+        "i want to book a table", "table booking", "i need a table",
+        "reserve table for 4", "book table for three",
+        "book table at 8 pm", "i want seats", "book a seat",
+        "i want to dine in", "book a table for dinner",
+        "book table at 7",
+
+        "bhai table book kar do",
+        "4 log ke liye table",
+        "aaj raat table chahiye",
+        "kal 7 baje table book karo"
+      ],
+      "responses": [
+        "Sure! 😊 Let me help you with table booking.",
+        "Okay 👍 Booking your table."
+      ]
+    },
+
+    {
+      "tag": "cancel_booking",
+      "patterns": [
+        "cancel booking", "cancel table", "cancel reservation",
+        "table cancel", "booking cancel", "cancel my table",
+        "table cancel karo", "booking cancel karo"
+      ],
+      "responses": [
+        "Got it. I can help you cancel your booking.",
+        "Sure. Please share your booking ID."
+      ]
+    },
+
+    {
+      "tag": "view_restaurants",
+      "patterns": [
+        "view restaurants", "show restaurants", "restaurants dikhao",
+        "order food", "i want to order", "hungry",
+        "khana mangwana", "khaana order", "food order"
+      ],
+      "responses": [
+        "Here are the available restaurants.",
+        "Sure! Pick a restaurant to continue."
+      ]
+    },
+
+    {
+      "tag": "recommend_restaurants",
+      "patterns": [
+        "popular restaurants", "best restaurant", "top restaurant",
+        "which restaurant is popular", "famous restaurants",
+        "best restaurant in gwalior"
+      ],
+      "responses": [
+        "Here are the top restaurants to explore.",
+        "Try one of these popular restaurants."
+      ]
+    },
+
+    {
+      "tag": "recommendations",
+      "patterns": [
+        "popular dishes", "best dish", "what should i order",
+        "recommend food", "kya order karu", "famous food"
+      ],
+      "responses": [
+        "Here are some popular dishes.",
+        "Try these top picks."
+      ]
+    },
+
+    {
+      "tag": "help",
+      "patterns": [
+        "help", "support", "complaint", "issue",
+        "problem", "assist", "faq", "faqs"
+      ],
+      "responses": [
+        "Sure. I can help with orders, bookings, and account queries.",
+        "Tell me what you need help with."
+      ]
+    },
+
+    {
+      "tag": "account_help",
+      "patterns": [
+        "forgot password", "reset password", "login issue",
+        "cant login", "can't login", "password bhool gaya",
+        "change email", "change phone", "account help"
+      ],
+      "responses": [
+        "I can help with login and account issues.",
+        "Open Login and tap Forgot Password to reset."
+      ]
+    },
+
+    {
+      "tag": "partner",
+      "patterns": [
+        "add my restaurant", "partner with you", "register restaurant",
+        "restaurant join", "list restaurant", "dineous partner"
+      ],
+      "responses": [
+        "Open the Add Restaurant / Partner page, click Continue, and complete Restaurant Information → Documents → Menu Setup.",
+        "Start at the Partner page→ Restaurant Information → Documents → Menu Setup; after approval, login via the Restaurant Admin Login page."
+      ]
+    },
+
+    {
+      "tag": "payment",
+      "patterns": [
+        "payment", "pay", "checkout", "upi", "card", "online pay"
+      ],
+      "responses": [
+        "Payments are completed during checkout.",
+        "Open Cart and proceed to Checkout."
+      ]
+    },
+
+    {
+      "tag": "navigation_help",
+      "patterns": [
+        "where is", "how to go", "navigate", "link", "url"
+      ],
+      "responses": [
+        "Tell me which page you are looking for.",
+        "I can guide you to the right page."
+      ]
+    },
+
+    {
+      "tag": "site_navigation",
+      "patterns": [
+        "how to use", "how to login", "how to signup",
+        "profile kahan", "order history kahan"
+      ],
+      "responses": [
+        "I can guide you through the website steps.",
+        "Tell me what you want to do on the site."
+      ]
+    },
+
+    {
+      "tag": "compare_restaurants",
+      "patterns": [
+        "compare restaurants", "which restaurant is best",
+        "best restaurant", "top rated restaurant"
+      ],
+      "responses": [
+        "Here is a quick comparison of restaurants.",
+        "Here are some options to compare."
+      ]
+    },
+
+    {
+      "tag": "thanks",
+      "patterns": [
+        "thanks", "thank you", "thx", "thanks a lot",
+        "appreciate it", "shukriya", "dhanyavaad"
+      ],
+      "responses": [
+        "You're welcome! 😊",
+        "Glad to help! 👍"
+      ]
+    },
+
+    {
+      "tag": "goodbye",
+      "patterns": [
+        "bye", "see you", "goodbye", "take care",
+        "see you later", "chal bye", "milte hain"
+      ],
+      "responses": [
+        "Goodbye! 👋 Have a great day!",
+        "See you soon! 😊"
+      ]
+    },
+
+    {
+      "tag": "fallback",
+      "patterns": [],
+      "responses": [
+        "🤔 I didn't quite get that. You can order food, track orders, or book a table."
+      ]
+    }
+  ]
+}

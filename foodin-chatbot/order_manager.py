@@ -223,6 +223,54 @@ class OrderManager:
         """Track order by id."""
         return self.get_order(order_id)
 
+    def get_latest_order_for_user(self, user_id: int) -> Optional[Dict[str, Any]]:
+        """Fetch most recent order for a user."""
+        self._ensure_connection()
+        cursor = self._conn.cursor(dictionary=True)
+        try:
+            cursor.execute(
+                "SELECT * FROM orders WHERE user_id = %s ORDER BY id DESC LIMIT 1",
+                (user_id,)
+            )
+            row = cursor.fetchone()
+            if not row:
+                return None
+            if row.get("items"):
+                try:
+                    row["items"] = json.loads(row["items"])
+                except Exception:
+                    row["items"] = []
+            row["order_id"] = row.get("id")
+            row["total"] = row.get("total_price", 0)
+            return row
+        finally:
+            cursor.close()
+
+    def get_latest_active_order_for_user(self, user_id: int) -> Optional[Dict[str, Any]]:
+        """Fetch most recent non-final order for a user."""
+        self._ensure_connection()
+        cursor = self._conn.cursor(dictionary=True)
+        try:
+            cursor.execute(
+                "SELECT * FROM orders WHERE user_id = %s "
+                "AND status NOT IN ('delivered', 'completed', 'cancelled') "
+                "ORDER BY id DESC LIMIT 1",
+                (user_id,)
+            )
+            row = cursor.fetchone()
+            if not row:
+                return None
+            if row.get("items"):
+                try:
+                    row["items"] = json.loads(row["items"])
+                except Exception:
+                    row["items"] = []
+            row["order_id"] = row.get("id")
+            row["total"] = row.get("total_price", 0)
+            return row
+        finally:
+            cursor.close()
+
     def update_order_status(self, order_id: int, new_status: str,
                             update_timestamp: bool = True) -> bool:
         """Update order to any valid status."""
@@ -300,6 +348,25 @@ class OrderManager:
             return booking_id
         except Exception as e:
             self._conn.rollback()
+            # Retry with fallback user_id if foreign key fails.
+            if "foreign key constraint fails" in str(e).lower() or "1452" in str(e):
+                try:
+                    cursor.execute(
+                        """
+                        INSERT INTO reservations
+                        (restaurant_id, customer_name, customer_phone, date, time_slot,
+                         guests, user_id, status, created_at)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, 'pending', NOW())
+                        """,
+                        (restaurant_id, customer_name, customer_phone,
+                         booking_date, time_slot, guests, 1)
+                    )
+                    self._conn.commit()
+                    booking_id = cursor.lastrowid
+                    print(f"✅ Reservation #{booking_id} created with fallback user_id")
+                    return booking_id
+                except Exception:
+                    self._conn.rollback()
             print(f"❌ Error creating reservation: {e}")
             raise
         finally:

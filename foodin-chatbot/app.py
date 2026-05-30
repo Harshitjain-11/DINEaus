@@ -454,13 +454,9 @@ def is_time_allowed_for_date(date_str: str | None, time_str: str) -> bool:
     if not in_window: return False
     if date_str:
         try:
-            bdate = date.fromisoformat(date_str)
+            date.fromisoformat(date_str)
         except Exception:
             return False
-        if bdate == date.today():
-            now = datetime.now()
-            if hh < now.hour or (hh == now.hour and mm <= now.minute):
-                return False
     return True
 
 def support_intent_parser(text: str) -> str | None:
@@ -481,7 +477,8 @@ def support_intent_parser(text: str) -> str | None:
 
 BOOKING_EXEMPT_INTENTS = {
     "greeting", "goodbye", "thanks", "help", "account_help",
-    "cancel_booking", "booking_interrupt", "navigation_help", "site_navigation"
+    "cancel_booking", "booking_interrupt", "navigation_help", "site_navigation",
+    "cancel_order"
 }
 
 def resolve_intent(message: str, session: dict, restaurants: list) -> str:
@@ -512,12 +509,16 @@ def resolve_intent(message: str, session: dict, restaurants: list) -> str:
 
     # Fast-path menu item phrases so cart additions do not fall into ML/Groq fallback.
     active_restaurant = session.get("active_restaurant")
-    if active_restaurant:
+    if active_restaurant and not re.search(r"\b(cancel|track|status|confirm order|checkout|payment|help|book|booking|table)\b", message, flags=re.I):
         try:
             menu_list, price_map = get_restaurant_menu(active_restaurant)
         except Exception:
             menu_list, price_map = None, None
-        if menu_list and extract_items_from_message(message, menu_list, price_map):
+        order_hint = bool(re.search(r"\b(add|order|want|get|give me|i want|i need|chahiye|de do|lena|mangwa|dena)\b", message, flags=re.I))
+        qty_hint = bool(re.search(r"\b(\d+|one|two|three|four|five|six|seven|eight|nine|ten|ek|do|teen|char|paanch)\b", message, flags=re.I))
+        if menu_list and (order_hint or qty_hint):
+            if extract_items_from_message(message, menu_list, price_map):
+                return "order_item"
             return "order_item"
 
     return predict_intent(message, session)
@@ -837,7 +838,22 @@ def extract_items_from_message(message, menu_list, price_map):
                 matched, confidence = fuzzy_match_item(word, menu_list)
                 if matched and confidence >= 0.7:
                     items.append({"name": matched, "qty": 1, "price": price_map[matched]}); break
-    return items
+    if not items:
+        return items
+    # Consolidate duplicates from overlapping patterns to avoid double pricing.
+    merged = {}
+    for item in items:
+        name = item.get("name")
+        if not name:
+            continue
+        key = name.lower()
+        qty = int(item.get("qty", 1) or 1)
+        price = item.get("price", 0)
+        if key not in merged:
+            merged[key] = {"name": name, "qty": qty, "price": price}
+        else:
+            merged[key]["qty"] += qty
+    return list(merged.values())
 
 def suggest_close_items(user_input, menu_list, n=3):
     suggestions = set()
@@ -1147,7 +1163,7 @@ def chat_handler():
     message = (data.get("message") or "").strip()
 
     if not message:
-        return jsonify({"reply": "Please type something! 😊"}), 200
+        return jsonify({"reply": "Please type something!"}), 200
 
     session = get_session(user_id)
     lang    = get_lang(session, message)
@@ -1212,6 +1228,30 @@ def chat_handler():
 
     # ── PENDING RESTAURANT SWITCH CONFIRMATION ─────────────────────────────────
     if session.get("pending_switch"):
+        # Allow cancellation/track/help to bypass a stale switch prompt.
+        if re.search(r"\b(cancel order|cancel|track|help|menu|confirm order)\b", message, flags=re.I):
+            session["pending_switch"] = None
+            set_session(user_id, session)
+        else:
+            if is_yes(message):
+                clear_temp_order(user_id)
+                session["active_restaurant"] = None
+                session["pending_switch"] = None
+                session["restaurant_list_shown"] = True
+                try: rows = om.get_restaurants() or []
+                except Exception as e: rows = []; print(f"Error: {e}")
+                set_session(user_id, session)
+                return jsonify({"reply": format_restaurant_list(rows, lang), "intent": "view_restaurants",
+                                "restaurants": prepare_restaurants_for_json(rows),
+                                "speak": False, "speech_text": None}), 200
+            if is_no(message):
+                session["pending_switch"] = None
+                set_session(user_id, session)
+                return jsonify({"reply": get_response("switch_cancelled", lang), "intent": "change_restaurant",
+                                "speak": False, "speech_text": None}), 200
+            set_session(user_id, session)
+            return jsonify({"reply": ("Reply **'yes'** or **'no'**." if lang == "en" else "**'yes'** ya **'no'** bolo."),
+                            "intent": "change_restaurant", "speak": False, "speech_text": None}), 200
         if is_yes(message):
             clear_temp_order(user_id)
             session["active_restaurant"] = None
@@ -1235,7 +1275,7 @@ def chat_handler():
     # ── FIX 5: PENDING ORDER CANCEL CONFIRMATION ───────────────────────────────
     if session.get("pending_cancel_order_id"):
         pending_cancel_id = session.get("pending_cancel_order_id")
-        if is_yes(message):
+        if is_yes(message) or re.search(r"\b(cancel order|cancel)\b", message, flags=re.I):
             try:
                 success = om.cancel_order(pending_cancel_id)
                 if success:
@@ -1262,16 +1302,21 @@ def chat_handler():
                         "intent": "cancel_order", "speak": False, "speech_text": None}), 200
 
     # ── VIEW / CHANGE RESTAURANTS ──────────────────────────────────────────────
-    if (re.search(r'\b(change|switch|different|badlo|dusra)\s*(restaurant|place)?\b', message.lower()) or
-            re.search(r'\b(view restaurants?|show restaurants?|restaurants dikhao|restaurants batao)\b', message.lower()) or
-            "view restaurant" in message.lower()):
+    wants_change = bool(re.search(r'\b(change|switch|different|badlo|dusra)\s*(restaurant|place)?\b', message.lower()))
+    wants_view = bool(re.search(r'\b(view restaurants?|show restaurants?|restaurants dikhao|restaurants batao)\b', message.lower()) or
+                      "view restaurant" in message.lower())
+    if wants_change or wants_view:
 
         temp_items = session.get("temp_order", {}).get("items", [])
-        if session.get("active_restaurant") and temp_items:
+        if wants_change and session.get("active_restaurant") and temp_items:
             session["pending_switch"] = "view_restaurants"
             set_session(user_id, session)
             return jsonify({"reply": get_response("switch_warning", lang), "intent": "change_restaurant",
                             "speak": False, "speech_text": None}), 200
+        if wants_view and temp_items:
+            # Treat explicit browse as a fresh start to avoid stale carts.
+            clear_temp_order(user_id)
+            session["last_added_item"] = None
         try: rows = om.get_restaurants() or []
         except Exception as e: rows = []; print(f"Error: {e}")
         session["active_restaurant"] = None; session["restaurant_list_shown"] = True
@@ -1343,7 +1388,11 @@ def chat_handler():
         }), 200
 
     # ── INTENT DETECTION ──────────────────────────────────────────────────────
-    intent = resolve_intent(message, session, all_rests)
+    explicit_cancel = bool(re.search(r"\b(cancel order|cancel my order|cancel)\b", message, flags=re.I)) and not bool(re.search(r"\b(table|booking|reservation)\b", message, flags=re.I))
+    if explicit_cancel:
+        intent = "cancel_order"
+    else:
+        intent = resolve_intent(message, session, all_rests)
     if intent == "compare_restaurants":
         intent = "recommend_restaurants"
 
@@ -1362,6 +1411,17 @@ def chat_handler():
         set_session(user_id, session)
         return jsonify({"reply": bot_response, "intent": intent,
                         "speak": False, "speech_text": None}), 200
+
+    # Restart booking flow if user explicitly asks to book again with no details.
+    booking_state = session.get("booking_state", {})
+    if booking_state and is_booking_message(message):
+        has_people = extract_people_count(message) is not None
+        if not has_date_hint(message) and not has_time_hint(message) and not has_people:
+            session["booking_state"] = {}
+            session.pop("mentioned_restaurant_id", None)
+            session.pop("mentioned_restaurant_name", None)
+            session["active_restaurant"] = None
+            set_session(user_id, session)
 
     # FIX 1+3: Booking state override uses BOOKING_EXEMPT_INTENTS set
     booking_active = session.get("booking_state", {})
@@ -1813,6 +1873,33 @@ def chat_handler():
         m = re.search(r'\b(\d{1,8})\b', message)
         if m: cancel_id = int(m.group(1))
         elif session.get("last_order_id"): cancel_id = session["last_order_id"]
+
+        if not cancel_id:
+            latest_active = None
+            latest_order = None
+            try:
+                user_id_int = int(user_id)
+                latest_active = om.get_latest_active_order_for_user(user_id_int)
+                latest_order = om.get_latest_order_for_user(user_id_int)
+            except Exception:
+                latest_active = None
+                latest_order = None
+            if latest_active:
+                cancel_id = latest_active.get("order_id") or latest_active.get("id")
+                session["last_order_id"] = cancel_id
+            elif latest_order:
+                cancel_id = latest_order.get("order_id") or latest_order.get("id")
+                session["last_order_id"] = cancel_id
+                latest_status = (latest_order.get("status") or "").lower()
+                set_session(user_id, session)
+                return jsonify({
+                    "reply": (f"You have no active orders to cancel. Latest order **#{cancel_id}** is {latest_status}. "
+                              "If you want to cancel a different order, share its ID."
+                              if lang == "en" else
+                              f"Koi active order cancel ke liye nahi mila. Latest order **#{cancel_id}** {latest_status} hai. "
+                              "Agar kisi aur order ko cancel karna hai, uska ID bhejo."),
+                    "intent": "cancel_order", "speak": False, "speech_text": None
+                }), 200
 
         if cancel_id:
             latest_order_id = session.get("last_order_id")

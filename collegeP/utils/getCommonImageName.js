@@ -1,3 +1,4 @@
+// utils/getCommonImageName.js
 function getCommonImageName(itemName) {
   const name = itemName.toLowerCase();
 

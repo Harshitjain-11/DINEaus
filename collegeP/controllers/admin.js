@@ -1,3 +1,4 @@
+// controllers/admin.js
 const connection = require("../config/db");
 const ExpressError = require("../utils/ExpressError");
 const bcrypt = require("bcrypt");

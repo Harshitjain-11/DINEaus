@@ -1,3 +1,4 @@
+// config/db.js
 // 1. Importing MySQL2 driver - Preferred over 'mysql' for performance and async support.
 const mysql = require("mysql2");
 

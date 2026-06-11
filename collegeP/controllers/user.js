@@ -1,3 +1,4 @@
+// controllers/user.js
 const connection = require("../config/db");
 const getCommonImageName = require("../utils/getCommonImageName");
 const bcrypt = require("bcrypt");

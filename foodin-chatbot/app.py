@@ -509,7 +509,7 @@ def resolve_intent(message: str, session: dict, restaurants: list) -> str:
 
     # Fast-path menu item phrases so cart additions do not fall into ML/Groq fallback.
     active_restaurant = session.get("active_restaurant")
-    if active_restaurant and not re.search(r"\b(cancel|track|status|confirm order|checkout|payment|help|book|booking|table)\b", message, flags=re.I):
+    if active_restaurant and not re.search(r"\b(cancel|track|status|confirm order|checkout|payment|help|book|booking|table|people|guests?|person)\b", message, flags=re.I):
         try:
             menu_list, price_map = get_restaurant_menu(active_restaurant)
         except Exception:
@@ -1314,6 +1314,11 @@ def chat_handler():
             return jsonify({"reply": get_response("switch_warning", lang), "intent": "change_restaurant",
                             "speak": False, "speech_text": None}), 200
         if wants_view and temp_items:
+            if session.get("active_restaurant"):
+                session["pending_switch"] = "view_restaurants"
+                set_session(user_id, session)
+                return jsonify({"reply": get_response("switch_warning", lang), "intent": "change_restaurant",
+                                "speak": False, "speech_text": None}), 200
             # Treat explicit browse as a fresh start to avoid stale carts.
             clear_temp_order(user_id)
             session["last_added_item"] = None
@@ -1463,7 +1468,12 @@ def chat_handler():
             bot_response = get_response("greeting", lang)
 
     elif intent == "goodbye":
-        bot_response = get_response("goodbye", lang); clear_temp_order(user_id)
+        bot_response = get_response("goodbye", lang)
+        clear_temp_order(user_id)
+        session["booking_state"] = {}
+        session["pending_booking_switch"] = None
+        session["pending_switch"] = None
+        set_session(user_id, session)
 
     elif intent == "thanks":
         bot_response = get_response("thanks", lang)
@@ -1904,7 +1914,8 @@ def chat_handler():
         if cancel_id:
             latest_order_id = session.get("last_order_id")
             # FIX 5: If user typed wrong ID but we know the latest, suggest it
-            if latest_order_id and cancel_id != latest_order_id:
+            cancel_id_from_user = bool(re.search(r'\b(\d{1,8})\b', message))
+            if latest_order_id and cancel_id != latest_order_id and not cancel_id_from_user:
                 session["pending_cancel_order_id"] = latest_order_id
                 set_session(user_id, session)
                 return jsonify({

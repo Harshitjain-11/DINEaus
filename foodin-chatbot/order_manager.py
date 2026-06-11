@@ -119,6 +119,10 @@ class OrderManager:
         cursor = self._conn.cursor()
         added = 0
         try:
+            cursor.execute(
+                "DELETE FROM cart_items WHERE user_id = %s AND restaurant_id = %s",
+                (user_id, restaurant_id)
+            )
             for item in items:
                 name = item.get("item_name")
                 qty = int(item.get("quantity", 1) or 1)

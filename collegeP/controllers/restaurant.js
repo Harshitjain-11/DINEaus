@@ -1,3 +1,4 @@
+// controllers/restaurant.js
 const connection = require("../config/db");
 const bcrypt = require("bcrypt");
 const Tesseract = require("tesseract.js");

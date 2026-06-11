@@ -690,10 +690,15 @@ function resetExploreFilter() {
 </script>
 
 <!-- DINEBOT -->
-<script>
+<!-- <script>
   window.DINEAUS_USER_ID = "<%= user ? user.id : 'guest_' + Date.now() %>";
     window.DINEAUS_IS_LOGGED_IN = <%= user ? 'true' : 'false' %>;
     window.DINEAUS_USER_NAME = "<%= user ? user.firstname : '' %>";
+</script> -->
+<script>
+  window.DINEAUS_USER_ID      = "<%= locals.user ? user.id : '' %>" || ("guest_" + Date.now());
+  window.DINEAUS_IS_LOGGED_IN = <%= locals.user ? 'true' : 'false' %>;
+  window.DINEAUS_USER_NAME    = "<%= locals.user ? (user.firstname || '') : '' %>";
 </script>
 
 <button class="chat-toggle-btn" id="chat-toggle" aria-controls="chat-container" aria-expanded="false">

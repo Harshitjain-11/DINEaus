@@ -30,7 +30,6 @@ def _default_session() -> dict:
         "created_at": datetime.now(UTC).isoformat(),
         "updated_at": datetime.now(UTC).isoformat(),
         "recent_actions": [],
-        "last_added_item": None,
         "last_action_time": None,
     }
 

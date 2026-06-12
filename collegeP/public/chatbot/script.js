@@ -134,7 +134,7 @@ function renderRestaurantCards(restaurants) {
             <div class="restaurant-card-title">${r.name}</div>
             <div class="restaurant-card-meta">
               <span class="restaurant-meta-item">📍 ${r.location || 'Gwalior'}</span>
-              <span class="restaurant-meta-item">⭐ ${(4 + Math.random()).toFixed(1)}</span>
+              <span class="restaurant-meta-item">⭐ 4.5</span>
               <span class="restaurant-meta-item">🕐 25-35 min</span>
             </div>
             <button class="restaurant-select-btn"

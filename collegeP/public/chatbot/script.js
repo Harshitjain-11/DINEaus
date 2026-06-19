@@ -264,6 +264,11 @@ function renderOrderConfirmed(orderId, items, total) {
         <button class="order-track-btn" onclick="sendMessage('track ${orderId}')">
           📦 Track Order #${orderId}
         </button>
+        <button class="order-track-btn" 
+          style="background:#fff1f2;color:#be123c;border:1.5px solid #fecdd3;margin-top:6px;"
+          onclick="sendMessage('cancel order ${orderId}')">
+          ❌ Cancel Order #${orderId}
+        </button>
       </div>
     </div>
   `;
@@ -506,7 +511,7 @@ function handleBotResponse(data, message) {
   }
 
   // ── ORDER CANCELLED ────────────────────────────────────────────────────────
-  if (intent === "cancel_order" && (reply.includes("cancelled") || reply.includes("cancel ho gaya"))) {
+  if (intent === "cancel_order" && (reply.includes("cancelled successfully") || reply.includes("cancel ho gaya"))) {
     appendCard(`
       <div style="background:#fff1f2;border:1.5px solid #fecdd3;border-radius:12px;
                   padding:14px;text-align:center;">

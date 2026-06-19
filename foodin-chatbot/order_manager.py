@@ -56,16 +56,34 @@ class OrderManager:
         finally:
             cursor.close()
 
+    # def get_menu(self, restaurant_id: int) -> List[Dict[str, Any]]:
+    #     """Get available menu items for a restaurant."""
+    #     self._ensure_connection()
+    #     cursor = self._conn.cursor(dictionary=True)
+    #     try:
+    #         cursor.execute(
+    #             "SELECT item_name, price FROM menu_item "
+    #             "WHERE restaurant_id = %s AND is_available = TRUE",
+    #             (restaurant_id,)
+    #         )
+    #         rows = cursor.fetchall()
+    #         return rows if rows else []
+    #     except Exception as e:
+    #         print(f"Error fetching menu for restaurant {restaurant_id}: {e}")
+    #         return []
+    #     finally:
+    #         cursor.close()
     def get_menu(self, restaurant_id: int) -> List[Dict[str, Any]]:
         """Get available menu items for a restaurant."""
         self._ensure_connection()
         cursor = self._conn.cursor(dictionary=True)
         try:
             cursor.execute(
-                "SELECT item_name, price FROM menu_item "
-                "WHERE restaurant_id = %s AND is_available = TRUE",
+                "SELECT DISTINCT item_name, MIN(price) as price FROM menu_item "
+                "WHERE restaurant_id = %s AND is_available = TRUE "
+                "GROUP BY item_name",
                 (restaurant_id,)
-            )
+        )
             rows = cursor.fetchall()
             return rows if rows else []
         except Exception as e:

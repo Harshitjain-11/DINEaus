@@ -596,6 +596,22 @@ class _InMemoryOrderManager:
 
     def add_reservation_preorders(self, reservation_id, items): return len(items or [])
 
+    # FIX BUG-13: Missing methods — prevent AttributeError when MySQL is unavailable
+    def get_order(self, order_id): return self.orders.get(order_id)
+    def get_reservation(self, reservation_id): return self.reservations.get(reservation_id)
+    def cancel_reservation(self, reservation_id):
+        if reservation_id in self.reservations:
+            self.reservations[reservation_id]["status"] = "cancelled"; return True
+        return False
+    def update_order_status(self, order_id, new_status, update_timestamp=True):
+        if order_id in self.orders:
+            self.orders[order_id]["status"] = new_status; return True
+        return False
+    def update_reservation_status(self, reservation_id, new_status):
+        if reservation_id in self.reservations:
+            self.reservations[reservation_id]["status"] = new_status; return True
+        return False
+
 if om is None:
     print("WARNING: Using in-memory OrderManager")
     om = _InMemoryOrderManager()
@@ -1063,11 +1079,10 @@ def _handle_booking(user_id: str, message: str, session: dict, lang: str, all_re
         session["restaurant_list_shown"]    = False
         set_session(user_id, session)
 
-        # UX FIX: Default to dine-out. Skip booking type 1/2 prompt entirely.
-        # Pre-order will be offered optionally at the end before confirmation.
-        if not saved.get("booking_mode"):
-            saved["booking_mode"] = mode or "dine_out"
-            session["booking_state"] = saved
+        # FIX BUG-01: Ensure booking_mode is set in the CURRENT booking_state dict
+        # (old code wrote to orphaned `saved` variable that pointed to the empty dict from line 1005)
+        if not session["booking_state"].get("booking_mode"):
+            session["booking_state"]["booking_mode"] = mode or "dine_out"
         set_session(user_id, session)
         return _advance_booking_after_mode(user_id, session, lang)
 
@@ -1409,8 +1424,9 @@ def _confirm_booking(user_id: str, saved: dict, session: dict, lang: str):
             saved.get("time"),
             saved.get("people"),
         )
-        if (saved.get("booking_mode") == "preorder"
-                and saved.get("preorder_items")
+        # FIX BUG-03: Save pre-order items regardless of booking_mode.
+        # UX flow now offers pre-order to dine_out users too (Line 1327-1342).
+        if (saved.get("preorder_items")
                 and hasattr(om, "add_reservation_preorders")):
             om.add_reservation_preorders(booking_id, saved.get("preorder_items"))
 

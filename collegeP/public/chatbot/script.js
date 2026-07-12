@@ -12,6 +12,28 @@ let activeCartCardEl = null; // tracks live cart card — old ones get removed
 let lastSubmittedMessage = "";
 let lastSubmittedAt = 0;
 
+// FIX #122/#123: HTML Escape helper for XSS prevention
+function escapeHtml(unsafe) {
+  if (unsafe === null || unsafe === undefined) return "";  // REG-09: allow 0/false through
+  return String(unsafe)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+// FIX #108/#110: Persist guest session ID across page reloads
+function getChatbotUserId() {
+  if (window.DINEAUS_USER_ID) return window.DINEAUS_USER_ID;
+  let guestId = localStorage.getItem("dinebot_guest_id");
+  if (!guestId) {
+    guestId = "guest_" + Date.now();
+    localStorage.setItem("dinebot_guest_id", guestId);
+  }
+  return guestId;
+}
+
 function setChatbotOpen(isOpen) {
   chatContainer.classList.toggle("open", isOpen);
   chatToggle.classList.toggle("active", isOpen);
@@ -105,7 +127,12 @@ function appendCard(cardHTML) {
 function renderRestaurantCards(restaurants) {
   const html = `
     <div class="restaurant-cards">
-      ${restaurants.map((r, i) => `
+      ${restaurants.map((r, i) => {
+        const safeName = escapeHtml(r.name);
+        const safeLocation = escapeHtml(r.location || 'Gwalior');
+        const safeId = r.id;
+        const clickSafeName = r.name.replace(/'/g, "\\'");
+        return `
         <div class="restaurant-card">
           <div class="restaurant-card-banner" style="
             background: #1a1a1a;
@@ -115,8 +142,8 @@ function renderRestaurantCards(restaurants) {
           ">
             ${r.image_url
               ? `<img
-                   src="${r.image_url}"
-                   alt="${r.name}"
+                   src="${escapeHtml(r.image_url)}"
+                   alt="${safeName}"
                    loading="lazy"
                    style="width:100%;height:100%;object-fit:cover;"
                    onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<span style=\\'font-size:30px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)\\'>🍽️</span>')"
@@ -131,19 +158,19 @@ function renderRestaurantCards(restaurants) {
             ">#${i + 1}</span>
           </div>
           <div class="restaurant-card-body">
-            <div class="restaurant-card-title">${r.name}</div>
+            <div class="restaurant-card-title">${safeName}</div>
             <div class="restaurant-card-meta">
-              <span class="restaurant-meta-item">📍 ${r.location || 'Gwalior'}</span>
+              <span class="restaurant-meta-item">📍 ${safeLocation}</span>
               <span class="restaurant-meta-item">⭐ 4.5</span>
               <span class="restaurant-meta-item">🕐 25-35 min</span>
             </div>
             <button class="restaurant-select-btn"
-              onclick="selectRestaurant(${r.id}, '${r.name.replace(/'/g, "\\'")}')">
+              onclick="selectRestaurant(${safeId}, '${clickSafeName}')">
               Select Restaurant <span>→</span>
             </button>
           </div>
         </div>
-      `).join('')}
+      `}).join('')}
     </div>
   `;
 
@@ -163,19 +190,20 @@ function renderMenuCards(menuItems) {
           const name  = item.item_name || item.name || 'Item';
           const price = item.price || 0;
           const emoji = getFoodEmoji(name);
-          const safeName = name.replace(/'/g, "\\'");
+          const safeName = escapeHtml(name.charAt(0).toUpperCase() + name.slice(1));
+          const clickSafeName = name.replace(/'/g, "\\'");  // REG-03: No escapeHtml for JS onclick context
           return `
-            <div class="menu-item-card" onclick="orderItem('${safeName}')">
+            <div class="menu-item-card" onclick="orderItem('${clickSafeName}')">
               <div class="menu-item-left">
                 <div class="menu-item-icon">${emoji}</div>
                 <div class="menu-item-info">
-                  <div class="menu-item-name">${name.charAt(0).toUpperCase() + name.slice(1)}</div>
+                  <div class="menu-item-name">${safeName}</div>
                   <div class="menu-item-desc">Freshly prepared</div>
                 </div>
               </div>
               <div class="menu-item-right">
-                <div class="menu-item-price">₹${price}</div>
-                <button class="menu-add-btn" onclick="event.stopPropagation(); orderItem('${safeName}')">+</button>
+                <div class="menu-item-price">₹${escapeHtml(price)}</div>
+                <button class="menu-add-btn" onclick="event.stopPropagation(); orderItem('${clickSafeName}')">+</button>
               </div>
             </div>
           `;
@@ -548,18 +576,24 @@ async function sendMessage(customText = null, forceAppend = false) {
   if (customText == null) input.value = "";
   showTyping();
 
+  // FIX #140: Abort controller for fetch timeout
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+
   try {
     const res = await fetch("http://localhost:5000/chat", {
       method:  "POST",
       headers: { "Content-Type": "application/json" },
+      signal:  controller.signal,
       body:    JSON.stringify({
-        user_id: window.DINEAUS_USER_ID || "guest_" + Date.now(),
+        user_id: getChatbotUserId(),
         message: text,
         is_logged_in: Boolean(window.DINEAUS_IS_LOGGED_IN),
         user_name: window.DINEAUS_USER_NAME || ""
       }),
     });
 
+    clearTimeout(timeoutId);
     if (!res.ok) throw new Error("Network response not OK");
     const data = await res.json();
     hideTyping();
@@ -571,9 +605,14 @@ async function sendMessage(customText = null, forceAppend = false) {
     }
 
   } catch (err) {
+    clearTimeout(timeoutId);
     hideTyping();
     console.error("Send error:", err);
-    appendMessage("bot", "⚠️ Connection issue. Please try again.");
+    if (err.name === 'AbortError') {
+      appendMessage("bot", "⚠️ Server took too long to respond. Please try again.");
+    } else {
+      appendMessage("bot", "⚠️ Connection issue. Please try again.");
+    }
   } finally {
     setTimeout(() => { isSending = false; }, 300);
   }

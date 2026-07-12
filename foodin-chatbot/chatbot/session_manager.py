@@ -2,9 +2,41 @@
 """
 Fixed session manager — correct defaults, booking state, context stack.
 """
+import json
+import os
+import time as _time
 from datetime import datetime, UTC
 
-_sessions = {}
+# FIX #106: Persist sessions to disk so they survive server restarts
+_SESSION_FILE = os.path.join(os.path.dirname(__file__), "data", "chatbot_sessions.json")
+
+def load_sessions():
+    try:
+        if os.path.exists(_SESSION_FILE):
+            with open(_SESSION_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+    except Exception as e:
+        print(f"[SESSION] Failed to load sessions: {e}")
+    return {}
+
+# REG-07: Debounce file writes — at most once per 2 seconds
+_last_save_ts = 0
+_SAVE_DEBOUNCE_SECS = 2
+
+def save_sessions(force=False):
+    global _last_save_ts
+    now = _time.time()
+    if not force and (now - _last_save_ts < _SAVE_DEBOUNCE_SECS):
+        return  # skip — written too recently
+    _last_save_ts = now
+    try:
+        os.makedirs(os.path.dirname(_SESSION_FILE), exist_ok=True)
+        with open(_SESSION_FILE, "w", encoding="utf-8") as f:
+            json.dump(_sessions, f)
+    except Exception as e:
+        print(f"[SESSION] Failed to save sessions: {e}")
+
+_sessions = load_sessions()
 
 def _default_session() -> dict:
     return {
@@ -53,6 +85,7 @@ def get_session(user_id: str) -> dict:
 def set_session(user_id: str, data: dict) -> dict:
     data["updated_at"] = datetime.now(UTC).isoformat()
     _sessions[user_id] = data
+    save_sessions()  # FIX #106: Save on update
     return _sessions[user_id]
 
 def push_intent(user_id: str, intent: str):
@@ -79,7 +112,28 @@ def clear_booking_state(user_id: str) -> dict:
 def reset_session(user_id: str) -> dict:
     """Full reset — called on chat reset button."""
     _sessions[user_id] = _default_session()
+    save_sessions()  # FIX #106: Save on reset
     return _sessions[user_id]
+
+def cleanup_stale_sessions(ttl_seconds=7200):
+    """REG-02: Remove sessions older than ttl_seconds. Called from app.py."""
+    now = _time.time()
+    stale_keys = []
+    for uid, s in list(_sessions.items()):
+        updated = s.get("updated_at") or s.get("created_at")
+        if updated:
+            try:
+                ts = datetime.fromisoformat(updated).timestamp()
+                if now - ts > ttl_seconds:
+                    stale_keys.append(uid)
+            except Exception:
+                pass
+    for k in stale_keys:
+        _sessions.pop(k, None)
+    if stale_keys:
+        save_sessions(force=True)
+        print(f"[SESSION] Cleaned {len(stale_keys)} stale sessions")
+    return len(stale_keys)
 
 def dump_sessions() -> dict:
     """Shallow copy for debugging."""

@@ -36,9 +36,9 @@ except Exception:
     ModelLoader = None
 
 try:
-    from chatbot.session_manager import get_session, set_session, push_intent, reset_session, clear_temp_order
+    from chatbot.session_manager import get_session, set_session, push_intent, reset_session, clear_temp_order, save_sessions, cleanup_stale_sessions
 except Exception:
-    get_session = set_session = push_intent = reset_session = clear_temp_order = None
+    get_session = set_session = push_intent = reset_session = clear_temp_order = save_sessions = cleanup_stale_sessions = None
 
 try:
     from chatbot.entity_extractor import extract_order_id, extract_items
@@ -106,7 +106,8 @@ _HINDI_MARKERS = {
 BOOKING_EXEMPT_INTENTS = {
     "greeting", "goodbye", "thanks", "help", "account_help",
     "cancel_booking", "booking_interrupt", "navigation_help",
-    "site_navigation", "cancel_order", "payment",
+    "site_navigation", "cancel_order", "payment", "track_order",
+    "remove_item", "show_cart", "about_bot",
 }
 
 # ── Language ───────────────────────────────────────────────────────────────────
@@ -115,8 +116,18 @@ def detect_language(text: str) -> str:
     return 'hi' if words & _HINDI_MARKERS else 'en'
 
 def get_lang(session: dict, message: str) -> str:
-    if not session.get("lang"):
-        session["lang"] = detect_language(message)
+    # FIX #100/#116 + REG-04: Hybrid detection — only switch if strong signal.
+    # Short messages ("7pm", "yes", "ok") keep the previous language.
+    words = set(message.lower().split())
+    hindi_count = len(words & _HINDI_MARKERS)
+    if hindi_count >= 1:
+        session["lang"] = "hi"
+    elif len(words) >= 4 and hindi_count == 0:
+        # Long message with zero Hindi → conclusive English switch
+        session["lang"] = "en"
+    elif not session.get("lang"):
+        session["lang"] = "en"  # default for first message
+    # else: keep session["lang"] unchanged for short/ambiguous inputs
     return session["lang"]
 
 # ── Static responses ───────────────────────────────────────────────────────────
@@ -278,14 +289,25 @@ def booking_ask(field: str, lang: str) -> str:
 
 # ── Yes / No helpers ───────────────────────────────────────────────────────────
 def is_yes(text: str) -> bool:
+    # FIX #21/#22/#26/#28: Expand yes detection — handle "absolutely", "of course",
+    # "go ahead", stretched "yesss", thumbs up emoji, etc.
+    t = text.strip()
+    if t in ("👍", "👌", "✅", "💯"): return True
     return bool(re.search(
-        r"\b(yes|y|yeah|yep|ok|okay|sure|confirm|haan|han|ha|bilkul|theek hai|done)\b",
+        r"\b(yes+|y|yeah+|yep|yup|ok|okay|sure|confirm|haan+|han|ha|bilkul|"
+        r"theek hai|theek|done|absolutely|of course|go ahead|let'?s do it|"
+        r"perfect|definitely|zaroor|pakka|sahi|ji|ji haan|approved|chalo)\b",
         text, flags=re.I,
     ))
 
 def is_no(text: str) -> bool:
+    # FIX #5/#27 + REG-01: Removed cancel/stop/ruko/band karo — those are escape
+    # intents, not negation. They must be handled at each call site instead.
+    t = text.lower().strip()
+    if re.search(r"\bno\s*(problem|worries|doubt|issue|probs)\b", t, flags=re.I):
+        return False  # "no problem" is affirmative
     return bool(re.search(
-        r"\b(no|n|nope|nah|stop|nahin|nahi|mat|nai)\b",
+        r"\b(no+|n|nope|nah+|nahin|nahi|mat|nai|nahii+)\b",
         text, flags=re.I,
     ))
 
@@ -300,10 +322,22 @@ def has_date_hint(text: str) -> bool:
     ))
 
 def has_time_hint(text: str) -> bool:
+    # REG-11: Added time aliases to match parse_time_string capabilities
     return bool(re.search(
-        r"\b(noon|midday|midnight|\d{1,2}:\d{2}|\d{1,2}\s*(?:am|pm)|\d{1,2}(?:am|pm)|\d{1,2}\s*baje)\b",
+        r"\b(noon|midday|midnight|\d{1,2}:\d{2}|\d{1,2}\s*(?:am|pm)|\d{1,2}(?:am|pm)|\d{1,2}\s*baje"
+        r"|morning|evening|lunch|dinner|night|afternoon|subah|sham|shaam|dopahar|raat)\b",
         text, flags=re.I,
     ))
+
+# FIX #74/#75: Time aliases — "evening", "dinner", "lunch", "morning", "sham", "dopahar"
+_TIME_ALIASES = {
+    "morning": (10, 0), "subah": (10, 0),
+    "lunch": (12, 30), "lunch time": (12, 30), "dopahar": (12, 30),
+    "afternoon": (13, 0),
+    "evening": (19, 0), "sham": (19, 0), "shaam": (19, 0),
+    "dinner": (19, 30), "dinner time": (19, 30), "raat": (20, 0),
+    "night": (20, 0),
+}
 
 def parse_time_string(tstr: str):
     if not tstr or not isinstance(tstr, str):
@@ -311,6 +345,11 @@ def parse_time_string(tstr: str):
     s = tstr.lower().strip()
     s = re.sub(r"\bbaje\b", "", s).replace('.', '')
     s = re.sub(r"\s+", " ", s).strip()
+
+    # FIX #74/#75: Check time aliases first
+    for alias, val in _TIME_ALIASES.items():
+        if re.search(r"\b" + re.escape(alias) + r"\b", s):
+            return val
 
     if re.fullmatch(r"\d{1,2}", s):
         hh = int(s)
@@ -371,9 +410,10 @@ def is_allowed_booking_date(date_str: str) -> bool:
 
 def parse_date_from_text(text: str):
     t = text.lower()
-    if re.search(r"\b(today|aaj|todat|todsy|tody|todya|tday)\b", t):
+    # FIX #86: Add more typo variants from speech-to-text
+    if re.search(r"\b(today|aaj|todat|todsy|tody|todya|tday|2day|tuday)\b", t):
         return date.today().isoformat()
-    if re.search(r"\b(tomorrow|tmr|tmrw|kal|tommorow|tomorow|tommorrow)\b", t):
+    if re.search(r"\b(tomorrow|tmr|tmrw|tmw|kal|tommorow|tomorow|tommorrow|tomarrow|2morrow|2mrw|tomaro|tomorrw)\b", t):
         return (date.today() + timedelta(days=1)).isoformat()
     return None
 
@@ -399,8 +439,19 @@ def extract_people_count(message: str):
         val = int(m.group(1))
         if 1 <= val <= 20:
             return val
+    # FIX #90: Handle bare "for N" without people keyword
+    m_for = re.search(r"\bfor\s+(\d{1,2})\b", text)
+    if m_for:
+        val = int(m_for.group(1))
+        if 1 <= val <= 20:
+            return val
+
     for word, val in WORD_TO_NUMBER.items():
         if re.search(rf"\b{re.escape(word)}\s*(people|person|guests?|log|aadmi|members?)\b", text):
+            if 1 <= val <= 20:
+                return val
+        # FIX #90 for word numbers: "for two"
+        if re.search(rf"\bfor\s+{re.escape(word)}\b", text):
             if 1 <= val <= 20:
                 return val
     return None
@@ -446,17 +497,23 @@ def is_booking_message(text: str) -> bool:
     ))
 
 def is_unrelated_to_booking(text: str) -> bool:
+    # FIX #7/#8/#10/#14-18: Add quit/stop/cancel/nevermind/reset so user can escape booking
     return bool(re.search(
-        r"\b(menu|order|cart|checkout|confirm order|track|cancel order|payment|offers|deal)\b",
+        r"\b(menu|order|cart|checkout|confirm order|track|cancel order|cancel|payment|"
+        r"offers|deal|stop|quit|exit|nevermind|never mind|start over|reset|"
+        r"i changed my mind|show my bookings|show bookings|my bookings)\b",
         text, flags=re.I,
     ))
 
 def detect_booking_interrupt_target(text: str) -> str:
     t = text.lower()
-    if re.search(r"\b(track|status)\b", t):       return "track"
-    if re.search(r"\b(cancel order)\b", t):        return "cancel"
-    if re.search(r"\b(payment|checkout|pay)\b", t): return "payment"
-    if re.search(r"\b(help|support|account)\b", t): return "help"
+    if re.search(r"\b(track|status|order status|my order)\b", t): return "track"
+    if re.search(r"\b(cancel order|cancel my order)\b", t):       return "cancel"
+    if re.search(r"\b(payment|checkout|pay)\b", t):               return "payment"
+    if re.search(r"\b(help|support|account)\b", t):               return "help"
+    # FIX #7/#8: Bare cancel/stop/quit/nevermind → abandon booking
+    if re.search(r"\b(cancel|stop|quit|exit|nevermind|never mind|start over|reset|i changed my mind|band karo|ruko)\b", t):
+        return "abandon_booking"
     return "order"
 
 # ── Next booking prompt ────────────────────────────────────────────────────────
@@ -731,7 +788,9 @@ def extract_items_from_message(message, menu_list, price_map):
     for match in re.finditer(qty_pattern, message_lower):
         matched, confidence = fuzzy_match_item(match.group(2).strip(), menu_list)
         if matched and confidence >= 0.6:
-            items.append({"name": matched, "qty": normalize_quantity(match.group(1)), "price": price_map.get(matched, 0)})
+            qty = normalize_quantity(match.group(1))
+            qty = min(qty, 50)  # FIX #61: Cap quantity at 50 to prevent absurd orders
+            items.append({"name": matched, "qty": qty, "price": price_map.get(matched, 0)})
     if not items:
         for item_name in menu_list:
             if re.search(r'\b' + re.escape(item_name) + r'\b', message_lower):
@@ -807,6 +866,15 @@ def match_restaurant_in_message(message: str, restaurants: list):
         tokens = [tok for tok in tokens if tok not in ignore]
         if tokens and all(tok in t for tok in tokens):
             if not best or len(name) > len(best.get("name", "")): best = rx
+    # FIX #81: Fuzzy matching fallback for typos like "piza palace" → "Pizza Palace"
+    if not best:
+        names = [str(rx.get("name", "")).lower() for rx in (restaurants or []) if rx.get("name")]
+        for word in re.split(r"\W+", t):
+            if len(word) < 3: continue
+            matches = get_close_matches(word, names, n=1, cutoff=0.75)
+            if matches:
+                best = next((rx for rx in restaurants if rx.get("name", "").lower() == matches[0]), None)
+                if best: break
     return best
 
 def extract_preorder_items(message: str, restaurant_id: int):
@@ -869,12 +937,18 @@ def resolve_intent(message: str, session: dict, restaurants: list) -> str:
     booking_state = session.get("booking_state", {})
 
     if booking_state and booking_state.get("awaiting") not in (None, "restaurant"):
+        # FIX #2: Allow goodbye to exit booking cleanly
+        if re.search(r"\b(bye|goodbye|see you|alvida|chal bye|tata|later)\b", message, flags=re.I): return "goodbye"
+        # FIX #50: Allow thanks to pass through during booking
+        if re.search(r"\b(thanks|thank you|thanku|shukriya|dhanyavaad)\b", message, flags=re.I) and not re.search(r"\b(book|table|reserve|people|date|time)\b", message, flags=re.I): return "thanks"
         if re.search(r"\b(help|faq|support|complaint)\b", message, flags=re.I): return "help"
         if re.search(r"\b(navigate|navigation|where is|how to go)\b", message, flags=re.I): return "navigation_help"
         s = support_intent_parser(message)
         if s: return s
         # FIX P1: Payment is a stateless interrupt — don't trigger booking_interrupt
         if re.search(r"\b(payment|pay|checkout|upi|card)\b", message, flags=re.I): return "payment"
+        # FIX #1: Allow track_order to pass through
+        if re.search(r"\b(track|status|where is my order|mera order|order kaha)\b", message, flags=re.I) and re.search(r"\b(order|\d{3,})\b", message, flags=re.I): return "track_order"
         if is_unrelated_to_booking(message): return "booking_interrupt"
         return "book_table"
 
@@ -1270,6 +1344,24 @@ def _handle_booking(user_id: str, message: str, session: dict, lang: str, all_re
 
     # ── Confirmation ───────────────────────────────────────────────────────────
     if awaiting == "confirmation":
+        # FIX #4: Detect partial field edits BEFORE yes/no check
+        # "no, change the time to 8pm" / "change date" / "change people to 6"
+        field_edit = re.search(r"\b(change|update|modify|edit|fix|correct)\s+(the\s+)?(time|date|people|guests?|restaurant)", message, flags=re.I)
+        if field_edit:
+            target_field = field_edit.group(3).lower()
+            field_map = {"time": "time", "date": "date", "people": "guests", "guest": "guests", "guests": "guests", "restaurant": "restaurant"}
+            awaiting_field = field_map.get(target_field, target_field)
+            saved["awaiting"] = awaiting_field
+            # Clear the field so it gets re-asked
+            if awaiting_field == "time": saved["time"] = None
+            elif awaiting_field == "date": saved["date"] = None
+            elif awaiting_field == "guests": saved["people"] = None
+            elif awaiting_field == "restaurant":
+                saved["restaurant_id"] = None; saved["restaurant_name"] = None; saved["awaiting"] = "restaurant"
+            session["booking_state"] = saved
+            set_session(user_id, session)
+            return _continue_booking(user_id, session, lang)
+
         if is_yes(message):
             return _confirm_booking(user_id, saved, session, lang)
         if is_no(message):
@@ -1295,8 +1387,8 @@ def _handle_booking(user_id: str, message: str, session: dict, lang: str, all_re
         # FIX P0: Unknown input pe state preserve karo
         session["booking_state"] = saved
         set_session(user_id, session)
-        return ("Reply **yes** to confirm or **no** to restart."
-                if lang == "en" else "Confirm ke liye **yes** ya restart ke liye **no** bolo."), None
+        return ("Reply **yes** to confirm, **no** to restart, or **'change time/date/people'** to edit a field."
+                if lang == "en" else "Confirm ke liye **yes**, restart ke liye **no**, ya **'change time/date/people'** bolo field edit karne ke liye."), None
 
     session["booking_state"] = saved
     set_session(user_id, session)
@@ -1414,18 +1506,26 @@ def _continue_booking(user_id: str, session: dict, lang: str):
 
 def _confirm_booking(user_id: str, saved: dict, session: dict, lang: str):
     try:
-        uid_int    = safe_numeric_user_id(session.get("user_id", "1"))
+        uid_int    = safe_numeric_user_id(user_id)  # FIX #111: Use user_id param, not session.get
+        # REG-10: Let order_manager's own FK fallback handle guest users.
+        # Pass the uid_int as-is — book_table at L353-354 and L374-384
+        # already retries with user_id=1 on FK constraint failure.
+        # This avoids pre-emptively hijacking real user #1's profile.
+        if str(user_id).startswith("guest_") or user_id in ("anonymous", ""):
+            uid_int = None  # order_manager treats falsy user_id → 1 at L353
+        # FIX #151: Use real user name & phone from session instead of hardcoded values
+        customer_name  = session.get("user_name") or f"User{uid_int}"
+        customer_phone = session.get("user_phone") or "0000000000"
         booking_id = om.book_table(
             uid_int,
             saved.get("restaurant_id"),
-            f"User{uid_int}",
-            "1234567890",
+            customer_name,
+            customer_phone,
             saved.get("date"),
             saved.get("time"),
             saved.get("people"),
         )
         # FIX BUG-03: Save pre-order items regardless of booking_mode.
-        # UX flow now offers pre-order to dine_out users too (Line 1327-1342).
         if (saved.get("preorder_items")
                 and hasattr(om, "add_reservation_preorders")):
             om.add_reservation_preorders(booking_id, saved.get("preorder_items"))
@@ -1437,7 +1537,7 @@ def _confirm_booking(user_id: str, saved: dict, session: dict, lang: str):
         session["pending_booking_switch"] = None
         session.pop("mentioned_restaurant_id",   None)
         session.pop("mentioned_restaurant_name", None)
-        set_session(session.get("user_id", "1"), session)
+        set_session(user_id, session)  # FIX #111: Use user_id param, not session.get
 
         rname = saved.get("restaurant_name") or f"Restaurant #{saved.get('restaurant_id')}"
         reply = (
@@ -1480,6 +1580,54 @@ def _get_restaurants():
 def home():
     return "DineBot backend running ✅"
 
+# FIX #127: Simple in-memory rate limiter
+_rate_limit_store = {}  # {user_id: [timestamp, ...]}
+_RATE_LIMIT_WINDOW = 10  # seconds
+_RATE_LIMIT_MAX    = 20  # max requests per window
+
+def _check_rate_limit(uid: str) -> bool:
+    now = datetime.now(UTC).timestamp()
+    history = _rate_limit_store.get(uid, [])
+    history = [t for t in history if now - t < _RATE_LIMIT_WINDOW]
+    if len(history) >= _RATE_LIMIT_MAX:
+        _rate_limit_store[uid] = history
+        return False  # rate limited
+    history.append(now)
+    _rate_limit_store[uid] = history
+    return True
+
+# REG-08: Prune expired entries from rate limit store to prevent memory leak
+_last_rate_cleanup = 0
+
+def _cleanup_rate_limit_store():
+    global _last_rate_cleanup
+    now = datetime.now(UTC).timestamp()
+    if now - _last_rate_cleanup < 60:  # at most every 60 seconds
+        return
+    _last_rate_cleanup = now
+    stale = [uid for uid, hist in _rate_limit_store.items()
+             if not hist or (now - max(hist)) > _RATE_LIMIT_WINDOW * 2]
+    for uid in stale:
+        _rate_limit_store.pop(uid, None)
+
+# FIX #107: Session TTL — purge sessions older than 2 hours
+_SESSION_TTL_SECONDS = 7200
+_last_session_cleanup = datetime.now(UTC).timestamp()
+
+def _run_periodic_cleanup():
+    """REG-02: Delegates to session_manager.cleanup_stale_sessions (has _sessions access)."""
+    global _last_session_cleanup
+    now = datetime.now(UTC).timestamp()
+    if now - _last_session_cleanup < 300:  # at most every 5 minutes
+        return
+    _last_session_cleanup = now
+    try:
+        if cleanup_stale_sessions:
+            cleanup_stale_sessions(_SESSION_TTL_SECONDS)
+    except Exception as e:
+        print(f"[SESSION] Cleanup error: {e}")
+    _cleanup_rate_limit_store()
+
 @app.route("/chat", methods=["POST"])
 def chat_handler():
     data    = request.get_json() or {}
@@ -1488,6 +1636,17 @@ def chat_handler():
 
     if not message:
         return jsonify({"reply": "Please type something!"}), 200
+
+    # FIX #124: Input length limit — truncate to 500 chars
+    if len(message) > 500:
+        message = message[:500]
+
+    # FIX #127: Rate limiting
+    if not _check_rate_limit(user_id):
+        return jsonify({"reply": "⚠️ Too many messages. Please wait a moment.", "intent": "rate_limited"}), 429
+
+    # FIX #107 + REG-02: Periodic session + rate-limiter cleanup
+    _run_periodic_cleanup()
 
     session = get_session(user_id)
     lang    = get_lang(session, message)
@@ -1528,6 +1687,10 @@ def chat_handler():
                 return respond(get_response("payment_info", lang), "payment")
             if pending_target == "help":
                 return respond(get_response("help", lang), "help")
+            # FIX #7/#8: abandon_booking = user said cancel/stop/quit during booking
+            if pending_target == "abandon_booking":
+                return respond("Booking cancelled. 👋\n\nType **'book a table'** to start a new booking or **'view restaurants'** to order food."
+                               if lang == "en" else "Booking cancel ho gayi. 👋\n\n**'book a table'** se naya booking karo ya **'view restaurants'** se order karo.", "cancel_booking")
             return respond("Switched to ordering.\n\nType **'view restaurants'** to start.", "order_item")
 
         if is_no(message):
@@ -1583,8 +1746,14 @@ def chat_handler():
             set_session(user_id, session)
             return respond("Okay, order not cancelled. Tell me the exact order ID if you want to cancel a specific one.",
                            "cancel_order")
-        return respond("Reply **yes** to confirm cancel or **no** to keep the order."
-                       if lang == "en" else "Cancel ke liye **yes** ya rakhne ke liye **no** bolo.", "cancel_order")
+        # FIX #39: Allow escape to other intents instead of blocking
+        if re.search(r"\b(book|table|track|menu|view restaurants?|help|order|hi|hello)\b", message, flags=re.I):
+            session["pending_cancel_order_id"] = None
+            set_session(user_id, session)
+            # Fall through to normal intent routing below
+        else:
+            return respond("Reply **yes** to confirm cancel or **no** to keep the order."
+                           if lang == "en" else "Cancel ke liye **yes** ya rakhne ke liye **no** bolo.", "cancel_order")
 
     # ── VIEW / CHANGE RESTAURANTS ──────────────────────────────────────────────
     wants_change = bool(re.search(r'\b(change|switch|different|badlo|dusra)\s*(restaurant|place)?\b', message.lower()))
@@ -2160,6 +2329,10 @@ def chat_handler():
         temp_items = session["temp_order"].get("items", [])
         if not temp_items:
             bot_response = get_response("empty_cart", lang)
+        # FIX #59: Handle "remove everything" / "remove all" / "clear cart"
+        elif re.search(r"\b(everything|all|sab|saara|clear|empty|pura)\b", message, flags=re.I):
+            clear_temp_order(user_id)
+            bot_response = "✅ Cart cleared! All items removed. 🛒" if lang == "en" else "✅ Cart saaf ho gaya! Sab items hata diye. 🛒"
         else:
             active = session.get("active_restaurant")
             menu_list, _ = get_restaurant_menu(active) if active else (None, None)
@@ -2230,7 +2403,8 @@ def chat_handler():
         order_id = None
         if extract_order_id: order_id = extract_order_id(message)
         if not order_id:
-            m = re.search(r'\b(\d{1,8})\b', message)
+            # FIX #68: Require at least 3 digits to avoid matching quantities like "3 items"
+            m = re.search(r'\b(\d{3,8})\b', message)
             if m:
                 try: order_id = int(m.group(1))
                 except: pass

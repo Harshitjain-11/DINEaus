@@ -93,10 +93,20 @@ def normalize_number_word(w):
 
 
 def extract_order_id(text):
-    """Extract a numeric order ID from text."""
+    """Extract a numeric order ID from text.
+    FIX #68: Require at least 3 digits to avoid matching quantities like '3 items'.
+    """
     if not text:
         return None
-    m = re.search(r'\b(\d{1,8})\b', text)
+    # Prefer explicit order ID patterns first
+    m = re.search(r'(?:order|#)\s*(\d{1,8})\b', text, flags=re.I)
+    if m:
+        try:
+            return int(m.group(1))
+        except (ValueError, TypeError):
+            pass
+    # Fall back to any 3+ digit number (avoids false positives from "3 items", "2 pizzas")
+    m = re.search(r'\b(\d{3,8})\b', text)
     if m:
         try:
             return int(m.group(1))

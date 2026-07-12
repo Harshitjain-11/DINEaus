@@ -1,5 +1,5 @@
 """
-PRODUCTION OrderManager - 100% DINEaus Compatible
+PRODUCTION OrderManager 
 Database: college_practice
 Fully aligned with your actual production schema
 """

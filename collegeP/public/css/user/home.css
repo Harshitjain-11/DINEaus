@@ -19,13 +19,13 @@
         ::-webkit-scrollbar-thumb:hover { background: #b0b0b0; }
         * { scrollbar-width: thin; scrollbar-color: #d0d0d0 transparent; }
 
-        html { overflow-x: hidden; scroll-behavior: smooth; }
+        html { overflow-x: clip; scroll-behavior: smooth; }
 
         body {
             margin: 0; padding: 0;
             font-family: 'Plus Jakarta Sans', sans-serif;
             background: #ffffff; color: var(--text-dark);
-            overflow-x: hidden;
+            overflow-x: clip;
         }
         body.filter-open { overflow: hidden !important; touch-action: none; }
 

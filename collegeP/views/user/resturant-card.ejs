@@ -71,14 +71,22 @@
   </div>
   
     
-  <div class="filters">
-    <div class="filter-toggle">
+  <div class="filters" id="filterBar">
+    <div class="filter-toggle" id="vegFilter" data-filter="veg">
       <span class="veg-icon"></span> Veg
     </div>
-    <div class="filter-toggle">
+    <div class="filter-toggle" id="nonVegFilter" data-filter="nonveg">
       <span class="nonveg-icon"></span> Non-Veg
     </div>
-    <button class="bestseller-btn">Bestseller</button>
+    <!-- Bestseller button hidden: no bestseller field exists in the database schema -->
+  </div>
+  <!-- Cart action bar (Floating) -->
+  <div id="cartBar" class="floating-cart" style="<%= cartCount > 0 ? 'display:flex;' : 'display:none;' %>">
+    <div class="cart-info">
+      <i class="fa fa-shopping-cart"></i>
+      <span id="cartCount"><%= cartCount %> item(s) added</span>
+    </div>
+    <a href="/cart/checkout" class="view-cart-btn">View Cart <i class="fa fa-arrow-right"></i></a>
   </div>
   
 
@@ -88,8 +96,11 @@
     <h3>Recommended (<%= menuItems.length %>)</h3>
   
     <% menuItems.forEach(item => { %>
-      <div class="menu-item <%= Number(item.is_available) === 1 ? '' : 'out-of-stock' %>
-"  data-item-id="<%= item.id %>" data-name="<%= item.item_name.toLowerCase() %>">
+      <div
+        class="menu-item <%= Number(item.is_available) === 1 ? '' : 'out-of-stock' %>"
+        data-item-id="<%= item.id %>"
+        data-name="<%= item.item_name.toLowerCase() %>"
+        data-veg="<%= Number(item.is_veg) === 1 ? 'true' : 'false' %>">
 
         <div class="menu-left">
           <!-- <img
@@ -108,27 +119,30 @@
   <div class="out-badge">OUT OF STOCK</div>
 <% } %>
 
-          <!-- <img src="/common-images/<%= getCommonImageName(item.item_name) %>"> -->
-
-          <img 
-            src="<%= item.common_image 
-                  ? '/uploads/menu-items/' + item.common_image 
-                  : '/common-images/' + getCommonImageName(item.item_name) %>"
+          <!-- Individual dish image: common_image first (admin-uploaded), then name-based fallback, then OCR photo last -->
+          <img
+            src="<%= item.common_image
+                  ? '/uploads/menus/' + item.common_image
+                  : '/' + getCommonImageName(item.item_name) %>"
+            alt="<%= item.item_name %>"
           >
 
-
-
-          <a href="/cart/checkout?item_id=<%= item.id %>&add=1">
-
+          <% if (Number(item.is_available) === 1) { %>
             <button
               class="add-btn add-to-cart-btn"
-              <%= Number(item.is_available) === 1 
-                    ? '' 
-                    : 'disabled style="background:#aaa;cursor:not-allowed;"' %>
+              data-item-id="<%= item.id %>"
             >
-              <%= Number(item.is_available) === 1 ? 'ADD' : 'UNAVAILABLE' %>
+              ADD
             </button>
-          </a>
+          <% } else { %>
+            <button
+              class="add-btn add-to-cart-btn"
+              disabled
+              style="background:#aaa;cursor:not-allowed;"
+            >
+              UNAVAILABLE
+            </button>
+          <% } %>
           
           
           <p class="customisable">Customisable</p>
@@ -143,18 +157,31 @@
 </div>
 
   <script>
-  const searchInput = document.getElementById("dishSearch");
-  const menuItems = document.querySelectorAll(".menu-item");
-  const noResult = document.getElementById("noResult");
+  /* ── Shared helpers ────────────────────────────────── */
+  const searchInput  = document.getElementById("dishSearch");
+  const allMenuItems = document.querySelectorAll(".menu-item");
+  const noResult     = document.getElementById("noResult");
+  const cartBar      = document.getElementById("cartBar");
+  const cartCountEl  = document.getElementById("cartCount");
 
-  searchInput.addEventListener("input", function () {
-    const keyword = this.value.toLowerCase().trim();
+  let activeFilter = null;   // null | 'veg' | 'nonveg'
+  let cartItemCount = <%= typeof cartCount !== 'undefined' ? cartCount : 0 %>;
+
+  function applyVisibility() {
+    const keyword = searchInput.value.toLowerCase().trim();
     let visibleCount = 0;
 
-    menuItems.forEach(item => {
+    allMenuItems.forEach(item => {
       const dishName = item.dataset.name;
+      const isVeg    = item.dataset.veg === 'true';
 
-      if (dishName.includes(keyword)) {
+      const matchSearch = !keyword || dishName.includes(keyword);
+      const matchFilter =
+        !activeFilter ||
+        (activeFilter === 'veg'    &&  isVeg) ||
+        (activeFilter === 'nonveg' && !isVeg);
+
+      if (matchSearch && matchFilter) {
         item.style.display = "flex";
         visibleCount++;
       } else {
@@ -162,12 +189,72 @@
       }
     });
 
-    // 👇 No result logic
-    if (visibleCount === 0) {
-      noResult.style.display = "block";
+    noResult.style.display = visibleCount === 0 ? "block" : "none";
+  }
+
+  /* ── Search ─────────────────────────────────────────── */
+  searchInput.addEventListener("input", applyVisibility);
+
+  /* ── Veg / Non-Veg filters ──────────────────────────── */
+  document.getElementById("vegFilter").addEventListener("click", function () {
+    if (activeFilter === 'veg') {
+      activeFilter = null;
+      this.classList.remove("active");
     } else {
-      noResult.style.display = "none";
+      activeFilter = 'veg';
+      this.classList.add("active");
+      document.getElementById("nonVegFilter").classList.remove("active");
     }
+    applyVisibility();
+  });
+
+  document.getElementById("nonVegFilter").addEventListener("click", function () {
+    if (activeFilter === 'nonveg') {
+      activeFilter = null;
+      this.classList.remove("active");
+    } else {
+      activeFilter = 'nonveg';
+      this.classList.add("active");
+      document.getElementById("vegFilter").classList.remove("active");
+    }
+    applyVisibility();
+  });
+
+  /* ── AJAX Add-to-cart ───────────────────────────────── */
+  document.querySelectorAll(".add-to-cart-btn").forEach(btn => {
+    if (btn.disabled) return;   // skip UNAVAILABLE buttons
+
+    btn.addEventListener("click", function () {
+      const itemId = this.dataset.itemId;
+      if (!itemId) return;
+
+      // Disable button during request to prevent double-clicks
+      btn.disabled = true;
+      btn.textContent = "...";
+
+      fetch(`/cart/checkout?item_id=${itemId}`, { method: "GET", headers: { "X-Requested-With": "XMLHttpRequest" } })
+        .then(res => {
+          if (!res.ok) throw new Error("Network response was not ok");
+          // Item added successfully — update counter, restore button as stepper
+          cartItemCount++;
+          cartCountEl.textContent = cartItemCount + " item(s) added";
+          cartBar.style.display = "flex";
+
+          // Transform ADD → simple ✓ confirmation then back to ADD
+          btn.textContent = "✓ Added";
+          btn.style.background = "#4caf50";
+          setTimeout(() => {
+            btn.textContent = "ADD";
+            btn.style.background = "";
+            btn.disabled = false;
+          }, 1200);
+        })
+        .catch(() => {
+          btn.textContent = "ADD";
+          btn.disabled = false;
+          alert("Could not add item. Please try again.");
+        });
+    });
   });
 </script>
 

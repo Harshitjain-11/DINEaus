@@ -30,7 +30,7 @@
             font-family: 'DM Sans', sans-serif;
             background: var(--bg-warm);
             color: var(--text);
-            overflow-x: hidden;
+            overflow-x: clip;
         }
 
         body.drawer-open {
@@ -51,14 +51,56 @@
             box-shadow: var(--shadow-nav);
             z-index: 5000;
             border-bottom: 1px solid var(--border);
-            transition: box-shadow var(--transition), background var(--transition);
+            transition: box-shadow var(--transition), background var(--transition), backdrop-filter var(--transition);
             overflow: visible;
         }
 
         .navbar.scrolled {
-            background: #fff;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             box-shadow: 0 4px 24px rgba(26,16,8,0.10), 0 1px 0 rgba(26,16,8,0.06);
         }
+
+        /* ── Scroll Progress Line ── */
+        .navbar-scroll-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: var(--primary);
+            width: 0%;
+            z-index: 10;
+            transition: width 0.1s ease-out;
+            pointer-events: none;
+        }
+
+        /* ── Dummy Toast ── */
+        .nav-dummy-toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--text-dark);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: var(--radius-pill);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            opacity: 0;
+            transition: transform 0.3s cubic-bezier(.4,0,.2,1), opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 6000;
+            box-shadow: var(--shadow-dropdown);
+        }
+        .nav-dummy-toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        .nav-dummy-toast svg { width: 20px; height: 20px; color: var(--orange-mid); }
 
         /* ── Container: 3-column grid ── */
         .navbar-container {

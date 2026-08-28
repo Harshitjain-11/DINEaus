@@ -218,7 +218,8 @@ exports.showRestaurant = (req, res, next) => {
   `;
 
   const menuQuery = `
-    SELECT id, item_name, price, costfortwo, vegNonveg, cuisine, menu_image, common_image
+    SELECT id, item_name, price, costfortwo, vegNonveg, cuisine, menu_image, common_image,
+           is_available, is_veg
     FROM menu_item
     WHERE restaurant_id = ?
   `;
@@ -242,11 +243,21 @@ exports.showRestaurant = (req, res, next) => {
       // ✅ cart ke liye context
       req.session.restaurant_id = restaurant.id;
 
-      res.render("user/resturant-card.ejs", {
-        restaurant,
-        menuItems,
-        getCommonImageName
-      });
+      if (user) {
+        connection.query(
+          "SELECT SUM(quantity) AS count FROM cart_items WHERE user_id = ? AND restaurant_id = ?",
+          [user.id, restaurant.id],
+          (err3, cartRes) => {
+            const cartCount = (cartRes && cartRes[0].count) ? parseInt(cartRes[0].count) : 0;
+            res.render("user/resturant-card.ejs", { restaurant, menuItems, getCommonImageName, cartCount });
+          }
+        );
+      } else {
+        const guestCart = req.session.guestCart || [];
+        const restCart = guestCart.filter(i => String(i.restaurant_id) === String(restaurant.id));
+        const cartCount = restCart.reduce((acc, item) => acc + item.quantity, 0);
+        res.render("user/resturant-card.ejs", { restaurant, menuItems, getCommonImageName, cartCount });
+      }
     });
   });
 };
@@ -766,6 +777,51 @@ exports.updateCart = (req, res, next) => {
   });
 };
 
+exports.removeFromCart = (req, res, next) => {
+  const { item_id } = req.body;
+  const user = req.session.user || null;
+
+  if (!user) {
+    if (req.session.guestCart) {
+      req.session.guestCart = req.session.guestCart.filter(i => String(i.item_id) !== String(item_id));
+    }
+    return res.redirect("/cart/checkout");
+  }
+
+  connection.query(
+    "DELETE FROM cart_items WHERE user_id = ? AND item_id = ?",
+    [user.id, item_id],
+    (err) => {
+      if (err) return next(new ExpressError(500, "Failed to remove item"));
+      res.redirect("/cart/checkout");
+    }
+  );
+};
+
+exports.clearCart = (req, res, next) => {
+  const { restaurant_id } = req.body;
+  const user = req.session.user || null;
+
+  if (!user) {
+    if (req.session.guestCart && restaurant_id) {
+      req.session.guestCart = req.session.guestCart.filter(i => String(i.restaurant_id) !== String(restaurant_id));
+    } else {
+      req.session.guestCart = [];
+    }
+    return res.redirect("/cart/checkout");
+  }
+
+  const query = restaurant_id 
+    ? "DELETE FROM cart_items WHERE user_id = ? AND restaurant_id = ?"
+    : "DELETE FROM cart_items WHERE user_id = ?";
+  const params = restaurant_id ? [user.id, restaurant_id] : [user.id];
+
+  connection.query(query, params, (err) => {
+    if (err) return next(new ExpressError(500, "Failed to clear cart"));
+    res.redirect("/cart/checkout");
+  });
+};
+
 exports.deleteAddress = (req, res, next) => {
   if (!req.session.user) {
     req.flash("error", "Please login first");
@@ -781,7 +837,7 @@ exports.deleteAddress = (req, res, next) => {
   }
 
   const deleteQuery =
-    "DELETE FROM address WHERE id = ? AND user_id = ?";
+    "UPDATE address SET user_id = NULL WHERE id = ? AND user_id = ?";
 
   connection.query(deleteQuery, [address_id, userId], (err, result) => {
     if (err) {

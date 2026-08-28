@@ -74,8 +74,10 @@
       <small class="muted">Your food will be prepared before arrival.</small>
 
       <div class="menu-list">
-        <% menuItems.forEach(item => { 
-             const img = `/common-images/${getCommonImageName(item.item_name)}`;
+        <% menuItems.forEach(item => {
+             const img = item.common_image
+               ? '/uploads/menus/' + item.common_image
+               : '/' + getCommonImageName(item.item_name);
         %>
         <div class="menu-item">
           <img class="menu-thumb" src="<%= img %>" alt="<%= item.item_name %>">

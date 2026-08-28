@@ -26,8 +26,15 @@
 
         // ── Scroll effect ──
         const navbar = document.getElementById('navbar');
+        const scrollProgress = document.getElementById('scrollProgress');
         function handleScroll() {
             navbar.classList.toggle('scrolled', window.scrollY > 10);
+            if (scrollProgress) {
+                const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+                scrollProgress.style.width = scrolled + '%';
+            }
         }
         window.addEventListener('scroll', handleScroll, { passive: true });
         handleScroll();
@@ -44,3 +51,21 @@
                 if (q) window.location.href = '/search?q=' + encodeURIComponent(q);
             });
         }
+
+        // ── Dummy Links ──
+        const dummyLinks = document.querySelectorAll('.nav-dummy-link');
+        const dummyToast = document.getElementById('navDummyToast');
+        let toastTimeout;
+        dummyLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (dummyToast) {
+                    dummyToast.classList.add('show');
+                    clearTimeout(toastTimeout);
+                    toastTimeout = setTimeout(() => {
+                        dummyToast.classList.remove('show');
+                    }, 3000);
+                }
+                if (drawer.classList.contains('open')) closeDrawer();
+            });
+        });

@@ -22,7 +22,7 @@
    <% if(user){%>
  <form method="GET" action="/profile">
     <button>
-        <i class="fas fa-user"></i><%=user.firstname%>..</button>
+        <i class="fas fa-user"></i><span style="max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%=user.firstname%></span></button>
     </form>
    <% }else{%>
        <button>
@@ -30,8 +30,6 @@
         <a href="/sign">SignUp</a></button>
     </form>
     <%}%>
-   
-    
 </div>
 <% if(isEmpty) { %>
   <div style="text-align:center; padding:40px;">
@@ -142,8 +140,16 @@
     <!-- RIGHT: Order Summary -->
     <div class="right">
       <img src="<%= restaurant.image_url %>" alt="<%= restaurant.name %>" />
-      <h3><%=restaurant.name%></h3>
-      <p style="color: gray;"><%=restaurant.location%></p>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <h3><%=restaurant.name%></h3>
+          <p style="color: gray;"><%=restaurant.location%></p>
+        </div>
+        <form method="POST" action="/cart/clear" onsubmit="return confirm('Are you sure you want to clear your cart?');">
+          <input type="hidden" name="restaurant_id" value="<%= restaurant.id %>">
+          <button type="submit" style="background:none; border:none; color:red; cursor:pointer; font-weight:bold;"><i class="fa fa-trash"></i> Clear Cart</button>
+        </form>
+      </div>
       <% menuItems.forEach(item => { %>
         <div class="item <%= item.is_available ? '' : 'cart-out' %>"
      data-item-id="<%= item.id %>">
@@ -173,10 +179,10 @@
             <% } %>
           </div>
 
-          <!-- 🔥 REMOVE BUTTON ALWAYS PRESENT (BUT HIDDEN) -->
-          <form method="POST" action="/cart/remove" class="remove-form" style = "<%= item.is_available ? 'display:none' : 'display:block' %>">
+          <!-- REMOVE BUTTON ALWAYS PRESENT -->
+          <form method="POST" action="/cart/remove" class="remove-form" style="margin-left: 10px;">
             <input type="hidden" name="item_id" value="<%= item.id %>">
-            <button class="remove-btn">Remove</button>
+            <button type="submit" class="remove-btn" style="background:none; border:none; color:red; cursor:pointer; font-size: 1.2rem;" title="Remove Item"><i class="fa fa-times"></i></button>
           </form>
           <% if (!item.is_available) { %>
   <div class="cart-warning">

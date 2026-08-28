@@ -305,7 +305,7 @@
       justify-content: space-between;
       align-items: flex-start;
       gap: 20px;
-      padding: 20px 0;
+      padding: 12px 0;
       border-bottom: 1px solid var(--bdr);
       transition: background var(--t);
       min-width: 0; /* no overflow */
@@ -515,4 +515,48 @@
       .add-btn      { font-size: .7rem; padding: 5px 13px; }
       a[href*="/reserve/"] { padding: 0 8px; }
       a[href*="/reserve/"] button { font-size: .82rem; padding: 11px; }
+    }
+
+    /* ── FLOATING CART ── */
+    .floating-cart {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+      background: var(--grad);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 50px;
+      box-shadow: var(--sh3);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      animation: fadeIn .3s ease;
+    }
+    .floating-cart .cart-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: .9rem;
+    }
+    .floating-cart .view-cart-btn {
+      background: #fff;
+      color: var(--orange-dk);
+      padding: 6px 14px;
+      border-radius: 20px;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: .8rem;
+      transition: all var(--t);
+    }
+    .floating-cart .view-cart-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 2px 8px rgba(0,0,0,.15);
+    }
+    @media (max-width: 540px) {
+      .floating-cart {
+        left: 20px;
+        justify-content: space-between;
+      }
     }

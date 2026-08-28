@@ -34,7 +34,6 @@
 
             <!-- ── CENTER: location + search ── -->
             <div class="navbar-center">
-                <% if (user && addresses && addresses.length > 0) { %>
                 <div class="nav-location">
                     <span class="nav-location-icon">
                         <svg viewBox="0 0 24 24" fill="currentColor">
@@ -43,6 +42,7 @@
                     </span>
                     <div class="nav-location-body">
                         <span class="nav-location-label">Deliver to</span>
+                        <% if (typeof user !== 'undefined' && user && typeof addresses !== 'undefined' && addresses.length > 0) { %>
                         <select id="addressSelect">
                             <% addresses.forEach(addr => { %>
                             <option value="<%= addr.id %>">
@@ -50,14 +50,18 @@
                             </option>
                             <% }) %>
                         </select>
+                        <% } else { %>
+                        <a href="/profile" style="font-size:0.85rem;font-weight:600;color:var(--text-dark);text-decoration:none;line-height:1;margin-top:2px;">Set Location</a>
+                        <% } %>
                     </div>
+                    <% if (typeof user !== 'undefined' && user && typeof addresses !== 'undefined' && addresses.length > 0) { %>
                     <span class="nav-location-chevron">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <polyline points="6 9 12 15 18 9"/>
                         </svg>
                     </span>
+                    <% } %>
                 </div>
-                <% } %>
 
                 <a href="/search" class="navbar-search">
                     <svg viewBox="0 0 24 24" fill="currentColor">
@@ -71,10 +75,10 @@
             <div class="navbar-right">
                 <ul class="navbar-links">
                     <li>
-                        <a href="/home">DINEaus Corporate</a>
+                        <a href="#" class="nav-dummy-link">DINEaus Corporate</a>
                     </li>
                     <li>
-                        <a href="/home">Offers <span class="badge-new">NEW</span></a>
+                        <a href="#" class="nav-dummy-link">Offers <span class="badge-new">NEW</span></a>
                     </li>
                     <li>
                         <a href="/help">Help</a>
@@ -152,7 +156,6 @@
             <ul class="navbar-drawer-links">
                 <li><a href="/home" style="font-weight:700;">HOME</a></li>
 
-                <% if (user && addresses && addresses.length > 0) { %>
                 <li>
                     <div class="nav-location" style="margin:6px 0; border-radius:12px;">
                         <span class="nav-location-icon">
@@ -162,6 +165,7 @@
                         </span>
                         <div class="nav-location-body">
                             <span class="nav-location-label">Deliver to</span>
+                            <% if (typeof user !== 'undefined' && user && typeof addresses !== 'undefined' && addresses.length > 0) { %>
                             <select id="addressSelectDrawer">
                                 <% addresses.forEach(addr => { %>
                                 <option value="<%= addr.id %>">
@@ -169,19 +173,23 @@
                                 </option>
                                 <% }) %>
                             </select>
+                            <% } else { %>
+                            <a href="/profile" style="font-size:0.85rem;font-weight:600;color:var(--text-dark);text-decoration:none;line-height:1;margin-top:2px;">Set Location</a>
+                            <% } %>
                         </div>
+                        <% if (typeof user !== 'undefined' && user && typeof addresses !== 'undefined' && addresses.length > 0) { %>
                         <span class="nav-location-chevron">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="6 9 12 15 18 9"/>
                             </svg>
                         </span>
+                        <% } %>
                     </div>
                 </li>
-                <% } %>
 
-                <li><a href="/home">DINEeaus Corporate</a></li>
+                <li><a href="#" class="nav-dummy-link">DINEaus Corporate</a></li>
                 <li>
-                    <a href="/home">Offers <span class="badge-new">NEW</span></a>
+                    <a href="#" class="nav-dummy-link">Offers <span class="badge-new">NEW</span></a>
                 </li>
                 <li><a href="/help">Help</a></li>
 
@@ -222,6 +230,12 @@
         </aside>
 
         <div class="navbar-overlay" id="overlay"></div>
+        <div class="navbar-scroll-progress" id="scrollProgress"></div>
+        
+        <div id="navDummyToast" class="nav-dummy-toast">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            <span>This feature is coming soon!</span>
+        </div>
     </header>
     <script src = "/js/includes/navbar.js"></script>
 </body>

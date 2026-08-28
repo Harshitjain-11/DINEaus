@@ -43,6 +43,8 @@ router.get("/search-ajax", userController.searchAjax);
 // Cart
 router.get("/cart/checkout", userController.renderCart);
 router.post("/cart/update", userController.updateCart);
+router.post("/cart/remove", userController.removeFromCart);
+router.post("/cart/clear", userController.clearCart);
 router.delete("/cart/delete", isLoggedIn, userController.deleteAddress);
 
 // Payment

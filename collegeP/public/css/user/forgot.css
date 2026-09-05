@@ -1,4 +1,4 @@
- *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
         :root {
             --orange-light: #FF8C42;
             --orange-mid:   #FF6B1A;
@@ -187,7 +187,7 @@
             background: var(--input-bg);
             border: 1.5px solid var(--bdr);
             border-radius: 10px; color: var(--ink);
-            font-size: .86rem; font-family: 'DM Sans', sans-serif;
+            font-size: .86rem; 
             transition: all var(--t); backdrop-filter: none; outline: none;
         }
         .input-field:focus {
@@ -226,7 +226,7 @@
             background: var(--input-bg);
             border: 1.5px solid var(--bdr); border-radius: 8px;
             color: var(--ink); font-size: .86rem;
-            font-family: 'DM Sans', sans-serif;
+            
             transition: all var(--t); outline: none; resize: none;
         }
         .captcha-input:focus { border-color: var(--orange-light); background: #fff; box-shadow: 0 0 0 3px rgba(255,140,66,.11); }
@@ -237,7 +237,7 @@
             background: var(--grad);
             border: none; border-radius: 50px;
             color: #fff; font-size: .86rem; font-weight: 700;
-            font-family: 'DM Sans', sans-serif; cursor: pointer;
+             cursor: pointer;
             text-transform: uppercase; letter-spacing: .08em;
             transition: all var(--t); margin-bottom: 14px;
             box-shadow: 0 6px 20px rgba(255,107,26,.26);

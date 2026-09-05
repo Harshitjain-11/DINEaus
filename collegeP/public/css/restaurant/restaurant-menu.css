@@ -1,4 +1,4 @@
-   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
 
     :root {
       --orange-light: #FF8C42;
@@ -277,7 +277,7 @@
       font-size: 0.84rem;
       border: none; outline: none;
       width: 100%;
-      font-family: 'DM Sans', sans-serif;
+      
     }
     .category-box input::placeholder { color: rgba(122,92,69,0.4); }
 
@@ -323,7 +323,7 @@
       background: var(--tint);
       padding: 9px 12px;
       font-size: 0.84rem;
-      font-family: 'DM Sans', sans-serif;
+      
       color: var(--text-dark);
       width: 100%;
       outline: none;
@@ -340,7 +340,7 @@
     /* file input */
     input[type="file"] {
       font-size: 0.8rem; color: var(--text-muted);
-      font-family: 'DM Sans', sans-serif;
+      
     }
     input[type="file"]::file-selector-button {
       background: linear-gradient(135deg, var(--orange-light), var(--orange-deep));
@@ -350,7 +350,7 @@
       padding: 6px 14px;
       font-weight: 600;
       font-size: 0.76rem;
-      font-family: 'DM Sans', sans-serif;
+      
       cursor: pointer;
       margin-right: 10px;
       transition: all 0.18s;
@@ -382,7 +382,7 @@
       background: var(--tint);
       font-size: 0.76rem; color: var(--text-muted);
       cursor: pointer; font-weight: 600;
-      font-family: 'DM Sans', sans-serif;
+      
       transition: all 0.17s;
     }
     .option-btn:hover, .option-btn:focus, .option-btn.active {
@@ -478,7 +478,7 @@
       background: var(--tint);
       color: var(--text-dark);
       font-size: 0.84rem;
-      font-family: 'DM Sans', sans-serif;
+      
       margin-bottom: 14px; outline: none;
       transition: border-color 0.18s, box-shadow 0.18s;
     }
@@ -500,7 +500,7 @@
       padding: 6px 14px;
       font-size: 0.78rem; font-weight: 600;
       cursor: pointer; transition: all 0.17s;
-      font-family: 'DM Sans', sans-serif;
+      
     }
     .cuisine-chip:hover, .cuisine-chip:focus {
       background: var(--orange-light); color: #fff;

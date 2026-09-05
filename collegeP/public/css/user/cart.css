@@ -2,7 +2,7 @@
     /* ══════════════════════════════════════════════
        RESET — every element properly box-sized
     ══════════════════════════════════════════════ */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     html { overflow-x: hidden; }
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-thumb { background: rgba(255,107,26,.3); border-radius: 4px; }
@@ -38,7 +38,7 @@
        BODY
     ══════════════════════════════════════════════ */
     body {
-      font-family: 'DM Sans', Arial, sans-serif;
+      
       background: var(--bg);
       color: var(--txt);
       min-height: 100vh;

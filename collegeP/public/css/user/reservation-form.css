@@ -4,7 +4,7 @@
        Layout: CSS Grid (not flex) — eliminates right panel overflow
     =========================================================== */
 
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
 
     :root {
       --orange:    #FF6B1A;

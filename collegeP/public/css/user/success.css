@@ -1,4 +1,4 @@
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
 
     :root {
       --orange:    #FF6B1A;
@@ -136,7 +136,7 @@
       width: 100%;
       padding: 13px 24px;
       border: none; border-radius: 12px;
-      font-family: 'DM Sans', sans-serif;
+      
       font-weight: 700; font-size: .88rem;
       letter-spacing: .03em; cursor: pointer;
       transition: all var(--t);

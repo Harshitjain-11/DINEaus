@@ -7,7 +7,7 @@
        ZERO HTML/EJS/JS changes.
     ═══════════════════════════════════════════════════════════ */
 
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
 
     :root {
       /* colours */
@@ -186,7 +186,7 @@
       padding: 13px 24px;
       background: var(--grad); color: #fff;
       border: none; border-radius: var(--r);
-      font-family: 'DM Sans', sans-serif;
+      
       font-weight: 700; font-size: .92rem;
       letter-spacing: .04em; text-transform: uppercase;
       cursor: pointer; box-shadow: var(--shbtn);
@@ -230,7 +230,7 @@
       border-radius: 50px;
       box-shadow: var(--sh1);
       transition: all var(--t);
-      font-family: 'DM Sans', sans-serif;
+      
     }
     .search-bar:focus-within {
       border-color: var(--orange-lt);
@@ -238,7 +238,7 @@
     }
     .search-bar input {
       flex: 1; border: none; background: transparent;
-      font-family: 'DM Sans', sans-serif;
+      
       font-size: .9rem; font-weight: 500;
       outline: none; color: var(--text);
     }
@@ -256,7 +256,7 @@
       border: 1.5px solid var(--bdr);
       border-radius: 50px;
       background: var(--surface);
-      font-family: 'DM Sans', sans-serif;
+      
       font-weight: 600; font-size: .81rem;
       color: var(--muted); cursor: pointer;
       transition: all var(--t);
@@ -279,7 +279,7 @@
       border-radius: 50px;
       border: 1.5px solid var(--bdr);
       background: var(--surface);
-      font-family: 'DM Sans', sans-serif;
+      
       font-weight: 600; font-size: .81rem;
       color: var(--muted); cursor: pointer;
       transition: all var(--t);
@@ -291,7 +291,7 @@
       max-width: 900px;
       margin: 0 auto;
       padding: 0 20px 48px;
-      font-family: 'DM Sans', sans-serif;
+      
     }
     .menu-section h3 {
       font-family: 'Cormorant Garamond', serif;
@@ -323,7 +323,7 @@
     }
     .menu-left .veg-icon { margin-bottom: 7px; }
     .menu-left h4 {
-      font-family: 'DM Sans', sans-serif;
+      
       font-size: .96rem; font-weight: 700;
       color: var(--text); margin: 3px 0 6px;
       text-transform: capitalize;
@@ -338,7 +338,7 @@
       border: 1px solid var(--bdr2);
       border-radius: 50px;
       color: var(--muted);
-      font-family: 'DM Sans', sans-serif;
+      
       font-size: .76rem; font-weight: 600;
       padding: 4px 13px; cursor: pointer;
       transition: all var(--t);
@@ -381,7 +381,7 @@
       background: var(--grad); color: #fff;
       border: none;
       padding: 7px 22px;
-      font-family: 'DM Sans', sans-serif;
+      
       font-weight: 700; font-size: .78rem;
       letter-spacing: .06em; text-transform: uppercase;
       border-radius: 50px; cursor: pointer;

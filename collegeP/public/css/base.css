@@ -1,0 +1,17 @@
+/* ═══════════════════════════════════════════════
+   base.css — Global reset & shared defaults
+   Loaded via views/includes/head.ejs
+   ═══════════════════════════════════════════════ */
+
+/* Universal reset */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Shared html defaults */
+html {
+  overflow-x: clip;
+  scroll-behavior: smooth;
+}

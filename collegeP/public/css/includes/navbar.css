@@ -277,7 +277,7 @@
             appearance: none;
             border: none;
             background: transparent;
-            font-family: 'DM Sans', sans-serif;
+            
             font-size: 0.88rem;
             font-weight: 700;
             color: var(--text-dark);
@@ -363,7 +363,7 @@
         .navbar-user-trigger {
             color: var(--text-dark);
             text-decoration: none;
-            font-family: 'DM Sans', sans-serif;
+            
             font-weight: 600;
             font-size: 0.88rem;
             padding: 8px 11px;
@@ -624,7 +624,7 @@
         .navbar-drawer-search input {
             border: none;
             background: transparent;
-            font-family: 'DM Sans', sans-serif;
+            
             font-size: 0.9rem;
             padding: 11px 0;
             width: 100%;
@@ -657,7 +657,7 @@
         #drawerCartBtn {
             color: var(--text-dark);
             text-decoration: none;
-            font-family: 'DM Sans', sans-serif;
+            
             font-size: 0.95rem;
             font-weight: 600;
             padding: 13px 22px;

@@ -22,7 +22,7 @@
     /* ════════════════════════════════════
        RESET
     ════════════════════════════════════ */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     html { overflow-x: hidden; }
 
     /* Thin themed scrollbar */
@@ -132,7 +132,7 @@
       padding: 7px 15px; border-radius: 20px;
       border: 1px solid var(--border);
       background: var(--surface);
-      font-family: 'DM Sans', sans-serif;
+      
       font-size: 0.78rem; font-weight: 600; color: var(--text-muted);
       text-decoration: none; white-space: nowrap;
       box-shadow: var(--sh-sm); transition: all 0.17s;
@@ -155,7 +155,7 @@
       padding: 8px 20px; border-radius: 22px;
       border: 1.5px solid var(--border);
       background: var(--surface);
-      font-family: 'DM Sans', sans-serif;
+      
       font-size: 0.82rem; font-weight: 600; color: var(--text-muted);
       cursor: pointer; white-space: nowrap;
       box-shadow: var(--sh-sm); transition: all 0.17s;
@@ -306,7 +306,7 @@
       display: block; width: 100%;
       padding: 6px 10px;
       border-radius: 8px; border: none;
-      font-family: 'DM Sans', sans-serif;
+      
       font-size: 0.72rem; font-weight: 600;
       cursor: pointer; white-space: nowrap; text-align: center;
       background: linear-gradient(135deg, var(--orange-light), var(--orange-deep));

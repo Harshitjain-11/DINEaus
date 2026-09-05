@@ -23,7 +23,7 @@
   --amber:  #d97706;
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
 html, body { height: 100%; overflow-x: hidden; }
 
 body {
@@ -90,7 +90,7 @@ body > div:first-child > *, body > .flash-wrap > * { pointer-events: auto; }
   border-radius: 20px;
   border: 1.5px solid var(--border);
   background: var(--surface);
-  font-family: 'DM Sans', sans-serif;
+  
   font-size: 0.8rem;
   font-weight: 600; color: var(--text-muted);
   cursor: pointer; white-space: nowrap;
@@ -150,7 +150,7 @@ body > div:first-child > *, body > .flash-wrap > * { pointer-events: auto; }
   border-radius: 18px;
   border: 1px solid var(--border);
   background: var(--tint);
-  font-family: 'DM Sans', sans-serif;
+  
   font-size: 0.76rem;
   font-weight: 600; color: var(--text-muted);
   cursor: pointer; white-space: nowrap;
@@ -292,7 +292,7 @@ table td form button {
   padding: 5px 6px;
   border-radius: 7px;
   border: none;
-  font-family: 'DM Sans', sans-serif;
+  
   font-size: 0.68rem;
   font-weight: 600;
   cursor: pointer;
@@ -455,7 +455,7 @@ table td form button[disabled] {
     display: block; width: 100%;
     padding: 10px 14px;
     border-radius: 9px; border: none;
-    font-family: 'DM Sans', sans-serif;
+    
     font-size: 0.8rem; font-weight: 600;
     cursor: pointer; text-align: center;
     background: linear-gradient(135deg, var(--orange-light), var(--orange-deep));

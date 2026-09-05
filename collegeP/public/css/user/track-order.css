@@ -4,7 +4,7 @@
        Responsive: 900 → 680 → 480 → 360
     ════════════════════════════════════════════ */
 
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
 
     :root {
       --orange:    #FF6B1A;
@@ -174,7 +174,7 @@
       background: linear-gradient(135deg,#f87171,#dc2626);
       color: #fff; border: none;
       border-radius: var(--r);
-      font-family: 'DM Sans', sans-serif;
+      
       font-weight: 700; font-size: .88rem;
       cursor: pointer; letter-spacing: .02em;
       box-shadow: 0 4px 14px rgba(220,38,38,.28);

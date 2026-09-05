@@ -13,7 +13,7 @@
       --sh-btn: 0 6px 20px rgba(232,79,13,0.32);
     }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     html, body { height: 100%; overflow-x: hidden; }
 
     body {
@@ -155,7 +155,7 @@
       background: rgba(255,255,255,0.75);
       border: 1.5px solid var(--border);
       border-radius: 11px;
-      font-family: 'DM Sans', sans-serif;
+      
       font-size: clamp(0.81rem, 2vw, 0.89rem);
       color: var(--text-dark); outline: none;
       transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
@@ -276,7 +276,7 @@
     }
 
     .csel-val {
-      font-family: 'DM Sans', sans-serif;
+      
       font-size: clamp(0.81rem, 2vw, 0.89rem);
       color: var(--text-dark);
       display: flex; align-items: center; gap: 7px;
@@ -306,7 +306,7 @@
       display: flex; align-items: center; justify-content: space-between;
       gap: 8px;
       padding: 11px 15px;
-      font-family: 'DM Sans', sans-serif;
+      
       font-size: clamp(0.81rem, 2vw, 0.89rem);
       color: var(--text-dark);
       cursor: pointer;
@@ -346,7 +346,7 @@
       display: inline-flex; align-items: center; gap: 7px;
       padding: 12px 30px;
       border-radius: 12px; border: none;
-      font-family: 'DM Sans', sans-serif;
+      
       font-size: clamp(0.83rem, 2vw, 0.9rem);
       font-weight: 600; letter-spacing: 0.03em;
       cursor: pointer;

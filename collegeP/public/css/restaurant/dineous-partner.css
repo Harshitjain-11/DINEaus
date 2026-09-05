@@ -13,7 +13,7 @@
       --sh-btn: 0 8px 28px rgba(232,79,13,0.38);
     }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     html { scroll-behavior: smooth; }
 
     body {
@@ -212,7 +212,7 @@
       background: rgba(255,255,255,0.78);
       border: 1.5px solid var(--border);
       border-radius: 12px;
-      font-family: 'DM Sans', sans-serif;
+      
       font-size: 0.9rem; color: var(--text-dark); outline: none;
       transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
       -webkit-appearance: none;
@@ -230,7 +230,7 @@
       padding: 14px;
       background: linear-gradient(135deg, var(--orange-light), var(--orange-deep));
       border: none; border-radius: 13px;
-      color: #fff; font-family: 'DM Sans', sans-serif;
+      color: #fff; 
       font-size: 0.92rem; font-weight: 600;
       letter-spacing: 0.03em; cursor: pointer;
       box-shadow: var(--sh-btn);

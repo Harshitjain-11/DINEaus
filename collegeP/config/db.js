@@ -1,24 +1,24 @@
 // config/db.js
-// 1. Importing MySQL2 driver - Preferred over 'mysql' for performance and async support.
+// 1. Importing MySQL2 driver
 const mysql = require("mysql2");
 
-// 2. Creating DB connection or Database Configuration object
-const connection = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    database: "college_practice",
-    password: "harshit@123"
-});
-
-// 3. Establishing the connection
-// connection.connect() is used to verify if the credentials and DB server are reachable.
-connection.connect((err)=>{
-    if(err){
-        console.error("❌ DB connection failed:", err.message);
-    }else{
-        console.log("✅ DB connected!");
+// Validate required environment variables (fail-fast)
+const requiredEnvVars = ['DB_HOST', 'DB_USER', 'DB_NAME'];
+for (const envVar of requiredEnvVars) {
+    if (!process.env[envVar]) {
+        console.warn(`⚠️ Warning: Missing required database environment variable: ${envVar}`);
     }
+}
+
+// 2. Creating DB Connection Pool
+const connection = mysql.createPool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASSWORD,
+    port: process.env.DB_PORT || 3306,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-module.exports = connection;// 4. Exporting the connection instance (Singleton Pattern)
-// This allows other files to use the SAME database connection via require().
+module.exports = connection; // Exporting the pool (consumers still use connection.query)

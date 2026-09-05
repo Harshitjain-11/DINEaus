@@ -1,4 +1,4 @@
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
 
         :root {
             --orange-light: #FF8C42;
@@ -173,7 +173,7 @@
             border: 1.5px solid var(--bdr); border-radius: 10px;
             padding: 12px 15px; width: 100%;
             background: var(--input-bg); color: var(--ink);
-            font-family: 'DM Sans', sans-serif;
+            
             font-size: .86rem; font-weight: 400; outline: none;
             transition: all var(--t);
         }
@@ -185,7 +185,7 @@
             display: flex; justify-content: center; align-items: center;
             margin-left: 0; background: var(--grad);
             border: none; border-radius: 50px; color: #fff; cursor: pointer;
-            font-family: 'DM Sans', sans-serif;
+            
             font-weight: 700; font-size: .86rem;
             letter-spacing: .1em; text-transform: uppercase;
             transition: all var(--t); position: relative; overflow: hidden;
@@ -202,7 +202,7 @@
         .btn:hover::after { transform: translate(-50%,-50%) scale(1); }
         .btn span { position: relative; z-index: 1; }
 
-        .links { font-family: 'DM Sans', sans-serif; display: flex; flex-direction: column; align-items: center; margin-top: 20px; }
+        .links {  display: flex; flex-direction: column; align-items: center; margin-top: 20px; }
         .links p { font-size: .82rem; color: var(--muted); font-weight: 400; }
         .links a { position: relative; display: inline-block; color: var(--orange-mid); text-decoration: none; font-size: .82rem; font-weight: 700; transition: color var(--t), transform var(--t); }
         .links a:hover { color: var(--orange-light); transform: translateY(-1px); }

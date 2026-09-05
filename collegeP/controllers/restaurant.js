@@ -288,7 +288,6 @@ ORDER BY o.created_at DESC
 function updateOrderStatus(req, res, next, status, timeColumn = null, emitToUser = true) {
   const io = req.app.get("io");
   const orderId = req.params.id;
-  const userId = req.session.user.id;
   const restaurantId = req.session.restaurantAdmin.restaurant_id;
 
   let query = "UPDATE orders SET status = ?";
@@ -316,11 +315,19 @@ function updateOrderStatus(req, res, next, status, timeColumn = null, emitToUser
         status,
         timestamp: new Date().toISOString()
       });
-      io.to("user_" + userId).emit("profileOrderUpdate", {
-        orderId,
-        status
-      });
       
+      connection.query(
+        "SELECT user_id FROM orders WHERE id = ?",
+        [orderId],
+        (e, r) => {
+          if (r && r.length) {
+            io.to("user_" + r[0].user_id).emit("profileOrderUpdate", {
+              orderId,
+              status
+            });
+          }
+        }
+      );
     }
 
     res.redirect("/restaurant-admin/dashboard");

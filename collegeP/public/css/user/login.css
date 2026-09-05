@@ -1,4 +1,4 @@
- *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
 
         :root {
             --orange-light: #FF8C42;
@@ -165,7 +165,7 @@
             border: 1.5px solid var(--bdr); border-radius: 10px;
             padding: 12px 15px; width: 100%;
             background: var(--input-bg); color: var(--ink);
-            font-family: 'DM Sans', sans-serif;
+            
             font-size: .86rem; font-weight: 400; outline: none;
             transition: all var(--t);
         }
@@ -178,7 +178,7 @@
             display: flex; justify-content: center; align-items: center;
             background: var(--grad); border: none; border-radius: 50px;
             color: #fff; cursor: pointer;
-            font-family: 'DM Sans', sans-serif;
+            
             font-weight: 700; font-size: .86rem;
             letter-spacing: .1em; text-transform: uppercase;
             transition: all var(--t); position: relative; overflow: hidden;

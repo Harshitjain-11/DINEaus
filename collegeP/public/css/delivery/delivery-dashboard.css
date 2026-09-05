@@ -1,7 +1,4 @@
- *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0; padding: 0;
-        }
+
 
         :root {
             --orange-light: #FF8C42;
@@ -304,7 +301,7 @@
             border: none;
             border-radius: 12px;
             color: #fff;
-            font-family: 'DM Sans', sans-serif;
+            
             font-size: clamp(0.82rem, 2vw, 0.9rem);
             font-weight: 600;
             letter-spacing: 0.03em;

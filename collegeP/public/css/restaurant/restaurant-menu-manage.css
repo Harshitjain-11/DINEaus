@@ -14,7 +14,7 @@
   --sh-btn: 0 6px 20px rgba(232,79,13,0.32);
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
 html, body { overflow-x: hidden; }
 
 /* ── THIN THEMED SCROLLBAR ── */
@@ -87,7 +87,7 @@ body::before {
   padding: 7px 14px; border-radius: 20px;
   border: 1px solid var(--border);
   background: var(--surface);
-  font-family: 'DM Sans', sans-serif;
+  
   font-size: 0.78rem; font-weight: 600; color: var(--text-muted);
   cursor: pointer; text-decoration: none; white-space: nowrap;
   box-shadow: var(--sh-sm); transition: all 0.17s;
@@ -102,7 +102,7 @@ body::before {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 8px 16px; border-radius: 12px; border: none;
   background: linear-gradient(135deg, var(--orange-light), var(--orange-deep));
-  font-family: 'DM Sans', sans-serif;
+  
   font-size: 0.82rem; font-weight: 600; color: #fff;
   cursor: pointer; text-decoration: none; white-space: nowrap;
   box-shadow: var(--sh-btn); transition: all 0.17s;
@@ -257,7 +257,7 @@ body::before {
   background: var(--tint);
   border: 1.5px solid var(--border);
   border-radius: 9px;
-  font-family: 'DM Sans', sans-serif;
+  
   font-size: 0.8rem; color: var(--text-dark); outline: none;
   transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
   -webkit-appearance: none;
@@ -286,7 +286,7 @@ input[type="number"].field-input {
   padding: 6px 12px; border-radius: 9px;
   border: 1.5px solid var(--border);
   background: var(--tint);
-  font-family: 'DM Sans', sans-serif;
+  
   font-size: 0.7rem; font-weight: 600; color: var(--text-muted);
   cursor: pointer; white-space: nowrap; flex-shrink: 0;
   transition: all 0.16s;
@@ -302,7 +302,7 @@ input[type="number"].field-input {
   padding: 5px 11px; border-radius: 8px;
   border: 1.5px solid var(--border);
   background: transparent;
-  font-family: 'DM Sans', sans-serif;
+  
   font-size: 0.67rem; font-weight: 600; color: var(--text-muted);
   cursor: pointer; white-space: nowrap;
   margin-top: 6px;
@@ -318,7 +318,7 @@ input[type="number"].field-input {
   display: flex; align-items: center; gap: 7px;
   width: 100%;
   padding: 8px 12px; border-radius: 9px; border: none;
-  font-family: 'DM Sans', sans-serif;
+  
   font-size: 0.74rem; font-weight: 600;
   cursor: pointer; white-space: nowrap;
   transition: all 0.16s;
@@ -341,7 +341,7 @@ input[type="number"].field-input {
   padding: 7px 12px; border-radius: 9px;
   border: 1.5px solid rgba(220,38,38,0.28);
   background: transparent;
-  font-family: 'DM Sans', sans-serif;
+  
   font-size: 0.7rem; font-weight: 600; color: #dc2626;
   cursor: pointer; white-space: nowrap; flex-shrink: 0;
   transition: all 0.16s;

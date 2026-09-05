@@ -1,4 +1,4 @@
- *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
 
     :root {
       --orange:    #FF6B1A;
@@ -105,7 +105,7 @@
       border: 1.5px solid var(--bdr);
       background: var(--tint);
       color: var(--text);
-      font-family: 'DM Sans', sans-serif;
+      
       font-size: .88rem; font-weight: 500;
       width: 100%;
       transition: all var(--t);
@@ -232,7 +232,7 @@
       padding: 13px 24px;
       background: var(--grad); color: #fff;
       border: none; border-radius: var(--r);
-      font-family: 'DM Sans', sans-serif;
+      
       font-weight: 700; font-size: .92rem;
       letter-spacing: .03em;
       cursor: pointer; box-shadow: var(--shbtn);

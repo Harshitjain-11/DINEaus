@@ -13,7 +13,7 @@
       --sh-btn: 0 6px 20px rgba(232,79,13,0.32);
     }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     html, body { overflow-x: hidden; }
 
     body {
@@ -82,7 +82,7 @@
       padding: 8px 18px; border-radius: 20px;
       border: 1px solid var(--border);
       background: var(--surface);
-      font-family: 'DM Sans', sans-serif;
+      
       font-size: 0.78rem; font-weight: 600; color: var(--text-muted);
       cursor: pointer; white-space: nowrap;
       box-shadow: var(--sh-sm);

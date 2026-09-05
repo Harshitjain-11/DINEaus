@@ -1,4 +1,4 @@
- *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
 
     :root {
       --orange-light: #FF8C42;
@@ -260,7 +260,7 @@
       padding: 5px 13px; border-radius: 10px;
       border: 1.5px solid var(--border);
       background: var(--surface);
-      font-family: 'DM Sans', sans-serif;
+      
       font-size: 0.72rem; font-weight: 600;
       color: var(--text-muted); cursor: pointer;
       transition: all 0.17s;
@@ -301,7 +301,7 @@
       font-size: 0.85rem;
       background: var(--tint);
       color: var(--text-dark);
-      font-family: 'DM Sans', sans-serif;
+      
       transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
       outline: none;
     }
@@ -387,7 +387,7 @@
       display: inline-flex; align-items: center; justify-content: center;
       padding: 12px 32px; border-radius: 13px; border: none;
       background: linear-gradient(135deg, var(--orange-light), var(--orange-deep));
-      font-family: 'DM Sans', sans-serif;
+      
       font-size: 0.88rem; font-weight: 600; color: #fff;
       cursor: pointer;
       box-shadow: var(--sh-btn);
@@ -493,7 +493,7 @@
       font-size: 0.72rem; cursor: pointer;
       padding: 5px 13px; outline: none;
       transition: all 0.17s;
-      font-family: 'DM Sans', sans-serif;
+      
     }
     .select-btn:hover, .select-btn:focus {
       background: var(--orange-light); color: #fff;

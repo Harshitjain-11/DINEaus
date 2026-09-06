@@ -1,4 +1,4 @@
- const input = document.getElementById("user-input");
+const input = document.getElementById("user-input");
 const btn = document.getElementById("send-btn");
 const micBtn = document.getElementById("mic-btn");
 const messages = document.getElementById("chat-messages");
@@ -12,9 +12,9 @@ let activeCartCardEl = null; // tracks live cart card — old ones get removed
 let lastSubmittedMessage = "";
 let lastSubmittedAt = 0;
 
-// FIX #122/#123: HTML Escape helper for XSS prevention
+
 function escapeHtml(unsafe) {
-  if (unsafe === null || unsafe === undefined) return "";  // REG-09: allow 0/false through
+  if (unsafe === null || unsafe === undefined) return "";
   return String(unsafe)
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -23,7 +23,7 @@ function escapeHtml(unsafe) {
     .replace(/'/g, "&#039;");
 }
 
-// FIX #108/#110: Persist guest session ID across page reloads
+
 function getChatbotUserId() {
   if (window.DINEAUS_USER_ID) return window.DINEAUS_USER_ID;
   let guestId = localStorage.getItem("dinebot_guest_id");
@@ -128,11 +128,11 @@ function renderRestaurantCards(restaurants) {
   const html = `
     <div class="restaurant-cards">
       ${restaurants.map((r, i) => {
-        const safeName = escapeHtml(r.name);
-        const safeLocation = escapeHtml(r.location || 'Gwalior');
-        const safeId = r.id;
-        const clickSafeName = r.name.replace(/'/g, "\\'");
-        return `
+    const safeName = escapeHtml(r.name);
+    const safeLocation = escapeHtml(r.location || 'Gwalior');
+    const safeId = r.id;
+    const clickSafeName = r.name.replace(/'/g, "\\'");
+    return `
         <div class="restaurant-card">
           <div class="restaurant-card-banner" style="
             background: #1a1a1a;
@@ -141,15 +141,15 @@ function renderRestaurantCards(restaurants) {
             height: 100px;
           ">
             ${r.image_url
-              ? `<img
+        ? `<img
                    src="${escapeHtml(r.image_url)}"
                    alt="${safeName}"
                    loading="lazy"
                    style="width:100%;height:100%;object-fit:cover;"
                    onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<span style=\\'font-size:30px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)\\'>🍽️</span>')"
                  >`
-              : `<span style="font-size:30px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)">🍽️</span>`
-            }
+        : `<span style="font-size:30px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)">🍽️</span>`
+      }
             <span style="
               position:absolute;top:8px;right:8px;
               background:rgba(0,0,0,0.55);
@@ -187,12 +187,12 @@ function renderMenuCards(menuItems) {
       <div class="menu-section-title">🍴 Today's Menu</div>
       <div class="menu-grid">
         ${items.map(item => {
-          const name  = item.item_name || item.name || 'Item';
-          const price = item.price || 0;
-          const emoji = getFoodEmoji(name);
-          const safeName = escapeHtml(name.charAt(0).toUpperCase() + name.slice(1));
-          const clickSafeName = name.replace(/'/g, "\\'");  // REG-03: No escapeHtml for JS onclick context
-          return `
+    const name = item.item_name || item.name || 'Item';
+    const price = item.price || 0;
+    const emoji = getFoodEmoji(name);
+    const safeName = escapeHtml(name.charAt(0).toUpperCase() + name.slice(1));
+    const clickSafeName = name.replace(/'/g, "\\'");  // REG-03: No escapeHtml for JS onclick context
+    return `
             <div class="menu-item-card" onclick="orderItem('${clickSafeName}')">
               <div class="menu-item-left">
                 <div class="menu-item-icon">${emoji}</div>
@@ -207,7 +207,7 @@ function renderMenuCards(menuItems) {
               </div>
             </div>
           `;
-        }).join('')}
+  }).join('')}
       </div>
       <div style="margin-top:10px;font-size:11.5px;color:#999;text-align:center;font-style:italic;">Tap any item to add to cart</div>
     </div>
@@ -253,7 +253,7 @@ function renderCart(cartItems, total) {
   activeCartCardEl = appendCard(html);
 }
 
-window.removeItem = function(name) {
+window.removeItem = function (name) {
   sendMessage(`remove ${name}`);
 };
 
@@ -304,7 +304,7 @@ function renderOrderConfirmed(orderId, items, total) {
   appendCard(html);
 }
 
-// ===== RENDER ORDER STATUS =====
+// == RENDER ORDER STATUS ==
 const STATUS_PROGRESS = {
   pending: 10, accepted: 25, preparing: 50, ready: 70,
   out_for_delivery: 85, picked_up: 90, delivered: 100,
@@ -319,11 +319,11 @@ const STATUS_LABELS = {
 };
 
 function renderOrderStatus(order) {
-  const status   = order.status || 'pending';
+  const status = order.status || 'pending';
   const progress = STATUS_PROGRESS[status] || 0;
-  const items    = order.items || [];
-  const total    = order.total_price || order.total || 0;
-  const steps    = ['Accepted', 'Preparing', 'Ready', 'Delivered'];
+  const items = order.items || [];
+  const total = order.total_price || order.total || 0;
+  const steps = ['Accepted', 'Preparing', 'Ready', 'Delivered'];
 
   const html = `
     <div class="order-status-card">
@@ -331,17 +331,16 @@ function renderOrderStatus(order) {
         <span class="order-status-id">Order #${order.id || order.order_id}</span>
         <span class="status-pill ${status}">${STATUS_LABELS[status] || status}</span>
       </div>
-      ${!['rejected','cancelled'].includes(status) ? `
+      ${!['rejected', 'cancelled'].includes(status) ? `
       <div class="order-progress-bar">
         <div class="progress-track">
           <div class="progress-fill" style="width: ${progress}%"></div>
         </div>
         <div class="progress-steps">
           ${steps.map(s => `
-            <span class="progress-step ${
-              STATUS_LABELS[status] === s || (status === 'accepted' && s === 'Accepted')
-                ? 'active' : ''
-            }">${s}</span>
+            <span class="progress-step ${STATUS_LABELS[status] === s || (status === 'accepted' && s === 'Accepted')
+      ? 'active' : ''
+    }">${s}</span>
           `).join('')}
         </div>
       </div>` : ''}
@@ -349,18 +348,18 @@ function renderOrderStatus(order) {
         <div style="font-size:12px;color:#666;margin-bottom:6px;font-weight:500;">Items ordered:</div>
         <div style="display:flex;flex-direction:column;gap:3px;">
           ${items.map(i => {
-            // Handle both real site format (item_name/quantity) and chatbot format (name/qty)
-            const qty  = i.quantity || i.qty || 1;
-            const name = (i.item_name || i.name || 'Item');
-            const displayName = name.charAt(0).toUpperCase() + name.slice(1);
-            const price = i.price || 0;
-            return `
+      // Handle both real site format (item_name/quantity) and chatbot format (name/qty)
+      const qty = i.quantity || i.qty || 1;
+      const name = (i.item_name || i.name || 'Item');
+      const displayName = name.charAt(0).toUpperCase() + name.slice(1);
+      const price = i.price || 0;
+      return `
               <div style="font-size:12.5px;color:#333;display:flex;justify-content:space-between;">
                 <span>${qty}× ${displayName}</span>
                 <span style="color:#e85d04;font-weight:600;">${price > 0 ? '₹' + (qty * price).toFixed(0) : ''}</span>
               </div>
             `;
-          }).join('')}
+    }).join('')}
         </div>
         <div style="margin-top:10px;padding-top:8px;border-top:1px solid #e8e6e1;
                     display:flex;justify-content:space-between;align-items:center;">
@@ -377,9 +376,9 @@ function renderOrderStatus(order) {
 // ===== QUICK ACTIONS =====
 const QUICK_ACTIONS = [
   { id: "view_restaurants", label: "🍽️ View Restaurants" },
-  { id: "book_table",       label: "🪑 Book a Table"     },
-  { id: "help_faqs",        label: "❓ Help & FAQs"      },
-  { id: "just_chat",        label: "💬 Just Chat"         }
+  { id: "book_table", label: "🪑 Book a Table" },
+  { id: "help_faqs", label: "❓ Help & FAQs" },
+  { id: "just_chat", label: "💬 Just Chat" }
 ];
 
 function appendOptions(options) {
@@ -415,26 +414,64 @@ function handleQuickAction(actionId) {
   // Map button IDs to proper messages
   const actionMap = {
     "view_restaurants": "view restaurants",
-    "book_table":       "book a table",
-    "help_faqs":        "help",
-    "just_chat":        "hello"
+    "book_table": "book a table",
+    "help_faqs": "help",
+    "just_chat": "hello"
   };
   const msg = actionMap[actionId];
   if (msg) sendMessage(msg);
 }
 
+// ===== GENERIC ACTION BUTTONS =====
+function renderActionButtons(actions) {
+  if (!actions || actions.length === 0) return;
+  const wrapper = document.createElement("div");
+  wrapper.className = "message bot-msg";
+  wrapper.style.flexDirection = "column";
+  wrapper.style.alignItems = "flex-start";
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  bubble.style.maxWidth = "88%";
+  bubble.style.background = "transparent";
+  bubble.style.padding = "0";
+  bubble.style.boxShadow = "none";
+  bubble.style.display = "flex";
+  bubble.style.flexWrap = "wrap";
+  bubble.style.gap = "6px";
+  bubble.style.marginLeft = "36px"; // Align with text bubble (avatar width + gap)
+
+  actions.forEach(opt => {
+    const b = document.createElement("button");
+    b.className = "chat-option-btn";
+    b.textContent = opt.label;
+    b.onclick = () => {
+      if (opt.action === "navigate") {
+        window.location.href = opt.url;
+      } else if (opt.action === "send_message") {
+        sendMessage(opt.value);
+      }
+    };
+    bubble.appendChild(b);
+  });
+
+  wrapper.appendChild(bubble);
+  messages.appendChild(wrapper);
+  messages.scrollTop = messages.scrollHeight;
+}
+
 // ===== GLOBAL CLICK HANDLERS =====
-window.selectRestaurant = function(id, name) {
+window.selectRestaurant = function (id, name) {
   sendMessage(String(id));
 };
 
-window.orderItem = function(name) {
+window.orderItem = function (name) {
   sendMessage(`1 ${name}`);
 };
 
 // ===== PARSE RESPONSE & RENDER RICH UI =====
 function handleBotResponse(data, message) {
-  const reply  = data.reply  || "";
+  const reply = data.reply || "";
   const intent = data.intent || "";
 
   // ── RESTAURANTS — use JSON array from API, not text parse ──────────────────
@@ -472,16 +509,16 @@ function handleBotResponse(data, message) {
 
   // ── CART ───────────────────────────────────────────────────────────────────
   if (reply.includes("Added to cart") || reply.includes("Cart mein add")) {
-    const cartItems  = [];
+    const cartItems = [];
     const totalMatch = reply.match(/Total:\s*₹([\d.]+)/);
-    const total      = totalMatch ? totalMatch[1] : '0';
+    const total = totalMatch ? totalMatch[1] : '0';
 
     reply.split('\n').forEach(line => {
       const m = line.match(/•\s*(\d+)x\s+(.+?)\s+-\s+₹([\d.]+)/i);
       if (m) {
         cartItems.push({
-          qty:   parseInt(m[1]),
-          name:  m[2].trim(),
+          qty: parseInt(m[1]),
+          name: m[2].trim(),
           price: parseFloat(m[3]) / parseInt(m[1])
         });
       }
@@ -495,11 +532,11 @@ function handleBotResponse(data, message) {
 
   // ── ORDER CONFIRMED ────────────────────────────────────────────────────────
   if (intent === "confirm_order" &&
-      (reply.includes("Order Confirmed") || reply.includes("Order Confirm Ho Gaya"))) {
+    (reply.includes("Order Confirmed") || reply.includes("Order Confirm Ho Gaya"))) {
     const orderIdMatch = reply.match(/Order ID:\s*\*?\*?(\d+)\*?\*?/);
-    const totalMatch   = reply.match(/Total:\s*₹([\d.]+)/);
-    const orderId      = orderIdMatch ? orderIdMatch[1] : '?';
-    const total        = totalMatch   ? totalMatch[1]   : '0';
+    const totalMatch = reply.match(/Total:\s*₹([\d.]+)/);
+    const orderId = orderIdMatch ? orderIdMatch[1] : '?';
+    const total = totalMatch ? totalMatch[1] : '0';
 
     const items = [];
     reply.split('\n').forEach(line => {
@@ -518,10 +555,10 @@ function handleBotResponse(data, message) {
   // ── ORDER TRACK ────────────────────────────────────────────────────────────
   if (intent === "track_order" && reply.includes("Order #")) {
     const orderIdMatch = reply.match(/Order #(\d+)/);
-    const statusMatch  = reply.match(/Status:\s*\*?\*?(\w+)\*?\*?/i);
-    const totalMatch   = reply.match(/Total:\s*₹([\d.]+)/);
-    const orderId      = orderIdMatch ? orderIdMatch[1]          : '?';
-    const status       = statusMatch  ? statusMatch[1].toLowerCase() : 'pending';
+    const statusMatch = reply.match(/Status:\s*\*?\*?(\w+)\*?\*?/i);
+    const totalMatch = reply.match(/Total:\s*₹([\d.]+)/);
+    const orderId = orderIdMatch ? orderIdMatch[1] : '?';
+    const status = statusMatch ? statusMatch[1].toLowerCase() : 'pending';
 
     const items = [];
     reply.split('\n').forEach(line => {
@@ -530,9 +567,9 @@ function handleBotResponse(data, message) {
     });
 
     renderOrderStatus({
-      id:          orderId,
-      status:      status,
-      items:       items,
+      id: orderId,
+      status: status,
+      items: items,
       total_price: totalMatch ? totalMatch[1] : 0
     });
     return;
@@ -558,6 +595,10 @@ function handleBotResponse(data, message) {
     .replace(/\*\*(.*?)\*\*/g, '$1')
     .replace(/\*(.*?)\*/g, '$1');
   appendMessage("bot", cleaned);
+
+  if (data.action_buttons) {
+    renderActionButtons(data.action_buttons);
+  }
 }
 
 // ===== SEND MESSAGE =====
@@ -582,10 +623,10 @@ async function sendMessage(customText = null, forceAppend = false) {
 
   try {
     const res = await fetch("http://localhost:5000/chat", {
-      method:  "POST",
+      method: "POST",
       headers: { "Content-Type": "application/json" },
-      signal:  controller.signal,
-      body:    JSON.stringify({
+      signal: controller.signal,
+      body: JSON.stringify({
         user_id: getChatbotUserId(),
         message: text,
         is_logged_in: Boolean(window.DINEAUS_IS_LOGGED_IN),
@@ -621,7 +662,7 @@ async function sendMessage(customText = null, forceAppend = false) {
 // ===== SPEAK =====
 function speak(text) {
   if (!text) return;
-  try { window.speechSynthesis.cancel(); } catch (e) {}
+  try { window.speechSynthesis.cancel(); } catch (e) { }
   const u = new SpeechSynthesisUtterance(text);
   u.lang = "en-IN";
   window.speechSynthesis.speak(u);
@@ -688,7 +729,7 @@ async function createRecognitionInstance() {
     r.onresult = (e) => {
       try {
         const resultIndex = e.results.length - 1;
-        const transcript  = String(e.results[resultIndex][0].transcript || "").trim();
+        const transcript = String(e.results[resultIndex][0].transcript || "").trim();
         if (!transcript) return;
         const now = Date.now();
         if (transcript.toLowerCase() === lastTranscript.toLowerCase() && now - lastTime < 1500) return;
@@ -722,7 +763,7 @@ if (!SpeechRec) {
       recognition = await createRecognitionInstance();
       if (!recognition) return;
     }
-    try { recognition.abort(); } catch (e) {}
+    try { recognition.abort(); } catch (e) { }
     recognition.start();
   });
 }
@@ -746,9 +787,9 @@ resetBtn.addEventListener("click", async () => {
   // Reset Python session too
   try {
     await fetch("http://localhost:5000/reset", {
-      method:  "POST",
+      method: "POST",
       headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify({ user_id: window.DINEAUS_USER_ID || "guest" })
+      body: JSON.stringify({ user_id: window.DINEAUS_USER_ID || "guest" })
     });
   } catch (e) {
     console.log("Session reset skipped:", e);

@@ -52,25 +52,13 @@ try:
 except Exception:
     Groq = None
 
-try:
-    from dotenv import load_dotenv
-    load_dotenv(Path(__file__).parent / ".env")
-except Exception:
-    pass
-
-GROQ_API_KEY          = os.getenv("GROQ_API_KEY")
-GROQ_MODEL            = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
-USE_GROQ              = os.getenv("USE_GROQ", "true").strip().lower() not in {"0", "false", "no", "off"}
-GROQ_SYSTEM_PROMPT_PATH = Path(__file__).parent / "data" / "groq_system_prompt.txt"
-
-DB_CONFIG = {
-    'user':       os.getenv('DB_USER',  'root'),
-    'password':   os.getenv('DB_PASS',  'harshit@123'),
-    'host':       os.getenv('DB_HOST',  '127.0.0.1'),
-    'database':   os.getenv('DB_NAME',  'college_practice'),
-    'port':       int(os.getenv('DB_PORT', '3306')),
-    'autocommit': False,
-}
+from chatbot.config import (
+    DB_CONFIG,
+    GROQ_API_KEY,
+    GROQ_MODEL,
+    USE_GROQ,
+    GROQ_SYSTEM_PROMPT_PATH,
+)
 
 app = Flask(__name__)
 CORS(app, resources={
@@ -131,161 +119,14 @@ def get_lang(session: dict, message: str) -> str:
     return session["lang"]
 
 # ── Static responses ───────────────────────────────────────────────────────────
-RESPONSES = {
-    "greeting": {
-        "en": "Hi! 👋 I'm DineBot.\n\n💬 Type **'view restaurants'** to start ordering!",
-        "hi": "Namaste! 👋 Main DineBot hoon.\n\n💬 **'view restaurants'** type karo aur order shuru karo!",
-    },
-    "fallback": {
-        "en": (
-            "🤔 Not sure what you meant.\n\n"
-            "Try one of these:\n"
-            "🍽️ Order food → **'menu'**\n"
-            "🪑 Book a table → **'book a table'**\n"
-            "📦 Track order → **'track 123'**\n"
-            "🏪 Restaurants → **'view restaurants'**\n"
-            "❓ Help → **'help'**"
-        ),
-        "hi": (
-            "🤔 Thoda clear batao.\n\n"
-            "Yeh try karo:\n"
-            "🍽️ Order → **'menu'**\n"
-            "🪑 Table book → **'table book'**\n"
-            "📦 Track → **'track 123'**\n"
-            "🏪 Restaurants → **'view restaurants'**\n"
-            "❓ Help → **'help'**"
-        ),
-    },
-    "thanks": {
-        "en": "You're welcome 😊 Need anything else?",
-        "hi": "Aapka swagat hai 😊 Aur kuch chahiye?",
-    },
-    "no_restaurant": {
-        "en": "⚠️ Please select a restaurant first.\n\n💬 Type **'view restaurants'**",
-        "hi": "⚠️ Pehle restaurant select karo.\n\n💬 **'view restaurants'** type karo",
-    },
-    "empty_cart": {
-        "en": "🛒 Your cart is empty!\n\n💬 Type **'menu'** to see items.",
-        "hi": "🛒 Cart khali hai!\n\n💬 **'menu'** type karo.",
-    },
-    "item_not_found": {
-        "en": "🤔 Item not found.\n\n💡 Type **'menu'** to see available items.",
-        "hi": "🤔 Item nahi mila.\n\n💡 **'menu'** type karo.",
-    },
-    "login_required_order": {
-        "en": "🔐 Please login to continue.\n\n1) Tap **Login** in the top navbar\n2) Complete login\n3) Come back and try again",
-        "hi": "🔐 Continue karne ke liye login karo.\n\n1) Top navbar me **Login** tap karo\n2) Login complete karo\n3) Wapas aake try karo",
-    },
-    "login_required_booking": {
-        "en": "🔐 Please login to continue.\n\n1) Tap **Login** in the top navbar\n2) Complete login\n3) Start booking again",
-        "hi": "🔐 Continue karne ke liye login karo.\n\n1) Top navbar me **Login** tap karo\n2) Login complete karo\n3) Booking phir se start karo",
-    },
-    "login_required_cancel": {
-        "en": "🔐 Please login to continue.\n\n1) Tap **Login** in the top navbar\n2) Complete login\n3) Then cancel your order",
-        "hi": "🔐 Continue karne ke liye login karo.\n\n1) Top navbar me **Login** tap karo\n2) Login complete karo\n3) Uske baad order cancel karo",
-    },
-    "switch_warning": {
-        "en": "⚠️ You have items in your cart. Switching restaurants will clear your cart.\n\nReply **'yes'** to continue or **'no'** to stay.",
-        "hi": "⚠️ Cart mein items hain. Restaurant switch karne par cart clear ho jayega.\n\nContinue ke liye **'yes'** ya **'no'** bolo.",
-    },
-    "switch_cancelled": {
-        "en": "✅ Keeping your current restaurant.\n\nType **'menu'** to continue ordering.",
-        "hi": "✅ Current restaurant hi rahega.\n\nAage badhne ke liye **'menu'** type karo.",
-    },
-    "payment_info": {
-        "en": "💳 Payments happen on the website.\n\n1) Open **Cart / Checkout**\n2) Select address\n3) Choose payment (UPI/Card/Pay on Delivery)",
-        "hi": "💳 Payment website par hota hai.\n\n1) **Cart / Checkout** open karo\n2) Address select karo\n3) Payment option choose karo",
-    },
-    "help": {
-        "en": (
-            "❓ **Help & FAQs**\n\n"
-            "🍽️ **Order food:** Home → restaurant → menu → ADD items → cart → checkout\n"
-            "🪑 **Book table:** Type **'book a table'** here, or visit restaurant page → **Reserve / Seat / Preorder** button\n"
-            "📦 **Track order:** Type **'track 1023'** or go to **Profile → Orders → Track Order**\n"
-            "❌ **Cancel order:** Type **'cancel order 1023'** or go to **Profile → Orders → Cancel**\n"
-            "🏪 **Restaurants:** Type **'view restaurants'** or browse on Home page\n"
-            "🎁 **Offers:** Navbar → **Offers** or Home → Today's Hot Deals\n\n"
-            "For complaints: navbar → **Help** (/help) — covers orders, FAQs, partner, safety, legal.\n"
-            "Support email: support@dineaus.com"
-        ),
-        "hi": (
-            "❓ **Help & FAQs**\n\n"
-            "🍽️ **Order:** Home → restaurant → menu → ADD → cart → checkout\n"
-            "🪑 **Table book:** **'book a table'** type karo ya restaurant page → **Reserve / Seat / Preorder** button\n"
-            "📦 **Track:** **'track 1023'** type karo ya **Profile → Orders → Track Order**\n"
-            "❌ **Cancel:** **'cancel order 1023'** ya **Profile → Orders → Cancel**\n"
-            "🏪 **Restaurants:** **'view restaurants'** type karo\n"
-            "🎁 **Offers:** Navbar → **Offers** ya Home → Today's Hot Deals\n\n"
-            "Complaint ke liye: navbar → **Help** (/help)\n"
-            "Support email: support@dineaus.com"
-        ),
-    },
-    "account_help": {
-        "en": (
-            "🔐 **Account Help**\n\n"
-            "• **Login:** Top navbar → **Login** (/login)\n"
-            "• **Sign Up:** Top navbar → **SignUp** (/sign)\n"
-            "• **Forgot password:** Login page → **Forgot Password** (/forgot)\n"
-            "• **Reset:** Check email → open reset link → set new password\n"
-            "• **Edit profile:** Top navbar → your name → **Profile** → **Edit Profile** (/profile/edit)\n"
-            "• **Update phone/email:** Profile → Edit Profile\n"
-            "• **Account issues:** Navbar → **Help** (/help)"
-        ),
-        "hi": (
-            "🔐 **Account Help**\n\n"
-            "• **Login:** Top navbar → **Login** (/login)\n"
-            "• **Sign Up:** Top navbar → **SignUp** (/sign)\n"
-            "• **Forgot password:** Login page → **Forgot Password** (/forgot)\n"
-            "• **Reset:** Email link se naya password set karo\n"
-            "• **Profile update:** Navbar → naam → **Profile** → **Edit Profile** (/profile/edit)\n"
-            "• **Account problem:** Navbar → **Help** (/help)"
-        ),
-    },
-    "booking_interrupt_prompt": {
-        "en": (
-            "You're currently booking a table.\n\n"
-            "Do you want to **continue booking** or **switch to food ordering**?\n"
-            "Reply **'continue'** or **'switch'**."
-        ),
-        "hi": (
-            "Aap abhi table booking kar rahe ho.\n\n"
-            "Booking continue karni hai ya food ordering pe switch karna hai?\n"
-            "**'continue'** ya **'switch'** reply karo."
-        ),
-    },
-}
-
-def get_response(key: str, lang: str) -> str:
-    return RESPONSES.get(key, {}).get(lang, RESPONSES.get(key, {}).get('en', ''))
-
-def booking_ask(field: str, lang: str) -> str:
-    msgs = {
-        "restaurant": {
-            "en": "🏪 Which restaurant would you like to book at?\n\nType **'view restaurants'** to see options.",
-            "hi": "🏪 Kaunse restaurant mein table book karna hai?\n\n**'view restaurants'** type karo.",
-        },
-        "booking_type": {
-            "en": "🪑 Choose booking type:\n\n1) **Dine-out only**\n2) **Table + pre-order food**\n\nReply **1** or **2**.",
-            "hi": "🪑 Booking type choose karo:\n\n1) **Sirf table**\n2) **Table + pre-order food**\n\n**1** ya **2** reply karo.",
-        },
-        "preorder_items": {
-            "en": "🍽️ What would you like to pre-order? Tell me items and quantities.\n\nExample: **'2 pizza and 1 coke'**",
-            "hi": "🍽️ Kya pre-order karna hai? Items aur quantity batao.\n\nExample: **'2 pizza aur 1 coke'**",
-        },
-        "people": {
-            "en": "👥 How many people will be joining?\n\nExample: **'4 people'** or just **'4'**",
-            "hi": "👥 Kitne logon ke liye table chahiye?\n\nExample: **'4 log'** ya sirf **'4'**",
-        },
-        "date": {
-            "en": "📅 Which date? (**today** or **tomorrow** only)\n\nExample: **'today'** or **'tomorrow'**",
-            "hi": "📅 Kaunsi date? (Sirf **aaj** ya **kal**)\n\nExample: **'aaj'** ya **'kal'**",
-        },
-        "time": {
-            "en": "🕒 What time? (11am–3pm or 6pm–10pm)\n\nExample: **'7pm'** or **'19:30'**",
-            "hi": "🕒 Kaunsa time? (11am–3pm ya 6pm–10pm)\n\nExample: **'7pm'** ya **'19:30'**",
-        },
-    }
-    return msgs.get(field, {}).get(lang, msgs.get(field, {}).get('en', ''))
+from chatbot.response_handler import (
+    get_response,
+    booking_ask,
+    prepare_restaurants_for_json,
+    format_restaurant_list,
+    format_cart_summary,
+    build_fallback_response,
+)
 
 # ── Yes / No helpers ───────────────────────────────────────────────────────────
 def is_yes(text: str) -> bool:
@@ -838,20 +679,7 @@ def safe_numeric_user_id(user_id):
     try: return int(user_id)
     except: return 1
 
-def prepare_restaurants_for_json(rows):
-    return [{"id": r.get("id"), "name": r.get("name", ""), "location": r.get("location", ""), "image_url": r.get("image_url") or ""} for r in (rows or [])]
 
-def format_restaurant_list(rows: list, lang: str) -> str:
-    if not rows:
-        return "No restaurants available." if lang == "en" else "Koi restaurant available nahi hai."
-    text = "🍽️ **Available Restaurants:**\n\n" if lang == "en" else "🍽️ **Restaurants ki list:**\n\n"
-    for rx in rows:
-        text += f"{rx['id']}. {rx['name']} ({rx.get('location', '')})\n"
-    text += "\n💬 Type the restaurant number to select." if lang == "en" else "\n💬 Restaurant ka number type karo."
-    return text
-
-def format_cart_summary(temp_items: list) -> str:
-    return "\n".join(f"• {i['qty']}x {i['name'].title()} - ₹{i['price'] * i['qty']}" for i in temp_items)
 
 def match_restaurant_in_message(message: str, restaurants: list):
     t = message.lower(); best = None
@@ -1077,15 +905,7 @@ def simple_intent_parser(text: str, restaurant_names: list = None) -> str:
     if re.match(r'^\s*(show|restaurant|restaurants|food|order|new|dikhao)\s*$', t): return "view_restaurants"
     return "fallback"
 
-def build_fallback_response(session: dict, lang: str) -> str:
-    last = session.get("last_intent") or (session.get("context_stack") or [None])[-1]
-    if last == "menu":
-        return "Tell me what you want.\n\nExample: **'2 burgers and a coke'**" if lang == "en" else "Menu se kya chahiye?"
-    if last == "book_table":
-        return "Still want a table? Tell me the missing detail." if lang == "en" else "Table book karna hai? Missing detail batao."
-    if last == "confirm_order":
-        return "Type **'confirm order'** to place your order." if lang == "en" else "**'confirm order'** bolo."
-    return get_response("fallback", lang)
+
 
 # ══════════════════════════════════════════════════════════════════════════════
 # BOOKING STATE MACHINE - FIXED VERSION
@@ -1662,6 +1482,14 @@ def chat_handler():
         payload.update(extra)
         return jsonify(payload), 200
 
+    # ── CONTEXTUAL INPUT RESOLUTION (NUMERIC AMBIGUITY FIX) ────────────────
+    awaiting = session.get("awaiting_input_for")
+    if awaiting == "cancel_order_id" and message.isdigit():
+        message = f"cancel order {message}"
+    elif awaiting == "track_order_id" and message.isdigit():
+        message = f"track {message}"
+    session["awaiting_input_for"] = None
+
     # ── PENDING BOOKING INTERRUPT ──────────────────────────────────────────────
     if session.get("pending_booking_switch"):
         pending_target = session.get("pending_booking_switch")
@@ -1830,6 +1658,7 @@ def chat_handler():
                        if lang == "en" else "Pehle restaurant list se choose karo.", "view_restaurants")
 
     # ── INTENT DETECTION ───────────────────────────────────────────────────────
+    # FIX: Run basic intent detection FIRST so we can escape the booking trap
     if (re.search(r"\b(cancel order|cancel my order)\b", message, flags=re.I)
             and not re.search(r"\b(table|booking|reservation)\b", message, flags=re.I)):
         intent = "cancel_order"
@@ -1838,13 +1667,18 @@ def chat_handler():
     if intent == "compare_restaurants":
         intent = "recommend_restaurants"
 
-    # Booking state override
+    # Booking state override (THE TRAP FIX)
     booking_active = session.get("booking_state", {})
     if booking_active and booking_active.get("awaiting") not in (None,):
-        missing = not all([booking_active.get("restaurant_id"), booking_active.get("booking_mode"),
-                           booking_active.get("people"), booking_active.get("date"), booking_active.get("time")])
-        if missing and intent not in BOOKING_EXEMPT_INTENTS:
-            intent = "book_table"
+        # We are inside a booking flow.
+        # But if the user clearly stated an escape intent, let it pass through.
+        if intent in BOOKING_EXEMPT_INTENTS or intent in ("cancel_order", "track_order", "help", "view_restaurants"):
+            pass # Allow escape
+        else:
+            missing = not all([booking_active.get("restaurant_id"), booking_active.get("booking_mode"),
+                               booking_active.get("people"), booking_active.get("date"), booking_active.get("time")])
+            if missing:
+                intent = "book_table"
 
     # FIX P0: Only restart booking if user EXPLICITLY says "book a table" AND
     # no booking data has been collected yet. Never destroy an in-progress booking.
@@ -1912,139 +1746,55 @@ def chat_handler():
         bot_response = get_response("thanks", lang)
 
     elif intent == "help":
-        bot_response = get_response("help", lang)
+        bot_response = ("Of course! 👋 What do you need help with?" if lang == "en" else "Bilkul! 👋 Aapko kis cheez mein help chahiye?")
+        extra_payload["action_buttons"] = [
+            {"label": "🍽️ Order Food", "action": "send_message", "value": "view restaurants"},
+            {"label": "🪑 Book a Table", "action": "send_message", "value": "book a table"},
+            {"label": "📦 Track an Order", "action": "send_message", "value": "track order"},
+            {"label": "❌ Cancel an Order", "action": "send_message", "value": "cancel order"},
+            {"label": "👤 Account & Profile", "action": "send_message", "value": "account help"},
+            {"label": "🎁 Offers & Deals", "action": "send_message", "value": "offers"},
+            {"label": "🏪 Add Your Restaurant", "action": "send_message", "value": "partner"}
+        ]
         # FIX P1: Help ke baad booking state intact rehni chahiye — kuch clear mat karo
 
     elif intent == "account_help":
-        bot_response = get_response("account_help", lang)
+        if is_logged_in_user(user_id, session):
+            bot_response = ("You're already signed in! You can manage your orders and addresses from your profile." if lang == "en" else "Aap already signed in ho! Aap apna profile se orders aur addresses manage kar sakte ho.")
+            extra_payload["action_buttons"] = [{"label": "Open Profile", "action": "navigate", "url": "/profile"}]
+        else:
+            bot_response = ("You can sign in or create an account using the Login option." if lang == "en" else "Aap login ya naya account bana sakte hain.")
+            extra_payload["action_buttons"] = [{"label": "Login", "action": "navigate", "url": "/login"}]
 
     elif intent == "about_bot":
         bot_response = ("🤖 I'm DineBot — your food ordering and table booking assistant.\n\nStart with **'view restaurants'**."
                         if lang == "en" else "🤖 Main DineBot hoon — food ordering aur table booking assistant.")
 
     elif intent == "offers_deals":
-        bot_response = (
-            "🎁 **Offers & Deals on DINEaus**\n\n"
-            "1. **Navbar** → click **Offers NEW** in the top navigation\n"
-            "2. **Home page** → scroll to **Today's Hot Deals** section:\n"
-            "   • FREEDEL — Free Delivery (Save ₹299)\n"
-            "   • SWEET2X — Buy 1 Get 1 Free (Desserts)\n"
-            "   • UPISAVE — 20% Cashback (UPI)\n"
-            "   • FIRST50 — 50% OFF (First Order)\n\n"
-            "3. **Restaurant page** → **Deals for you** section (TRYNEW, FLATDEAL)\n"
-            "4. **Home filter bar** → click **Offers** chip to filter restaurants with offers"
-            if lang == "en" else
-            "🎁 **DINEaus par Offers**\n\n"
-            "1. **Navbar** → **Offers NEW** click karo\n"
-            "2. **Home page** → **Today's Hot Deals** section mein:\n"
-            "   • FREEDEL, SWEET2X, UPISAVE, FIRST50\n\n"
-            "3. **Restaurant page** → **Deals for you** section\n"
-            "4. **Home filter** → **Offers** chip click karo"
-        )
+        bot_response = ("🎁 You can check the latest available deals from the Offers section on the home page." if lang == "en" else "🎁 Aap home page ke Offers section se latest deals check kar sakte hain.")
+        extra_payload["action_buttons"] = [{"label": "View Offers", "action": "navigate", "url": "/home"}]
 
     elif intent == "payment":
-        bot_response = get_response("payment_info", lang)
+        if session.get("temp_order", []):
+            bot_response = ("Your cart is ready. You can review it and continue to checkout whenever you're ready." if lang == "en" else "Aapka cart ready hai. Aap review karke checkout kar sakte hain.")
+            extra_payload["action_buttons"] = [{"label": "Proceed to Checkout", "action": "navigate", "url": "/cart/checkout"}]
+        else:
+            bot_response = ("Add items from a restaurant first, and I'll help you continue to payment from there." if lang == "en" else "Pehle items add karein, phir main aapki payment mein madad karunga.")
 
     elif intent == "navigation_help":
-        bot_response = (
-            "🗺️ **DINEaus Navigation Guide**\n\n"
-            "👤 **Login/Sign Up** → Top navbar (right side) → /login or /sign\n"
-            "🏠 **Home** → Click **DINEaus** logo or **Home** link → /home\n"
-            "🔎 **Search** → Navbar search bar → /search\n"
-            "🛒 **Cart** → Cart icon (🛒) in navbar → /cart/checkout\n"
-            "👤 **Profile** → Click your name → Profile dropdown → /profile\n"
-            "📦 **Orders** → Profile → Orders tab\n"
-            "🪑 **Bookings** → Profile → Bookings tab\n"
-            "📍 **Addresses** → Profile → Address tab\n"
-            "🤝 **Partner** → Home footer → Partner with us → /dineous-partner\n"
-            "❓ **Help** → Navbar → Help → /help\n"
-            "🎁 **Offers** → Navbar → Offers NEW"
-            if lang == "en" else
-            "🗺️ **DINEaus Navigation**\n\n"
-            "👤 **Login/Sign Up** → Top navbar → /login ya /sign\n"
-            "🏠 **Home** → Logo ya Home link → /home\n"
-            "🔎 **Search** → Navbar search bar\n"
-            "🛒 **Cart** → Cart icon navbar mein\n"
-            "👤 **Profile** → Naam click → Profile\n"
-            "📦 **Orders** → Profile → Orders tab\n"
-            "🤝 **Partner** → Footer → Partner with us\n"
-            "❓ **Help** → Navbar → Help"
-        )
+        bot_response = ("I can help you find what you're looking for. Tell me what you need, like 'Where is my profile?' or 'How do I track my order?'" if lang == "en" else "Main aapko sahi page dhoondne mein madad kar sakta hoon. Jaise 'Mera profile kahan hai?'")
 
     elif intent == "site_navigation":
-        bot_response = (
-            "🗺️ **DINEaus Website Guide**\n\n"
-            "👤 **Account:** Top navbar → **Login** (/login) or **SignUp** (/sign)\n"
-            "🍽️ **Order Food:** Home → click restaurant → view menu → **ADD** items → **Cart** (🛒) → Checkout → Pay\n"
-            "🪑 **Book Table:** Restaurant page → **Reserve / Seat / Preorder** button → fill details → **Book Now**\n"
-            "   Or type **'book a table'** here in chat!\n"
-            "🔎 **Search:** Navbar search bar — search restaurants or dishes (/search)\n"
-            "📦 **Track Order:** **Profile → Orders → Track Order** (/track-order/:id)\n"
-            "🤝 **Partner:** Home footer → **Partner with us** (/dineous-partner)\n"
-            "🚗 **Delivery Partner:** /delivery/register\n"
-            "❓ **Help:** Navbar → **Help** (/help)\n"
-            "🎁 **Offers:** Navbar → **Offers NEW** or Home → Today's Hot Deals"
-            if lang == "en" else
-            "🗺️ **DINEaus Website Guide**\n\n"
-            "👤 **Account:** Navbar → **Login** (/login) ya **SignUp** (/sign)\n"
-            "🍽️ **Order:** Home → restaurant click → menu → **ADD** → **Cart** → Checkout\n"
-            "🪑 **Table:** Restaurant page → **Reserve / Seat / Preorder** button\n"
-            "   Ya chat mein **'book a table'** type karo!\n"
-            "🔎 **Search:** Navbar search bar (/search)\n"
-            "📦 **Track:** **Profile → Orders → Track Order**\n"
-            "🤝 **Partner:** Footer → **Partner with us** (/dineous-partner)\n"
-            "❓ **Help:** Navbar → **Help** (/help)\n"
-            "🎁 **Offers:** Navbar → **Offers NEW**"
-        )
+        bot_response = ("DINEaus makes it easy to order food and book tables. You can use the navigation bar at the top or your Profile to access most features." if lang == "en" else "DINEaus par food order aur table book karna aasan hai. Top navigation ya Profile se features access karein.")
 
-    elif intent == "partner":
-        bot_response = (
-            "🤝 **Add Your Restaurant to DINEaus**\n\n"
-            "**How to start:**\n"
-            "1. Go to Home page footer → under 'Contact us' → click **Partner with us**\n"
-            "   Or visit directly: /dineous-partner\n\n"
-            "**4-Step Onboarding:**\n"
-            "📋 Step 1: **Restaurant Information** — name, address, owner contact, working hours\n"
-            "📄 Step 2: **Documents** — PAN card, GSTIN, FSSAI license, bank details\n"
-            "🍽️ Step 3: **Menu Setup** — cuisine type, upload menu (max 25MB), set prices\n"
-            "📝 Step 4: **Partner Contract**\n\n"
-            "**Required documents:** FSSAI License, PAN Card, GSTIN, Bank Account, Menu\n\n"
-            "After approval, login at **/restaurant-admin/login** to manage orders & bookings."
-            if lang == "en" else
-            "🤝 **Apna Restaurant DINEaus par Add Karo**\n\n"
-            "**Kaise shuru kare:**\n"
-            "1. Home footer → 'Contact us' → **Partner with us** click karo\n"
-            "   Ya directly jao: /dineous-partner\n\n"
-            "**4-Step Process:**\n"
-            "📋 Step 1: **Restaurant Information** — naam, address, contact, hours\n"
-            "📄 Step 2: **Documents** — PAN, GSTIN, FSSAI, bank details\n"
-            "🍽️ Step 3: **Menu Setup** — cuisine, menu upload, prices\n"
-            "📝 Step 4: **Partner Contract**\n\n"
-            "Approval ke baad **/restaurant-admin/login** se login karo."
-        )
 
-    elif intent == "restaurant_register":
-        bot_response = (
-            "Go to Home footer → **Partner with us** (/dineous-partner) → click **Continue**.\n\n"
-            "Complete: Restaurant Information → Documents (PAN, GSTIN, FSSAI, bank) → Menu Setup → Partner Contract.\n\n"
-            "After approval, login at **/restaurant-admin/login**."
-            if lang == "en" else
-            "Home footer → **Partner with us** (/dineous-partner) → **Continue** click karo.\n\n"
-            "Restaurant Info → Documents → Menu Setup complete karo.\n\n"
-            "Approval ke baad **/restaurant-admin/login** se login karo."
-        )
+    elif intent in ("partner", "restaurant_register"):
+        bot_response = ("🤝 Want to list your restaurant on DINEaus? I can point you to the restaurant onboarding process." if lang == "en" else "🤝 DINEaus par apna restaurant add karna chahte hain? Main aapko onboarding page par le ja sakta hoon.")
+        extra_payload["action_buttons"] = [{"label": "Add Your Restaurant", "action": "navigate", "url": "/dineous-partner"}]
 
     elif intent == "restaurant_login":
-        bot_response = (
-            "🏪 Restaurant owners login at: **/restaurant-admin/login**\n\n"
-            "Enter your restaurant credentials to access the dashboard where you can:\n"
-            "• Accept/Reject orders\n"
-            "• Manage table bookings\n"
-            "• View order history"
-            if lang == "en" else
-            "🏪 Restaurant owner login: **/restaurant-admin/login**\n\n"
-            "Dashboard par orders aur bookings manage karo."
-        )
+        bot_response = ("🏪 If you're already a partner, you can access your dashboard by logging in." if lang == "en" else "🏪 Agar aap already partner hain, toh login karke dashboard access kar sakte hain.")
+        extra_payload["action_buttons"] = [{"label": "Restaurant Admin Login", "action": "navigate", "url": "/restaurant-admin/login"}]
 
     elif intent == "delivery_partner":
         bot_response = (
@@ -2256,7 +2006,14 @@ def chat_handler():
             else:
                 items = extract_items_from_message(message, menu_list, price_map)
                 if items:
-                    temp_items = session["temp_order"].get("items", [])
+                    booking_active = session.get("booking_state", {})
+                    is_preorder = booking_active and booking_active.get("awaiting") == "preorder_items"
+                    
+                    if is_preorder:
+                        temp_items = booking_active.get("preorder_items", [])
+                    else:
+                        temp_items = session["temp_order"].get("items", [])
+                        
                     added_any  = False
                     for item in items:
                         name      = item.get("name")
@@ -2272,12 +2029,22 @@ def chat_handler():
                         session["last_added_item"] = name
                         _record_action(session, signature)
                         added_any = True
-                    session["temp_order"]["items"] = temp_items
+
+                    if is_preorder:
+                        booking_active["preorder_items"] = temp_items
+                        session["booking_state"] = booking_active
+                    else:
+                        session["temp_order"]["items"] = temp_items
                     set_session(user_id, session)
+
                     if added_any or temp_items:
                         total = sum(i['price'] * i['qty'] for i in temp_items)
-                        bot_response = (f"✅ Added to cart!\n\n**Cart:**\n{format_cart_summary(temp_items)}\n\n**Total: ₹{total}**\n\n💬 Say **'confirm order'** to place!"
-                                        if lang == "en" else f"✅ Cart mein add ho gaya!\n\n**Cart:**\n{format_cart_summary(temp_items)}\n\n**Total: ₹{total}**\n\n💬 **'confirm order'** bolo!")
+                        if is_preorder:
+                            bot_response = (f"✅ Pre-order added!\n\n**Items:**\n{format_cart_summary(temp_items)}\n\n💬 Say **'continue booking'** to finish your booking!"
+                                            if lang == "en" else f"✅ Pre-order add ho gaya!\n\n**Items:**\n{format_cart_summary(temp_items)}\n\n💬 **'continue booking'** bolo booking khatam karne ke liye!")
+                        else:
+                            bot_response = (f"✅ Added to cart!\n\n**Cart:**\n{format_cart_summary(temp_items)}\n\n**Total: ₹{total}**\n\n💬 Say **'confirm order'** to place!"
+                                            if lang == "en" else f"✅ Cart mein add ho gaya!\n\n**Cart:**\n{format_cart_summary(temp_items)}\n\n**Total: ₹{total}**\n\n💬 **'confirm order'** bolo!")
                     else:
                         bot_response = get_response("item_not_found", lang)
                 else:
@@ -2408,6 +2175,8 @@ def chat_handler():
             if m:
                 try: order_id = int(m.group(1))
                 except: pass
+        if not order_id and re.search(r'\b(it|that|this|last|previous)\b', message, flags=re.I):
+            order_id = session.get("last_order_id")
         if not order_id and session.get("last_order_id"): order_id = session["last_order_id"]
         if order_id:
             try:
@@ -2425,6 +2194,7 @@ def chat_handler():
             except Exception as e:
                 bot_response = f"❌ Error: {str(e)}"
         else:
+            session["awaiting_input_for"] = "track_order_id"
             bot_response = "📝 Please provide order ID.\n\nExample: **'track 1023'**" if lang == "en" else "📝 Order ID batao."
 
     elif intent == "cancel_order":
@@ -2435,6 +2205,10 @@ def chat_handler():
         if m:
             cancel_id = int(m.group(1))
 
+        # Check for pronouns to auto-resolve to last_order_id
+        if not cancel_id and re.search(r'\b(it|that|this|last|previous|latest)\b', message, flags=re.I):
+            cancel_id = session.get("last_order_id")
+
         # FIX P0: If no explicit order ID, ONLY use last_order_id from THIS session
         # NEVER auto-fetch latest DB order — that causes random old-order cancellations
         if not cancel_id:
@@ -2443,6 +2217,7 @@ def chat_handler():
                 cancel_id = session_order_id
             else:
                 # No order context at all — ask for ID instead of guessing
+                session["awaiting_input_for"] = "cancel_order_id"
                 set_session(user_id, session)
                 bot_response = (
                     "Which order would you like to cancel?\n\n"
@@ -2477,6 +2252,7 @@ def chat_handler():
                 "cancel_order",
             )
         else:
+            session["awaiting_input_for"] = "cancel_order_id"
             bot_response = "Which order to cancel?\n\n📝 Try: **'cancel order 1023'**" if lang == "en" else "Kaun sa order cancel karna hai?\n\n📝 Try: **'cancel order 1023'**"
 
     elif intent == "cancel_booking":

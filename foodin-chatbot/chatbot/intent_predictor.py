@@ -9,7 +9,6 @@ class IntentPredictor:
         """
         self.loader = model_loader
         self.threshold = float(threshold)
-        # keep intents from model_loader if you want to access responses here
         self.intents = getattr(model_loader, "intents", None)
 
     def predict(self, text: str):
@@ -18,7 +17,7 @@ class IntentPredictor:
         """
         if not text or not text.strip():
             return "fallback", 0.0
-
+        
         text = text.strip()
         # get probability vector from pipeline
         probs = self.loader.predict_proba([text])[0]   # shape: (n_classes,)

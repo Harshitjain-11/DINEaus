@@ -7,7 +7,7 @@ import os
 import time as _time
 from datetime import datetime, UTC
 
-# FIX #106: Persist sessions to disk so they survive server restarts
+
 _SESSION_FILE = os.path.join(os.path.dirname(__file__), "data", "chatbot_sessions.json")
 
 def load_sessions():
@@ -19,7 +19,7 @@ def load_sessions():
         print(f"[SESSION] Failed to load sessions: {e}")
     return {}
 
-# REG-07: Debounce file writes — at most once per 2 seconds
+
 _last_save_ts = 0
 _SAVE_DEBOUNCE_SECS = 2
 
@@ -27,7 +27,7 @@ def save_sessions(force=False):
     global _last_save_ts
     now = _time.time()
     if not force and (now - _last_save_ts < _SAVE_DEBOUNCE_SECS):
-        return  # skip — written too recently
+        return  
     _last_save_ts = now
     try:
         os.makedirs(os.path.dirname(_SESSION_FILE), exist_ok=True)
@@ -54,8 +54,11 @@ def _default_session() -> dict:
         "last_user_message": None,
         "last_user_message_at": None,
         "last_added_item": None,
-        "booking_state": {},             # NEW: tracks multi-turn booking fields
-        "context_stack": [],             # NEW: last 3 intents for context awareness
+        "awaiting_input_for": None,      # NEW: Explicit next-step expectation
+        "last_referenced_order_id": None, # NEW: Pronoun tracking
+        "last_referenced_booking_id": None, # NEW: Pronoun tracking
+        "booking_state": {},             # Tracks multi-turn booking fields
+        "context_stack": [],             # Last 3 intents for context awareness
         "lang": None,
         "pending_switch": None,
         "pending_booking_switch": None,

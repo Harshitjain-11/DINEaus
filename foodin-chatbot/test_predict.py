@@ -63,7 +63,8 @@ def run_interactive():
 
 
 def run_routing_tests():
-    from app import app as flask_app, predict_intent
+    from app import app as flask_app, ml_model, WORD_TO_NUMBER
+    from chatbot.intent_router import predict_intent
 
     predict_cases = [
         ("order food", "view_restaurants"),
@@ -86,7 +87,7 @@ def run_routing_tests():
     failures = 0
     print("\n=== predict_intent() routing tests ===")
     for text, expected in predict_cases:
-        got = predict_intent(text, {"restaurant_names": []})
+        got = predict_intent(text, {"restaurant_names": []}, ml_model=ml_model, word_to_number=WORD_TO_NUMBER)
         ok = got == expected
         status = "OK" if ok else "FAIL"
         print(f"[{status}] '{text}' -> {got} (expected {expected})")

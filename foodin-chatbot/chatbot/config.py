@@ -18,7 +18,7 @@ GROQ_SYSTEM_PROMPT_PATH = PROJECT_ROOT / "data" / "groq_system_prompt.txt"
 
 DB_CONFIG = {
     'user':       os.getenv('DB_USER',  'root'),
-    'password':   os.getenv('DB_PASS',  '***REMOVED***'),
+    'password':   os.getenv('DB_PASS'),
     'host':       os.getenv('DB_HOST',  '127.0.0.1'),
     'database':   os.getenv('DB_NAME',  'college_practice'),
     'port':       int(os.getenv('DB_PORT', '3306')),

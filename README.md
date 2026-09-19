@@ -383,7 +383,6 @@ DINEaus/
 │   ├── train_chatbot.py           # ML model training script
 │   ├── chatbot/
 │   │   ├── model_loader.py        # Load trained .pkl model
-│   │   ├── intent_predictor.py    # Predict intent from text
 │   │   ├── entity_extractor.py    # Extract items, dates, quantities
 │   │   ├── response_generator.py  # Pick response from intents.json
 │   │   └── session_manager.py     # Track conversation state per user

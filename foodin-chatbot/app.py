@@ -34,10 +34,7 @@ try:
 except Exception:
     ModelLoader = None
 
-try:
-    from chatbot.session_manager import get_session, set_session, push_intent, reset_session, clear_temp_order, save_sessions, cleanup_stale_sessions
-except Exception:
-    get_session = set_session = push_intent = reset_session = clear_temp_order = save_sessions = cleanup_stale_sessions = None
+from chatbot.session_manager import get_session, set_session, push_intent, reset_session, clear_temp_order, save_sessions, cleanup_stale_sessions
 
 try:
     from chatbot.entity_extractor import extract_order_id, extract_items, _NUM_WORDS as WORD_TO_NUMBER
@@ -46,7 +43,7 @@ except Exception:
     print("entity_extractor import warning")
     extract_order_id = extract_items = None
 from chatbot.utils import is_yes, is_no, safe_numeric_user_id
-from chatbot.booking_handler import handle_booking
+from chatbot.booking_handler import handle_booking, next_booking_prompt
 
 from chatbot.config import (
     DB_CONFIG,
@@ -153,70 +150,7 @@ def detect_booking_interrupt_target(text: str) -> str:
 
 # ── Next booking prompt ────────────────────────────────────────────────────────
 
-# ── Session Manager fallback ───────────────────────────────────────────────────
-if get_session is None:
-    _sessions: dict = {}
 
-    def _default_session() -> dict:
-        return {
-            "user_id": None, "is_logged_in": False, "user_name": None,
-            "lang": None,
-            "active_restaurant": None,
-            "restaurant_list_shown": False,
-            "restaurant_names": [],
-            "mentioned_restaurant_id": None,
-            "mentioned_restaurant_name": None,
-            "temp_order": {"items": []},
-            "last_order_id": None,
-            "last_booking_id": None,
-            "booking_state": {},
-            "pending_cancel_order_id": None,
-            "pending_switch": None,
-            "pending_booking_switch": None,
-            "last_intent": None,
-            "last_bot_msg": None,
-            "context_stack": [],
-            "recent_actions": [],
-            "last_added_item": None,
-            "last_action_time": None,
-            "created_at": datetime.now(UTC).isoformat(),
-        }
-
-    def get_session(uid):
-        if uid not in _sessions:
-            _sessions[uid] = _default_session()
-        else:
-            s = _sessions[uid]
-            defaults = _default_session()
-            for k, v in defaults.items():
-                if k not in s:
-                    s[k] = v
-            if not isinstance(s.get("temp_order"), dict):
-                s["temp_order"] = {"items": []}
-            if "items" not in s["temp_order"]:
-                s["temp_order"]["items"] = []
-        return _sessions[uid]
-
-    def set_session(uid, data):
-        _sessions[uid] = data
-        return data
-
-    def clear_temp_order(uid):
-        s = get_session(uid)
-        s["temp_order"] = {"items": []}
-        s["last_intent"] = None
-        return s
-
-    def push_intent(uid, intent):
-        s = get_session(uid)
-        stack = s.get("context_stack", [])
-        stack.append(intent)
-        s["context_stack"] = stack[-5:]
-        s["last_intent"] = intent
-
-    def reset_session(uid):
-        _sessions[uid] = _default_session()
-        return _sessions[uid]
 
 # ── Order Manager ──────────────────────────────────────────────────────────────
 om = None

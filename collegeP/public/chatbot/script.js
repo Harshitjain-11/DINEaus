@@ -617,7 +617,7 @@ async function sendMessage(customText = null, forceAppend = false) {
   if (customText == null) input.value = "";
   showTyping();
 
-  // FIX #140: Abort controller for fetch timeout
+  // Abort controller for fetch timeout
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
 

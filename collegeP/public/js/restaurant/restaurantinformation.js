@@ -28,7 +28,6 @@ async function autoFillRestaurant(lat, lng) {
 }
 
 function showRestaurantMap(lat, lng) {
-  // ✅ document.getElementById — direct variable nahi (external JS fix)
   const restLatInput = document.getElementById('restLat');
   const restLngInput = document.getElementById('restLng');
 

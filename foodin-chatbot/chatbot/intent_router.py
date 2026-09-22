@@ -62,7 +62,6 @@ def simple_intent_parser(text: str, restaurant_names: list = None, word_to_numbe
     if re.search(r'\b(veg|vegetarian|non-veg|non veg|vegan)\b', t): return "veg_nonveg"
     if re.search(r'\b(opening hours|open time|closing|timings|hours)\b', t): return "opening_hours"
     if re.search(r'\b(delivery area|deliver to|service area)\b', t): return "delivery_area"
-    # FIX P1: "konsa restaurant accha hai" / "which restaurant is best" → recommend, not current_restaurant
     if re.search(r'\b(which restaurant|konsa restaurant|abhi konsa|current restaurant|selected restaurant)\b', t):
         if re.search(r'\b(accha|best|popular|better|suggest|recommend|good|top|famous|rated|try)\b', t):
             return "recommend_restaurants"
@@ -79,7 +78,6 @@ def simple_intent_parser(text: str, restaurant_names: list = None, word_to_numbe
     if re.search(r'\b(cancel order|cancel my order|cancel this order|cancel it|cancel last order|cancel previous order|cancel the order|order cancel|order mat|cancel karo)\b', t): return "cancel_order"
     if re.search(r'\b(book|reserve|table|seat|reservation|baithna|dine in|dining)\b', t): return "book_table"
     if re.search(r'\b(remove|delete|hata|nikal|mat chahiye)\b', t): return "remove_item"
-    # FIX P2: "my order status" aur "mera order" bhi track karega
     if re.search(r'\b(track|where is|order status|kahan hai|status batao|order kahan|my order status|order ka status|mera order|what is my order)\b', t): return "track_order"
     if re.search(r'\b(quiet|calm|family|romantic|date night|ambience|nice place|good place|seating|crowd|peaceful)\b', t): return "fallback"
     if re.search(r'\b(menu|show menu|items|kya milta|food list|dikhao|kha sakte|khana)\b', t): return "menu"
@@ -155,7 +153,6 @@ def resolve_intent(
         if re.search(r"\b(navigate|navigation|where is|how to go)\b", message, flags=re.I): return "navigation_help"
         s = support_intent_parser(message)
         if s: return s
-        # FIX P1: Payment is a stateless interrupt — don't trigger booking_interrupt
         if re.search(r"\b(payment|pay|checkout|upi|card)\b", message, flags=re.I): return "payment"
         # FIX #1: Allow track_order to pass through
         if re.search(r"\b(track|status|where is my order|mera order|order kaha)\b", message, flags=re.I) and re.search(r"\b(order|\d{3,})\b", message, flags=re.I): return "track_order"

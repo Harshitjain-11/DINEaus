@@ -46,8 +46,8 @@ def _default_session() -> dict:
         "last_intent": None,
         "last_success_action": None,
         "active_restaurant": None,       # int or None
-        "temp_order": {"items": []},     # FIX: was {} — app.py needs items key
-        "last_order_id": None,           # FIX: was missing — needed for track/cancel
+        "temp_order": {"items": []},
+        "last_order_id": None,
         "last_booking_id": None,
         "pending_cancel_order_id": None,
         "last_bot_msg": None,
@@ -72,7 +72,7 @@ def get_session(user_id: str) -> dict:
     if user_id not in _sessions:
         _sessions[user_id] = _default_session()
     else:
-        # Patch old sessions that are missing keys (hot-reload safety)
+        # Ensure legacy sessions contain required keys
         s = _sessions[user_id]
         defaults = _default_session()
         for key, val in defaults.items():
@@ -88,7 +88,7 @@ def get_session(user_id: str) -> dict:
 def set_session(user_id: str, data: dict) -> dict:
     data["updated_at"] = datetime.now(UTC).isoformat()
     _sessions[user_id] = data
-    save_sessions()  # FIX #106: Save on update
+    save_sessions()
     return _sessions[user_id]
 
 def push_intent(user_id: str, intent: str):
@@ -103,7 +103,7 @@ def push_intent(user_id: str, intent: str):
 
 def clear_temp_order(user_id: str) -> dict:
     s = get_session(user_id)
-    s["temp_order"] = {"items": []}  # FIX: was {} 
+    s["temp_order"] = {"items": []}
     s["last_intent"] = None
     return s
 
@@ -115,7 +115,7 @@ def clear_booking_state(user_id: str) -> dict:
 def reset_session(user_id: str) -> dict:
     """Full reset — called on chat reset button."""
     _sessions[user_id] = _default_session()
-    save_sessions()  # FIX #106: Save on reset
+    save_sessions()
     return _sessions[user_id]
 
 def cleanup_stale_sessions(ttl_seconds=7200):

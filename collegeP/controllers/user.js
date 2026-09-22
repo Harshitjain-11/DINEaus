@@ -3,6 +3,18 @@ const connection = require("../config/db");
 const getCommonImageName = require("../utils/getCommonImageName");
 const bcrypt = require("bcrypt");
 const ExpressError = require("../utils/ExpressError");
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
+
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: process.env.SMTP_PORT || 587,
+  secure: process.env.SMTP_PORT == '465',
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
 
 // GET: login page
 exports.renderLogin = (req, res) => {
@@ -1466,22 +1478,58 @@ exports.forgot = (req, res, next) => {
     (err, result) => {
       if (err) return next(new ExpressError(500, "Database error"));
 
+      const genericMsg = "If an account exists for that email, a password reset link has been sent.";
+
       if (!result.length) {
-        req.flash("error", "Email not registered");
-        return res.redirect("/forgot");
+        req.flash("success", genericMsg);
+        return res.redirect("/login");
       }
 
-      const token = generateRandomString(32);
+      const rawToken = crypto.randomBytes(32).toString("hex");
+      const hashedToken = crypto.createHash("sha256").update(rawToken).digest("hex");
       const expiry = new Date(Date.now() + 15 * 60 * 1000); // 15 min
 
       connection.query(
         "UPDATE one SET reset_token = ?, reset_token_expiry = ? WHERE id = ?",
-        [token, expiry, result[0].id],
+        [hashedToken, expiry, result[0].id],
         (err2) => {
           if (err2) return next(new ExpressError(500, "Token save failed"));
 
-          // 🚨 Email sending later (for now show reset page)
-          res.redirect(`/reset-password?token=${token}`);
+          const baseUrl = process.env.APP_BASE_URL;
+          
+          if (!baseUrl) {
+            console.error("APP_BASE_URL is not configured. Cannot send reset link.");
+            connection.query("UPDATE one SET reset_token = NULL, reset_token_expiry = NULL WHERE id = ?", [result[0].id]);
+            req.flash("error", "System configuration error. Please try again later.");
+            return res.redirect("/forgot");
+          }
+
+          const resetUrl = `${baseUrl}/reset-password?token=${rawToken}`;
+          
+          const mailOptions = {
+            from: process.env.SMTP_USER || '"DINEaus Support" <support@dineaus.com>',
+            to: email,
+            subject: "Password Reset Request - DINEaus",
+            html: `
+              <h2>DINEaus Password Reset</h2>
+              <p>You requested a password reset for your DINEaus account.</p>
+              <p>Please click the link below to reset your password. This link will expire in 15 minutes.</p>
+              <p><a href="${resetUrl}" style="display:inline-block; padding: 10px 15px; background: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px;">Reset Password</a></p>
+              <p>If you did not request this reset, please ignore this email.</p>
+            `
+          };
+          
+          transporter.sendMail(mailOptions, (mailErr) => {
+             if (mailErr) {
+               console.error("Failed to send reset email:", mailErr);
+               connection.query("UPDATE one SET reset_token = NULL, reset_token_expiry = NULL WHERE id = ?", [result[0].id]);
+               req.flash("error", "Failed to send reset email. Please try again later.");
+               return res.redirect("/forgot");
+             }
+             
+             req.flash("success", genericMsg);
+             res.redirect("/login");
+          });
         }
       );
     }
@@ -1512,6 +1560,7 @@ exports.resetPassword = async (req, res, next) => {
     return res.redirect("back");
   }
 
+  const hashedTokenInput = crypto.createHash("sha256").update(token).digest("hex");
   const hashedPassword = await bcrypt.hash(password, 10);
 
   connection.query(
@@ -1520,7 +1569,7 @@ exports.resetPassword = async (req, res, next) => {
     SET password = ?, reset_token = NULL, reset_token_expiry = NULL
     WHERE reset_token = ? AND reset_token_expiry > NOW()
     `,
-    [hashedPassword, token],
+    [hashedPassword, hashedTokenInput],
     (err, result) => {
       if (err) {
         return next(new ExpressError(500, "Failed to reset password"));

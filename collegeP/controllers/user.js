@@ -1596,7 +1596,12 @@ exports.trackOrder = (req, res, next) => {
   const userId = req.session.user.id;
 
   connection.query(
-    "SELECT * FROM orders WHERE id = ?",
+    `SELECT o.*, a.latitude AS user_lat, a.longitude AS user_lng,
+            r.latitude AS rest_lat, r.longitude AS rest_lng
+     FROM orders o
+     LEFT JOIN address a ON a.id = o.address_id AND a.user_id = o.user_id
+     LEFT JOIN restaurant r ON r.id = o.restaurant_id
+     WHERE o.id = ?`,
     [orderId],
     (err, rows) => {
       if (err) {
@@ -1641,7 +1646,11 @@ exports.trackOrder = (req, res, next) => {
         items,
         timestamps,
         scheduledFor: o.scheduled_for,
-        rawStatus: o.status
+        rawStatus: o.status,
+        userLat: o.user_lat,
+        userLng: o.user_lng,
+        restLat: o.rest_lat,
+        restLng: o.rest_lng
       });
     }
   );

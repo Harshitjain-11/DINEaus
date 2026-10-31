@@ -442,3 +442,117 @@
       .help-main h2 { font-size: 2.2rem; margin-bottom: 8px; }
       .help-main h5 { font-size: 1.1rem; }
     }
+
+    /* Keep Help navigation aligned with the main DINEaus header. */
+    .header-container {
+      width: 100%;
+      max-width: none;
+      height: 68px;
+      padding-inline: clamp(1rem, 4.6vw, 5.5rem);
+      justify-content: flex-start;
+      gap: clamp(1rem, 3vw, 3rem);
+    }
+    .header-container > .logo {
+      display: inline-flex;
+      flex: 0 0 auto;
+      color: var(--text);
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(1.35rem, 1.8vw, 1.7rem);
+      font-weight: 900;
+      letter-spacing: .3px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .header-container .nav {
+      display: flex;
+      flex: 1 1 auto;
+      min-width: 0;
+      justify-content: flex-start;
+      gap: clamp(.85rem, 2.4vw, 2.25rem);
+      margin-left: clamp(.5rem, 2vw, 2rem);
+    }
+    .header-container .nav-link { font-size: clamp(.78rem, .9vw, .9rem); white-space: nowrap; }
+    .header-container .nav-home-link { color: var(--orange-deep); font-weight: 700; }
+    .header-container .nav-actions {
+      display: flex;
+      flex: 0 0 auto;
+      align-items: center;
+      gap: clamp(.35rem, 1vw, .85rem);
+      margin-left: auto;
+    }
+    .help-current-link,
+    .help-account-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+      min-height: 42px;
+      padding: .4rem .75rem;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      color: var(--muted);
+      text-decoration: none;
+      font: 600 .88rem/1.2 'Poppins', sans-serif;
+      white-space: nowrap;
+      transition: color var(--t), background var(--t), border-color var(--t);
+    }
+    .help-current-link:hover,
+    .help-current-link[aria-current="page"] { color: var(--orange-deep); background: var(--tint2); }
+    .help-current-link svg { width: 18px; height: 18px; }
+    .help-account-link {
+      max-width: min(15rem, 22vw);
+      justify-content: flex-start;
+      gap: .55rem;
+      padding: .35rem .8rem .35rem .4rem;
+      background: #fff;
+      border-color: var(--border);
+      box-shadow: var(--sh);
+      color: var(--text);
+    }
+    .help-account-link:hover,
+    .help-account-link:focus-visible { border-color: rgba(255,140,66,.55); outline: none; }
+    .help-account-avatar {
+      display: grid;
+      place-items: center;
+      flex: 0 0 2.2rem;
+      width: 2.2rem;
+      height: 2.2rem;
+      border-radius: 50%;
+      background: var(--grad);
+      color: #fff;
+      font-size: .9rem;
+      font-weight: 800;
+    }
+    .help-account-name { overflow: hidden; text-overflow: ellipsis; }
+    .header-container > .hamburger {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      margin-left: auto;
+    }
+    .header-container > .hamburger:focus-visible { outline: 2px solid var(--orange); outline-offset: 4px; }
+    .mobile-menu { overflow-y: auto; }
+    .mobile-menu > .logo { display: inline-flex; color: var(--text); text-decoration: none; }
+    .mobile-nav { gap: .5rem; }
+    .mobile-nav-link { display: flex; align-items: center; padding: .8rem .75rem; border-radius: .75rem; }
+    .mobile-nav-link:hover { background: var(--tint2); }
+    .mobile-actions .help-current-link,
+    .mobile-actions .help-account-link { width: 100%; justify-content: flex-start; }
+    .mobile-actions .help-account-link { padding: .55rem .75rem; }
+    .mobile-actions .btn { text-align: left; }
+
+    @media (max-width: 1100px) {
+      .header-container { padding-inline: 1.25rem; gap: 1rem; }
+      .header-container .nav,
+      .header-container .nav-actions { display: none; }
+      .header-container > .hamburger { display: flex; }
+    }
+    @media (max-width: 768px) {
+      .header-container { height: 60px; padding-inline: .875rem; }
+      .header-container > .logo { font-size: 1.45rem; }
+      .mobile-menu { padding: 1.5rem 1.25rem; }
+      .mobile-menu .logo { margin-bottom: 1.25rem; }
+    }
+    @media (max-width: 480px) {
+      .header-container { padding-inline: .75rem; }
+    }

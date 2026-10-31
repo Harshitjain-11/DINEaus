@@ -358,7 +358,9 @@
     .menu-right img {
       width: 100% !important;
       height: 112px !important;
-      object-fit: cover;
+      object-fit: contain;
+      object-position: center;
+      background-color: var(--surface);
       border-radius: 12px;
       border: 1px solid var(--bdr);
       display: block;

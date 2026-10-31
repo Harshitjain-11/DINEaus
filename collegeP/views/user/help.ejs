@@ -14,6 +14,7 @@
   <!-- Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.462.0/lucide.min.css">
   <link rel="stylesheet" href="/css/user/help.css">
+  <link rel="stylesheet" href="/css/includes/feature-toast.css">
 
 </head>
 
@@ -22,29 +23,32 @@
   <!-- Header -->
   <header class="header">
     <div class="header-container">
-      <div class="logo">
+      <a href="/home" class="logo">
         DINE<span class="logo-accent">aus</span>
-      </div>
+      </a>
 
       <nav class="nav">
-        <a href="#" class="nav-link">Get the app</a>
-        <a href="#" class="nav-link">Investor Relations</a>
+        <a href="/home" class="nav-link nav-home-link" aria-label="Return to the home page">
+          <i data-lucide="house" aria-hidden="true"></i> Home
+        </a>
+        <a href="#" class="nav-link" data-coming-soon="Get the app">Get the app</a>
+        <a href="#" class="nav-link" data-coming-soon="Investor Relations">Investor Relations</a>
         <a href="/dineous-partner" class="nav-link">Add Restaurant</a>
       </nav>
 
       <div class="nav-actions">
-        <button class="btn btn-ghost">
-          <i data-lucide="help-circle"></i>
-          Help
-        </button>
+        <a href="/help" class="help-current-link" aria-current="page">
+          <i data-lucide="help-circle"></i> Help
+        </a>
         <% if (typeof user !== 'undefined' && user) { %>
-          <button class="btn btn-ghost"><i data-lucide="user"></i>
-            <a href="/profile">Profile</a>
-          </button>
+          <a href="/profile" class="help-account-link">
+            <span class="help-account-avatar" aria-hidden="true"><%= (user.firstname || 'U').charAt(0).toUpperCase() %></span>
+            <span class="help-account-name"><%= user.firstname %> <%= user.lastname || '' %></span>
+          </a>
         <% } else { %>
-          <a href="#" class="btn btn-primary">
+          <a href="/login" class="btn btn-primary">
             <i data-lucide="log-in"></i>
-            Sign up
+            Sign in
           </a>
         <% } %>
       </div>
@@ -54,38 +58,42 @@
         <div class="hamburger-line"></div>
         <div class="hamburger-line"></div>
       </button> -->
-      <div class="hamburger" id="hamburger">
+      <button class="hamburger" id="hamburger" type="button" aria-label="Open navigation menu" aria-controls="mobileMenu" aria-expanded="false">
       <span></span>
       <span></span>
       <span></span>
-    </div>
+    </button>
     </div>
 
     <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobileMenu">
-      <div class="logo">
+      <a href="/home" class="logo">
         DINE<span class="logo-accent">aus</span>
-      </div>
+      </a>
       
       <nav class="mobile-nav">
-        <a href="#" class="mobile-nav-link">Get the app</a>
-        <a href="#" class="mobile-nav-link">Investor Relations</a>
+        <a href="/home" class="mobile-nav-link nav-home-link" aria-label="Return to the home page">
+          <i data-lucide="house" aria-hidden="true"></i> Home
+        </a>
+        <a href="#" class="mobile-nav-link" data-coming-soon="Get the app">Get the app</a>
+        <a href="#" class="mobile-nav-link" data-coming-soon="Investor Relations">Investor Relations</a>
         <a href="/dineous-partner" class="mobile-nav-link">Add Restaurant</a>
       </nav>
 
       <div class="mobile-actions">
-        <button class="btn btn-ghost">
+        <a href="/help" class="help-current-link" aria-current="page">
           <i data-lucide="help-circle"></i>
           Help
-        </button>
+        </a>
         <% if (typeof user !== 'undefined' && user) { %>
-          <button class="btn btn-ghost"><i data-lucide="user"></i><a href="/profile">
-            Profile</a>
-          </button>
+          <a href="/profile" class="help-account-link">
+            <span class="help-account-avatar" aria-hidden="true"><%= (user.firstname || 'U').charAt(0).toUpperCase() %></span>
+            <span class="help-account-name"><%= user.firstname %> <%= user.lastname || '' %></span>
+          </a>
         <% } else { %>
-          <a href="#" class="btn btn-primary">
+          <a href="/login" class="btn btn-primary">
             <i data-lucide="log-in"></i>
-            Sign up
+            Sign in
           </a>
         <% } %>
       </div>
@@ -316,17 +324,32 @@
     hamburger.addEventListener('click', () => {
       hamburger.classList.toggle('active');
       mobileMenu.classList.toggle('active');
-      document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+      const isOpen = mobileMenu.classList.contains('active');
+      hamburger.setAttribute('aria-expanded', String(isOpen));
+      hamburger.setAttribute('aria-label', isOpen ? 'Close navigation menu' : 'Open navigation menu');
+      document.body.style.overflow = isOpen ? 'hidden' : '';
     });
 
     // Close mobile menu when clicking outside
     document.addEventListener('click', (e) => {
-      if (window.innerWidth <= 768 && mobileMenu.classList.contains('active')) {
+      if (window.innerWidth <= 1024 && mobileMenu.classList.contains('active')) {
         if (!mobileMenu.contains(e.target) && !hamburger.contains(e.target)) {
           hamburger.classList.remove('active');
           mobileMenu.classList.remove('active');
+          hamburger.setAttribute('aria-expanded', 'false');
+          hamburger.setAttribute('aria-label', 'Open navigation menu');
           document.body.style.overflow = '';
         }
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+        hamburger.classList.remove('active');
+        mobileMenu.classList.remove('active');
+        hamburger.setAttribute('aria-expanded', 'false');
+        hamburger.setAttribute('aria-label', 'Open navigation menu');
+        document.body.style.overflow = '';
       }
     });
 
@@ -426,5 +449,6 @@
       initializeFAQ();
     });
   </script>
+  <script src="/js/includes/coming-soon.js" defer></script>
 </body>
 </html>

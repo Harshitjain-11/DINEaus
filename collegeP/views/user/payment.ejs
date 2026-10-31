@@ -5,6 +5,7 @@
     <title>Payment Page</title>
     <%- include("../includes/head") %>
     <link rel="stylesheet" href="/css/user/payment.css">
+    <link rel="stylesheet" href="/css/includes/home-return.css">
 </head>
 
 <body>
@@ -26,6 +27,9 @@
         <div class="header">
             <a href="/cart/checkout"> <i class="fas fa-arrow-left"></i></a>
             Payment Options
+            <a href="/home" class="home-return-link" aria-label="Return to the home page">
+                <i class="fas fa-home" aria-hidden="true"></i> Home
+            </a>
         </div>
         <div class="order-info">
             1 item • Total: ₹<span id="totalAmount">291</span> • Savings of ₹25

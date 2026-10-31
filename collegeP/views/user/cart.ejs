@@ -140,9 +140,9 @@
           <h3><%=restaurant.name%></h3>
           <p style="color: gray;"><%=restaurant.location%></p>
         </div>
-        <form method="POST" action="/cart/clear" onsubmit="return confirm('Are you sure you want to clear your cart?');">
+        <form method="POST" action="/cart/clear" class="clear-cart-form">
           <input type="hidden" name="restaurant_id" value="<%= restaurant.id %>">
-          <button type="submit" style="background:none; border:none; color:red; cursor:pointer; font-weight:bold;"><i class="fa fa-trash"></i> Clear Cart</button>
+          <button type="submit" class="clear-cart-trigger"><i class="fa fa-trash" aria-hidden="true"></i> Clear Cart</button>
         </form>
       </div>
       <% menuItems.forEach(item => { %>
@@ -228,6 +228,15 @@
       <button id="confirmSlot" class="deliver-btn" style="margin-top:15px;">Confirm Slot</button>
     </div>
   </div>
+  <dialog class="clear-cart-dialog" id="clearCartDialog" aria-labelledby="clearCartTitle" aria-describedby="clearCartDescription">
+    <div class="clear-cart-dialog-icon" aria-hidden="true"><i class="fa fa-trash"></i></div>
+    <h2 id="clearCartTitle">Clear your cart?</h2>
+    <p id="clearCartDescription">This will remove all items from <strong><%= restaurant.name %></strong>.</p>
+    <div class="clear-cart-dialog-actions">
+      <button type="button" class="clear-cart-cancel" id="cancelClearCart">Keep items</button>
+      <button type="button" class="clear-cart-confirm" id="confirmClearCart">Clear cart</button>
+    </div>
+  </dialog>
 <% } %>
   <!-- Leaflet CSS + JS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />

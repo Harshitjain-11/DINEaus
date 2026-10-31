@@ -279,10 +279,10 @@ function animateMarker(marker, from, to, duration = 1000) {
 }
 function initBaseMap() {
 
-  const userLat = "<%= userLat || 26.2183 %>";
-  const userLng = "<%= userLng || 78.1828 %>";
-  const restLat = "<%= restLat || 26.2183 %>";
-  const restLng = "<%= restLng || 78.1828 %>";
+  const userLat = <%- JSON.stringify(typeof userLat !== "undefined" && userLat !== null && Number.isFinite(Number(userLat)) ? Number(userLat) : 26.2183) %>;
+  const userLng = <%- JSON.stringify(typeof userLng !== "undefined" && userLng !== null && Number.isFinite(Number(userLng)) ? Number(userLng) : 78.1828) %>;
+  const restLat = <%- JSON.stringify(typeof restLat !== "undefined" && restLat !== null && Number.isFinite(Number(restLat)) ? Number(restLat) : 26.2183) %>;
+  const restLng = <%- JSON.stringify(typeof restLng !== "undefined" && restLng !== null && Number.isFinite(Number(restLng)) ? Number(restLng) : 78.1828) %>;
 
   map = L.map("map").setView([userLat, userLng], 14);
 

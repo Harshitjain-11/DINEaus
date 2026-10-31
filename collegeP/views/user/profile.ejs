@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.462.0/lucide.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <link rel="stylesheet" href="/css/user/profile.css">
+  <link rel="stylesheet" href="/css/includes/feature-toast.css">
 </head>
 
 <body>
@@ -22,14 +23,22 @@
 
         <!-- Desktop Navigation -->
         <nav class="nav">
-            <a href="#" class="nav-link">
+            <a href="/home" class="nav-link nav-home-link" aria-label="Return to the home page">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="m3 10 9-7 9 7"/>
+                    <path d="M5 9v12h14V9"/>
+                    <path d="M9 21v-7h6v7"/>
+                </svg>
+                Home
+            </a>
+            <a href="#" class="nav-link" data-coming-soon="Get the app">
                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect width="14" height="20" x="5" y="2" rx="2" ry="2"/>
                     <path d="M12 18h.01"/>
                 </svg>
                 Get the app
             </a>
-            <a href="#" class="nav-link">
+            <a href="#" class="nav-link" data-coming-soon="Investor Relations">
                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M3 21h18"/>
                     <path d="M5 21V7l8-4v18"/>
@@ -61,17 +70,21 @@
 
         <!-- Desktop Actions -->
         <div class="nav-actions">
-          <button style="background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:6px;color:inherit;font:inherit;">
-            <i class="fas fa-user"></i> <span style="max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= user.firstname %></span>
-          </button>
+          <a href="/profile" class="profile-account-link" aria-label="Open profile for <%= user.firstname %>">
+            <span class="profile-account-avatar" aria-hidden="true"><%= (user.firstname || 'U').charAt(0).toUpperCase() %></span>
+            <span class="profile-account-copy">
+              <span class="profile-account-name"><%= user.firstname %> <%= user.lastname || '' %></span>
+              <span class="profile-account-label">My profile</span>
+            </span>
+          </a>
         </div>
 
         <!-- Mobile Hamburger -->
-        <div class="hamburger" id="hamburger">
+        <button class="hamburger" id="hamburger" type="button" aria-label="Open navigation menu" aria-controls="mobileDrawer" aria-expanded="false">
             <span></span>
             <span></span>
             <span></span>
-        </div>
+        </button>
     </div>
 </header>
 
@@ -79,9 +92,9 @@
     <!-- Mobile Drawer -->
     
     <div class="mobile-drawer" id="mobileDrawer">
-        <div class="mobile-logo">
+        <a href="/home" class="mobile-logo">
             DINE<span class="logo-accent">aus</span>
-        </div>
+        </a>
           <a href="#" class="close-btn" 
    style="position:absolute;top:24px;right:32px;text-decoration:none;
           font-size:28px;color:rgb(248, 123, 6);font-weight:bold;z-index:10;transition:color 0.2s;">
@@ -90,14 +103,22 @@
 
 
         <nav class="mobile-nav">
-            <a href="#" class="mobile-nav-link">
+            <a href="/home" class="mobile-nav-link nav-home-link" aria-label="Return to the home page">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="m3 10 9-7 9 7"/>
+                    <path d="M5 9v12h14V9"/>
+                    <path d="M9 21v-7h6v7"/>
+                </svg>
+                Home
+            </a>
+            <a href="#" class="mobile-nav-link" data-coming-soon="Get the app">
                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect width="14" height="20" x="5" y="2" rx="2" ry="2"/>
                     <path d="M12 18h.01"/>
                 </svg>
                 Get the app
             </a>
-            <a href="#" class="mobile-nav-link">
+            <a href="#" class="mobile-nav-link" data-coming-soon="Investor Relations">
                 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M3 21h18"/>
                     <path d="M5 21V7l8-4v18"/>
@@ -622,6 +643,8 @@
 hamburger.addEventListener('click', () => {
   const isActive = mobileDrawer.classList.toggle('active');
   hamburger.classList.toggle('active', isActive);
+  hamburger.setAttribute('aria-expanded', String(isActive));
+  hamburger.setAttribute('aria-label', isActive ? 'Close navigation menu' : 'Open navigation menu');
   document.body.style.overflow = isActive ? 'hidden' : '';
 });
 
@@ -629,6 +652,8 @@ hamburger.addEventListener('click', () => {
 function closeSidebar() {
   hamburger.classList.remove('active');
   mobileDrawer.classList.remove('active');
+  hamburger.setAttribute('aria-expanded', 'false');
+  hamburger.setAttribute('aria-label', 'Open navigation menu');
   document.body.style.overflow = '';
 }
 
@@ -648,6 +673,9 @@ document.addEventListener('click', (e) => {
   ) {
     closeSidebar();
   }
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && mobileDrawer.classList.contains('active')) closeSidebar();
 });
         // Header scroll effect
         window.addEventListener('scroll', () => {
@@ -884,6 +912,7 @@ document.querySelector('[data-tab="address"]').addEventListener("click", () => {
   }, 150);
 });
 </script>
+<script src="/js/includes/coming-soon.js" defer></script>
 
 </body>
 </html>

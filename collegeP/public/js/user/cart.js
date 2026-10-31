@@ -256,3 +256,47 @@ function checkStockAndBlockPay() {
     msg.style.display = "none";
   }
 }
+
+/* Clear cart confirmation dialog */
+(() => {
+  const dialog = document.getElementById("clearCartDialog");
+  if (!dialog) return;
+
+  let pendingForm = null;
+  let allowSubmission = false;
+  const confirmButton = document.getElementById("confirmClearCart");
+  const cancelButton = document.getElementById("cancelClearCart");
+
+  document.querySelectorAll(".clear-cart-form").forEach((form) => {
+    form.addEventListener("submit", (event) => {
+      if (allowSubmission) {
+        allowSubmission = false;
+        return;
+      }
+
+      event.preventDefault();
+      pendingForm = form;
+      if (typeof dialog.showModal === "function") dialog.showModal();
+      else dialog.setAttribute("open", "");
+    });
+  });
+
+  cancelButton?.addEventListener("click", () => {
+    pendingForm = null;
+    if (typeof dialog.close === "function") dialog.close("cancel");
+    else dialog.removeAttribute("open");
+  });
+
+  confirmButton?.addEventListener("click", () => {
+    if (!pendingForm) return;
+    const form = pendingForm;
+    pendingForm = null;
+    if (typeof dialog.close === "function") dialog.close("confirm");
+    else dialog.removeAttribute("open");
+    allowSubmission = true;
+    if (typeof form.requestSubmit === "function") form.requestSubmit();
+    else form.submit();
+  });
+
+  dialog.addEventListener("cancel", () => { pendingForm = null; });
+})();

@@ -498,3 +498,91 @@
             .sidebar-item { min-width: 4.2rem; font-size: .62rem; }
             .main-content-container { padding: .875rem .6rem; border-radius: 12px; }
         }
+
+        /* Profile header alignment and account treatment */
+        .header-container {
+            width: 100%;
+            max-width: none;
+            padding-inline: clamp(1rem, 4.6vw, 5.5rem);
+            justify-content: flex-start;
+            gap: clamp(1rem, 3vw, 3.25rem);
+        }
+        .header-container > .navbar-logo { font-size: clamp(1.35rem, 1.8vw, 1.7rem); }
+        .header-container .nav {
+            flex: 1 1 auto;
+            min-width: 0;
+            margin-left: clamp(.5rem, 2vw, 2rem);
+            gap: clamp(.85rem, 2.4vw, 2.25rem);
+        }
+        .header-container .nav-link { font-size: clamp(.78rem, .9vw, .9rem); }
+        .header-container .nav-home-link { color: var(--or-dp); font-weight: 700; }
+        .header-container .nav-home-link:hover { color: var(--or); }
+        .nav-actions { margin-left: auto; }
+        .profile-account-link {
+            display: inline-flex;
+            align-items: center;
+            gap: .65rem;
+            min-width: 0;
+            max-width: min(15rem, 22vw);
+            padding: .4rem .85rem .4rem .45rem;
+            color: var(--tx);
+            text-decoration: none;
+            border: 1px solid var(--bd);
+            border-radius: 999px;
+            background: rgba(255,255,255,.78);
+            box-shadow: var(--sh);
+            transition: border-color var(--t), box-shadow var(--t), transform var(--t);
+        }
+        .profile-account-link:hover,
+        .profile-account-link:focus-visible {
+            border-color: var(--bd2);
+            box-shadow: var(--sh-md);
+            transform: translateY(-1px);
+            outline: none;
+        }
+        .profile-account-avatar {
+            display: grid;
+            place-items: center;
+            flex: 0 0 2.2rem;
+            width: 2.2rem;
+            height: 2.2rem;
+            border-radius: 50%;
+            color: #fff;
+            background: var(--grad);
+            font: 800 .9rem/1 var(--font-ui);
+        }
+        .profile-account-copy { display: grid; min-width: 0; line-height: 1.2; }
+        .profile-account-name {
+            overflow: hidden;
+            color: var(--tx);
+            font: 700 .84rem/1.25 var(--font-ui);
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .profile-account-label { color: var(--mu); font: 500 .68rem/1.2 var(--font-ui); }
+        .header-container .hamburger {
+            appearance: none;
+            border: 0;
+            padding: .35rem;
+            background: transparent;
+        }
+        .mobile-drawer .mobile-logo {
+            display: inline-block;
+            color: var(--tx);
+            text-decoration: none;
+            font-size: 1.45rem;
+            font-weight: 900;
+        }
+        .mobile-nav-link[data-coming-soon] { width: 100%; }
+
+        @media (max-width: 1100px) {
+            .header-container .nav,
+            .header-container .nav-actions { display: none; }
+            .header-container .hamburger { display: flex; }
+        }
+        @media (max-width: 768px) {
+            .header-container { padding-inline: .875rem; }
+        }
+        @media (max-width: 540px) {
+            .header-container { padding-inline: .75rem; }
+        }

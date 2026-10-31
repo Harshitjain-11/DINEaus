@@ -4,10 +4,12 @@
   <title>Reserve — <%= restaurant.name %></title>
   <%- include("../includes/head") %>
   <link rel="stylesheet" href="/css/user/reservation-form.css">
+  <link rel="stylesheet" href="/css/includes/home-return.css">
 </head>
 <body>
 <%- include("../includes/flash") %>
 <div style="max-width:1100px;margin:0 auto 18px">
+  <a href="/home" aria-label="Return to the home page">&#8592; Home</a>
   <a href="/restaurant/<%= restaurant.id %>">&larr; Back to Restaurant</a>
 </div>
 
